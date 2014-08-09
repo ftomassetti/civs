@@ -105,27 +105,61 @@
 ;(def t (generate-tribe w))
 ;(def t (update-population w t))
 
-(defn prosperity
-  "A number in [0,1] whic indicates how well the tribe is living.
-  For now it just depends on the kind of biome where the tribe is.
-  TODO increase for young men and women, reduce for children and old people"
-  [world tribe]
+(defn base-prosperity [world tribe]
   (let [ x (:x (.position tribe))
          y (:y (.position tribe))
          b (.get (.getBiome world) x y)]
-    (case (.name b)
-      "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
-      "ICELAND"     0.1
-      "TUNDRA"      0.2
-      "ALPINE"      0.5
-      "GLACIER"     0.05
-      "GRASSLAND"   1.0
-      "ROCK_DESERT" 0.3
-      "SAND_DESERT" 0.3
-      "FOREST"      0.8
-      "SAVANNA"     0.7
-      "JUNGLE"      0.8
-      (throw (Exception. (str "Unknown biome" b))))))
+    (if
+      (know? tribe :agriculture)
+      (case (.name b)
+        "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
+        "ICELAND"     0.1
+        "TUNDRA"      0.2
+        "ALPINE"      0.5
+        "GLACIER"     0.05
+        "GRASSLAND"   1.0
+        "ROCK_DESERT" 0.3
+        "SAND_DESERT" 0.3
+        "FOREST"      0.8
+        "SAVANNA"     0.7
+        "JUNGLE"      0.8
+        (throw (Exception. (str "Unknown biome" b))))
+      (case (.name b)
+        "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
+        "ICELAND"     0.1
+        "TUNDRA"      0.2
+        "ALPINE"      0.5
+        "GLACIER"     0.05
+        "GRASSLAND"   1.0
+        "ROCK_DESERT" 0.3
+        "SAND_DESERT" 0.3
+        "FOREST"      0.8
+        "SAVANNA"     0.7
+        "JUNGLE"      0.8
+        (throw (Exception. (str "Unknown biome" b)))))))
+
+(defn crowding
+  "Factor which influence prosperity depending on the technology and the number of inhabitants:
+  agriculture supports more inhabitants"
+  [world tribe]
+  (let [ actives (-> tribe .population active-persons)
+         tot     (-> tribe .population total-persons)
+         max-supportable (if (know? tribe :agriculture) 1000 100)
+         pop-supportable (* actives (if (know? tribe :agriculture) 5.0 2.0))
+         pop-supportable (min max-supportable pop-supportable)]
+    (if (< tot pop-supportable) 1.0
+      (/ 1.0 (/ tot pop-supportable)))))
+
+(defn prosperity
+  "A number in [0,1] whic indicates how well the tribe is living.
+  For now it just depends on the kind of biome where the tribe is.
+  TODO increase for young men and women, reduce for children and old people
+  TODO dependending on the kind of activity done (gathering/agriculture)
+       a certain number of people can be supported"
+  [world tribe]
+  (let [ base     (base-prosperity world tribe)
+         crowding (crowding world tribe)]
+    (* base crowding)))
 
 (defn fact [type params msg]
   (println msg))

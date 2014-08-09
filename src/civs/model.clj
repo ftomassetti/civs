@@ -9,6 +9,9 @@
 (defn total-persons [pop]
   (+ (:children pop) (:young-men pop) (:young-women pop) (:old-men pop) (:old-women pop)))
 
+(defn active-persons [pop]
+  (+ (:young-men pop) (:young-women pop)))
+
 ; The culture defines the behavior and beliefs of a population
 ; nomadism can be :nomadic, :semi-sedentary or :sedentary
 
