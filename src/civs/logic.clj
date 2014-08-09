@@ -94,7 +94,7 @@
       (randomLandPos world))))
 
 (defn randomInitialPopulation []
-  (model/Population. (rand-int 10) (rand-int 10) (rand-int 10) (rand-int 3) (rand-int 3)))
+  (model/Population. (rand-int 15) (rand-int 15) (rand-int 15) (rand-int 5) (rand-int 5)))
 
 (defn generate-tribe [world]
   (model/Tribe. :unnamed (randomLandPos world) (randomInitialPopulation) initial-culture))
@@ -141,8 +141,8 @@
   [world tribe pos]
   (let [ actives (-> tribe .population active-persons)
          tot     (-> tribe .population total-persons)
-         max-supportable (if (know? tribe :agriculture) 1000 100)
-         pop-supportable (* actives (if (know? tribe :agriculture) 5.0 2.0))
+         max-supportable (if (know? tribe :agriculture) 1000 150)
+         pop-supportable (* actives (if (know? tribe :agriculture) 6.0 2.5))
          pop-supportable (min max-supportable pop-supportable)]
     (if (< tot pop-supportable) 1.0
       (if (or (= pop-supportable 0.0) (= tot 0))

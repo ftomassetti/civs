@@ -4,7 +4,8 @@
     [civs.model :refer :all]
     [civs.logic :refer :all]
     [civs.logic.demographics :refer :all]
-    [civs.logic.tribe-choices :refer :all]))
+    [civs.logic.tribe-choices :refer :all]
+    [civs.logic.stats :refer :all]))
 
 ;(require '[civs.model :refer :all])
 ;(require '[civs.logic :refer :all])

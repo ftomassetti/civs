@@ -38,6 +38,9 @@
 (defn is-dead? [tribe]
   (= 0 (total-persons (:population tribe))))
 
+(defn alive? [tribe]
+  (not (is-dead? tribe)))
+
 (defn know? [tribe knowledge]
   (in? (-> tribe .culture .knowledge) knowledge))
 

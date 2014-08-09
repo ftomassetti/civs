@@ -14,11 +14,11 @@
 (defn update-births
   "This method returns a delta"
   [world tribe prosperity]
-  (let [young-men (-> tribe :population :young-men)
-        young-women (-> tribe :population :young-women)
+  (let [young-men               (-> tribe :population :young-men)
+        young-women             (-> tribe :population :young-women)
         men-availability-factor (men-availability-factor young-men young-women)
-        women-fertility (* young-women (perturbate-high prosperity))
-        births (round (* women-fertility men-availability-factor))]
+        women-fertility         (* young-women 1.1 (perturbate-high prosperity))
+        births                  (round (* women-fertility men-availability-factor))]
     (fact :births {:tribe tribe :n births} (str births " children were born"))
     (Population. births 0 0 0 0)))
 
@@ -26,7 +26,7 @@
   "Children can die or grow in to young men or women.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality (* (opposite prosperity) 0.8)
+  (let [mortality (* (opposite prosperity) 0.5)
         n-children (-> tribe :population :children)
         [dead, grown] (rsplit-by n-children mortality)
         [men, women] (rsplit-by grown 0.5)]
@@ -45,8 +45,8 @@
         n-young-women     (-> tribe :population :young-women)
         [dead-m, alive-m] (rsplit-by n-young-men mortality-men)
         [dead-w, alive-w] (rsplit-by n-young-women mortality-women)
-        [grown-m, _]      (rsplit-by alive-m 0.25)
-        [grown-w, _]      (rsplit-by alive-w 0.25)]
+        [grown-m, _]      (rsplit-by alive-m 0.20)
+        [grown-w, _]      (rsplit-by alive-w 0.20)]
     (fact :young-men-dead {:tribe tribe :n dead-m} (str dead-m " young men died"))
     (fact :young-women-dead {:tribe tribe :n dead-w} (str dead-w " young women died"))
     (fact :young-men-grew-old {:tribe tribe :n grown-m} (str grown-m " young men grew old"))
@@ -57,8 +57,8 @@
   "Old men and women can die or remain old.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality-men   (saturate (* (opposite prosperity) 1.2) 1.0)
-        mortality-women (saturate (* (opposite prosperity) 1.2) 1.0)
+  (let [mortality-men   (saturate (* (opposite prosperity) 1.4) 1.0)
+        mortality-women (saturate (* (opposite prosperity) 1.4) 1.0)
         n-old-men   (-> tribe :population :old-men)
         n-old-women (-> tribe :population :old-women)
         [dead-m, alive-m] (rsplit-by n-old-men mortality-men)
