@@ -87,9 +87,6 @@
     [values (repeatedly n #(if (< (rand-float) factor) [1 0] [0 1]))]
   (reduce #(map + %1 %2) [0 0] values)))
 
-(defn isLand [world pos]
-  (not (.get (.getOcean world) (:x pos) (:y pos))))
-
 (defn randomLandPos [world]
   (let [pos (randomPos (.getDimension world))]
     (if (isLand world pos)
@@ -153,9 +150,9 @@
 (defn prosperity
   "A number in [0,1] whic indicates how well the tribe is living.
   For now it just depends on the kind of biome where the tribe is.
-  TODO increase for young men and women, reduce for children and old people
-  TODO dependending on the kind of activity done (gathering/agriculture)
-       a certain number of people can be supported"
+  Increase for young men and women, reduce for children and old people
+  Depending on the kind of activity done (gathering/agriculture)
+  certain number of people can be supported"
   [world tribe]
   (let [ base     (base-prosperity world tribe)
          crowding (crowding world tribe)]

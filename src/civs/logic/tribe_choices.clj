@@ -7,16 +7,19 @@
     [civs.logic.demographics :refer :all])
   (:import [civs.model Population Tribe]))
 
-(defn chance-to-become-semi-sedentary [tribe prosperity]
-  (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0))
+(defn chance-to-become-semi-sedentary [world tribe]
+  (let [prosperity (prosperity world tribe)]
+    (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0)))
 
-(defn chance-to-develop-agriculture [tribe prosperity]
-  (let [ss (semi-sedentary? tribe)
+(defn chance-to-develop-agriculture [world tribe]
+  (let [prosperity (prosperity world tribe)
+         ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss (not know-agriculture)) 0.1 0.0)))
 
-(defn chance-to-become-sedentary [tribe prosperity]
-  (let [ss (semi-sedentary? tribe)
+(defn chance-to-become-sedentary [world tribe]
+  (let [prosperity (prosperity world tribe)
+         ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss know-agriculture) 0.1 0.0)))
 
@@ -58,8 +61,20 @@
           :msg "became sedentary"
           }))))
 
-(defn consider-event [tribe prosperity event]
-  (let [p ((.chance event) tribe prosperity)]
+(def migrate
+  (PossibleEvent.
+    :migrate
+    (fn [world tribe]
+      (case
+        (sedentary? tribe) 0
+        (semi-sedentary? tribe) 0.15
+        (nomadic? tribe) 0.85))
+    (fn [tribe]
+      (let [ pos (.position tribe)
+             possible-destinations (cells-around pos 3)]))))
+
+(defn consider-event [world tribe event]
+  (let [p ((.chance event) world tribe)]
     (if (roll p)
       (let [apply-res ((.apply event) tribe)
             new-tribe (:tribe apply-res)
@@ -69,17 +84,17 @@
         new-tribe)
       tribe)))
 
-(defn consider-events [tribe prosperity events]
+(defn consider-events [world tribe events]
   (if (empty? events)
     tribe
     (let [e (first events)
           re (rest events)]
-      (consider-events (consider-event tribe prosperity e) prosperity re))))
+      (consider-events world (consider-event world tribe e) re))))
 
-(defn consider-all-events [tribe prosperity]
-  (consider-events tribe prosperity [become-semi-sedentary discover-agriculture become-sedentary]))
+(defn consider-all-events [world tribe]
+  (consider-events world tribe [become-semi-sedentary discover-agriculture become-sedentary]))
 
 (defn turn [world tribe]
   (let [p (prosperity world tribe)]
     (update-population world
-      (consider-all-events tribe p))))
+      (consider-all-events world tribe))))

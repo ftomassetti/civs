@@ -31,3 +31,11 @@
 (deftest testLearn
   (let [t (learn t :agriculture)]
     (is (know? t :agriculture))))
+
+(deftest testCellsAround
+  (is (= '({:x 4, :y 7} {:x 4, :y 8} {:x 4, :y 9} {:x 5, :y 7} {:x 5, :y 8} {:x 5, :y 9} {:x 6, :y 7} {:x 6, :y 8} {:x 6, :y 9})
+    (cells-around w {:x 5 :y 8} 1))))
+
+(deftest testCellsAroundNearBorders
+  (is (= '( {:x 0, :y 0} {:x 0, :y 1} {:x 1, :y 0} {:x 1, :y 1})
+    (cells-around w {:x 0 :y 0} 1))))
