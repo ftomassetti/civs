@@ -86,3 +86,10 @@
     [values (repeatedly n #(if (< (rand-float) factor) [1 0] [0 1]))]
     (reduce #(map + %1 %2) [0 0] values)))
 
+(defn fact [type params msg]
+  (println msg))
+
+(defn saturate [value max]
+  (if (> value max)
+    max
+    value))

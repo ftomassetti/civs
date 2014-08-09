@@ -3,7 +3,6 @@
   civs.logic.tribe-choices
   (:require
     [civs.model :refer :all]
-    [civs.logic :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all])
   (:import [civs.model Population Tribe]))
@@ -106,7 +105,7 @@
 (defn consider-all-events [world tribe]
   (consider-events world tribe [become-semi-sedentary discover-agriculture become-sedentary migrate]))
 
-(defn turn [world tribe]
+(defn tribe-turn [world tribe]
   (let [p (prosperity world tribe)]
     (update-population world
       (consider-all-events world tribe))))
