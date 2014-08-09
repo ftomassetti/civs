@@ -1,7 +1,9 @@
 (ns
   ^{:author ftomassetti}
   civs.logic
-  (:import [civs.model Population Tribe]))
+  (:import [civs.model Population Tribe])
+  (:require
+    [civs.model :refer :all]))
 
 (import '(java.util Random))
 (import '(com.github.lands Biome))
@@ -95,7 +97,7 @@
   (model/Population. (rand-int 10) (rand-int 10) (rand-int 10) (rand-int 3) (rand-int 3)))
 
 (defn generate-tribe [world]
-  (model/Tribe. :unnamed (randomLandPos world) (randomInitialPopulation)))
+  (model/Tribe. :unnamed (randomLandPos world) (randomInitialPopulation) initial-culture))
 
 ;(def t (generate-tribe w))
 ;(def t (update-population w t))

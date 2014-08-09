@@ -1,7 +1,10 @@
 (ns civs.core-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
+            [civs.model :refer :all]
             [civs.logic :refer :all]))
+
+(def t (generate-tribe w))
 
 (deftest langGenerationWorks
   (let [l (com.github.langgen.SamplesBasedLanguageFactory/getRandomLanguage)]
@@ -21,3 +24,10 @@
 
 (deftest testRSplitByWithFactorOne
   (is (= [100 0] (rsplit-by 100 1.0))))
+
+(deftest testKnow?
+   (is (not (know? t :agriculture))))
+
+(deftest testLearn
+  (let [t (learn t :agriculture)]
+    (is (know? t :agriculture))))
