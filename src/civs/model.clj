@@ -28,12 +28,9 @@
 (defn know? [tribe knowledge]
   (in? (-> tribe .culture .knowledge) knowledge))
 
-(defn set-knowledge [culture knowledge]
-  (Culture. (.nomadism culture) knowledge))
-
 (defn learn [tribe knowledge]
   (let [old-knowledge (-> tribe .culture .knowledge)
         new-knowledge (conj old-knowledge knowledge)
-        new-culture (set-knowledge (-> tribe .culture) new-knowledge)]
-    (Tribe. (.name tribe) (.position tribe) (.population tribe) new-culture)))
+        new-culture (assoc (-> tribe .culture) :knowledge new-knowledge)]
+    (assoc tribe :culture new-culture)))
 

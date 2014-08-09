@@ -80,7 +80,7 @@
   "TODO this sum the various deltas to the tribe population"
   [tribe deltas]
   (let [new-population (reduce sum-population (.population tribe) deltas)]
-    (Tribe. (.name tribe) (.position tribe) new-population (.culture tribe))))
+    (assoc tribe :population new-population)))
 
 (defn update-population
   "We use deltas, so that we first calculated all the changes on the original
