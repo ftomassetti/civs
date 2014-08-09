@@ -18,6 +18,9 @@
 (defn rand-float []
   (.nextFloat r))
 
+(defn roll [prob]
+  (< (rand-float) prob))
+
 (defn opposite [n]
   (- 1.0 n))
 

@@ -20,7 +20,7 @@
   (= :sedentary (-> t .culture .nomadism)))
 
 (defn semi-sedentary? [t]
-  (= :sedentary (-> t .culture .nomadism)))
+  (= :semi-sedentary (-> t .culture .nomadism)))
 
 (defn nomadic? [t]
   (= :nomadic (-> t .culture .nomadism)))
