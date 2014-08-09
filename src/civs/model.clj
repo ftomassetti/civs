@@ -16,6 +16,15 @@
 ; To develop agriculture a population must be :semi-sedentary
 ; To become :sedentary a population must know agriculture
 
+(defn sedentary? [t]
+  (= :sedentary (-> t .culture .nomadism)))
+
+(defn semi-sedentary? [t]
+  (= :sedentary (-> t .culture .nomadism)))
+
+(defn nomadic? [t]
+  (= :nomadic (-> t .culture .nomadism)))
+
 (defrecord Culture [nomadism knowledge])
 
 (def initial-culture (Culture. :nomadic []))
