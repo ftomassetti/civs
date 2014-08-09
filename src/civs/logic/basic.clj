@@ -87,7 +87,8 @@
     (reduce #(map + %1 %2) [0 0] values)))
 
 (defn fact [type params msg]
-  (println msg))
+  ;(println msg)
+   )
 
 (defn saturate [value max]
   (if (> value max)

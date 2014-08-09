@@ -76,3 +76,6 @@
   (filter #(isLand world %) (cells-around world pos radius)))
 
 (defrecord Game [world tribes])
+
+(defn n-tribes-alive [game]
+  (.size (filter alive? (:tribes game))))
