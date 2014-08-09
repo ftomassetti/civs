@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model :refer :all]
-            [civs.logic :refer :all]))
+            [civs.logic :refer :all]
+            [civs.logic.basic :refer :all]))
 
 (def t (generate-tribe w))
 

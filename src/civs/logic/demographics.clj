@@ -3,7 +3,8 @@
   civs.logic.demographics
   (:require
     [civs.model :refer :all]
-    [civs.logic :refer :all])
+    [civs.logic :refer :all]
+    [civs.logic.basic :refer :all])
   (:import [civs.model Population Tribe]))
 
 (defn men-availability-factor [young-men young-women]

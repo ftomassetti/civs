@@ -75,3 +75,4 @@
 (defn land-cells-around [world pos radius]
   (filter #(isLand world %) (cells-around world pos radius)))
 
+(defrecord Game [world tribes])
