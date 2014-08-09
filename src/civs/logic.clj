@@ -102,9 +102,9 @@
 ;(def t (generate-tribe w))
 ;(def t (update-population w t))
 
-(defn base-prosperity [world tribe]
-  (let [ x (:x (.position tribe))
-         y (:y (.position tribe))
+(defn base-prosperity [world tribe pos]
+  (let [ x (:x pos)
+         y (:y pos)
          b (.get (.getBiome world) x y)]
     (if
       (know? tribe :agriculture)
@@ -138,14 +138,23 @@
 (defn crowding
   "Factor which influence prosperity depending on the technology and the number of inhabitants:
   agriculture supports more inhabitants"
-  [world tribe]
+  [world tribe pos]
   (let [ actives (-> tribe .population active-persons)
          tot     (-> tribe .population total-persons)
          max-supportable (if (know? tribe :agriculture) 1000 100)
          pop-supportable (* actives (if (know? tribe :agriculture) 5.0 2.0))
          pop-supportable (min max-supportable pop-supportable)]
     (if (< tot pop-supportable) 1.0
-      (/ 1.0 (/ tot pop-supportable)))))
+      (if (or (= pop-supportable 0.0) (= tot 0))
+        0.0
+        (/ 1.0 (/ tot pop-supportable))))))
+
+(defn prosperity-in-pos
+  "The prosperity a tribe would have in a given position"
+  [world tribe pos]
+  (let [ base     (base-prosperity world tribe pos)
+         crowding (crowding world tribe pos)]
+    (* base crowding)))
 
 (defn prosperity
   "A number in [0,1] whic indicates how well the tribe is living.
@@ -154,9 +163,7 @@
   Depending on the kind of activity done (gathering/agriculture)
   certain number of people can be supported"
   [world tribe]
-  (let [ base     (base-prosperity world tribe)
-         crowding (crowding world tribe)]
-    (* base crowding)))
+  (prosperity-in-pos world tribe (.position tribe)))
 
 (defn fact [type params msg]
   (println msg))

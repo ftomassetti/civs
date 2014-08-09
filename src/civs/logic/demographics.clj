@@ -26,10 +26,10 @@
   "Children can die or grow in to young men or women.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality (perturbate-med (opposite prosperity))
+  (let [mortality (* (opposite prosperity) 0.8)
         n-children (-> tribe :population :children)
-        [dead, grown] (split-by n-children mortality)
-        [men, women] (split-by grown (perturbate-low 0.5))]
+        [dead, grown] (rsplit-by n-children mortality)
+        [men, women] (rsplit-by grown 0.5)]
     (fact :children-dead {:tribe tribe :n dead} (str dead " children died"))
     (fact :children-grown-as-men {:tribe tribe :n men} (str men " children grew as men"))
     (fact :children-grown-as-women {:tribe tribe :n women} (str women " children grew as women"))
@@ -39,8 +39,8 @@
   "Young men and women can die, remain young or grow old.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality-men     (mean 0.0 (opposite prosperity))
-        mortality-women   (mean 0.0 (opposite prosperity))
+  (let [mortality-men     (* (opposite prosperity) 0.25)
+        mortality-women   (* (opposite prosperity) 0.25)
         n-young-men       (-> tribe :population :young-men)
         n-young-women     (-> tribe :population :young-women)
         [dead-m, alive-m] (rsplit-by n-young-men mortality-men)
@@ -57,8 +57,8 @@
   "Old men and women can die or remain old.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality-men   (mean 0.7 (opposite prosperity))
-        mortality-women (mean 0.7 (opposite prosperity))
+  (let [mortality-men   (saturate (* (opposite prosperity) 1.2) 1.0)
+        mortality-women (saturate (* (opposite prosperity) 1.2) 1.0)
         n-old-men   (-> tribe :population :old-men)
         n-old-women (-> tribe :population :old-women)
         [dead-m, alive-m] (rsplit-by n-old-men mortality-men)

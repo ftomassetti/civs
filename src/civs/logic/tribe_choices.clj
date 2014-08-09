@@ -29,7 +29,7 @@
   (PossibleEvent.
     :become-semi-sedentary
     chance-to-become-semi-sedentary
-    (fn [tribe]
+    (fn [world tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :semi-sedentary)]
         {
           :tribe (assoc tribe :culture new-culture)
@@ -41,7 +41,7 @@
   (PossibleEvent.
     :discover-agriculture
     chance-to-develop-agriculture
-    (fn [tribe]
+    (fn [world tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
           :tribe (learn tribe :agriculture)
@@ -53,7 +53,7 @@
   (PossibleEvent.
     :become-sedentary
     chance-to-become-sedentary
-    (fn [tribe]
+    (fn [world tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
           :tribe (assoc tribe :culture new-culture)
@@ -69,14 +69,25 @@
         (sedentary? tribe) 0
         (semi-sedentary? tribe) 0.15
         (nomadic? tribe) 0.85))
-    (fn [tribe]
+    (fn [world tribe]
       (let [ pos (.position tribe)
-             possible-destinations (cells-around pos 3)]))))
+             possible-destinations (land-cells-around world pos 3)
+             preferences (map (fn [pos] {
+                                     :preference (perturbate-low (prosperity-in-pos world tribe pos))
+                                     :pos pos
+                                     }) possible-destinations)
+             preferences (sort-by :preference preferences)
+             target (:pos (first preferences))]
+        {
+          :tribe (assoc tribe :position target)
+          :params {:to target}
+          :msg "migrate"
+          }))))
 
 (defn consider-event [world tribe event]
   (let [p ((.chance event) world tribe)]
     (if (roll p)
-      (let [apply-res ((.apply event) tribe)
+      (let [apply-res ((.apply event) world tribe)
             new-tribe (:tribe apply-res)
             params (assoc (:params apply-res) :tribe new-tribe)
             msg (:msg apply-res)]
@@ -92,7 +103,7 @@
       (consider-events world (consider-event world tribe e) re))))
 
 (defn consider-all-events [world tribe]
-  (consider-events world tribe [become-semi-sedentary discover-agriculture become-sedentary]))
+  (consider-events world tribe [become-semi-sedentary discover-agriculture become-sedentary migrate]))
 
 (defn turn [world tribe]
   (let [p (prosperity world tribe)]
