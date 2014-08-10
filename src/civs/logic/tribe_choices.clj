@@ -57,8 +57,10 @@
     :become-sedentary
     chance-to-become-sedentary
     (fn [game tribe]
-      (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
+      (let [ pos (.position tribe)
+             new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
+          :game (:game (create-town game :unnamed pos (:id tribe)))
           :tribe (assoc tribe :culture new-culture)
           :params {}
           :msg "became sedentary"
@@ -117,9 +119,11 @@
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
-             game-with-new-tribe (:game (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe)))]
+             res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe))
+             game (:game res)
+             game (:game (create-town game :unnamed dest-target (:id (:tribe res))))]
         {
-          :game game-with-new-tribe
+          :game game
           :tribe (assoc tribe :population (:remaining sp))
           :params {}
           :msg "split"

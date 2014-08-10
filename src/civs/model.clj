@@ -96,13 +96,19 @@
   (filter #(isLand world %) (cells-around world pos radius)))
 
 ; ###########################################################
+;  Town
+; ###########################################################
+
+(defrecord Town [id name position owner])
+
+; ###########################################################
 ;  Game
 ; ###########################################################
 
-(defrecord Game [world tribes next_id])
+(defrecord Game [world tribes towns next_id])
 
 (defn create-game [world]
-  (Game. world {} 1))
+  (Game. world {} {} 1))
 
 (defn create-tribe
   "Return the game, updated and the new tribe"
@@ -113,6 +119,17 @@
         game (assoc game :next_id (inc tribe-id))
         game (assoc game :tribes tribes)]
     {:game game :tribe new-tribe}))
+
+(defn create-town
+  "Return the game, updated and the new town"
+  [game name position owner]
+  (let [id (:next_id game)
+        new-town (Town. id name position owner)
+        towns (assoc (:towns game) id new-town)
+        game (assoc game :next_id (inc id))
+        game (assoc game :towns towns)]
+    {:game game :town new-town}))
+
 
 (defn update-tribe
   "Return the game, updated"

@@ -11,7 +11,6 @@
 
 (require '[civs.model :as model])
 
-
 (defn randomLandPos [world]
   (let [pos (randomPos (.getDimension world))]
     (if (isLand world pos)
@@ -19,7 +18,7 @@
       (randomLandPos world))))
 
 (defn randomInitialPopulation []
-  (model/Population. (rand-int 15) (rand-int 15) (rand-int 15) (rand-int 5) (rand-int 5)))
+  (model/Population. (rand-int 12) (rand-int 12) (rand-int 12) (rand-int 4) (rand-int 4)))
 
 (defn generate-tribe
   "Return a map game, tribe"
@@ -110,7 +109,7 @@
   "Children can die or grow in to young men or women.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality (* (opposite prosperity) 0.5)
+  (let [mortality (* (opposite prosperity) 0.35)
         n-children (-> tribe :population :children)
         [dead, grown] (rsplit-by n-children mortality)
         [men, women] (rsplit-by grown 0.5)]
@@ -129,8 +128,8 @@
         n-young-women     (-> tribe :population :young-women)
         [dead-m, alive-m] (rsplit-by n-young-men mortality-men)
         [dead-w, alive-w] (rsplit-by n-young-women mortality-women)
-        [grown-m, _]      (rsplit-by alive-m 0.20)
-        [grown-w, _]      (rsplit-by alive-w 0.20)]
+        [grown-m, _]      (rsplit-by alive-m 0.25)
+        [grown-w, _]      (rsplit-by alive-w 0.25)]
     (fact :young-men-dead {:tribe tribe :n dead-m} (str dead-m " young men died"))
     (fact :young-women-dead {:tribe tribe :n dead-w} (str dead-w " young women died"))
     (fact :young-men-grew-old {:tribe tribe :n grown-m} (str grown-m " young men grew old"))
@@ -141,8 +140,8 @@
   "Old men and women can die or remain old.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality-men   (saturate (* (opposite prosperity) 1.4) 1.0)
-        mortality-women (saturate (* (opposite prosperity) 1.4) 1.0)
+  (let [mortality-men   (saturate (* (opposite prosperity) 1.1) 1.0)
+        mortality-women (saturate (* (opposite prosperity) 1.1) 1.0)
         n-old-men   (-> tribe :population :old-men)
         n-old-women (-> tribe :population :old-women)
         [dead-m, alive-m] (rsplit-by n-old-men mortality-men)
