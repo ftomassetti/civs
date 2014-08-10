@@ -62,3 +62,18 @@
   (with-redefs [crand-float (constantly 0.4)]
     (> (perturbate-low 0.6) (perturbate-med 0.6))
     (> (perturbate-med 0.6) (perturbate-high 0.6))))
+
+(deftest test-mean
+  (= 0.7 (mean 0.5 0.9))
+  (= 0.0 (mean 0.0 0.0))
+  (= 0.0 (mean -0.5 0.5)))
+
+(deftest test-saturate
+  (= 0.6 (saturate 0.6 1.0))
+  (= 1.0 (saturate 1.6 1.0)))
+
+(deftest test-rand-range
+  (with-redefs [crand-int (constantly 2)]
+    (= 5 (rand-range 3 10)))
+  (with-redefs [crand-int (constantly 0)]
+    (= 3 (rand-range 3 10))))
