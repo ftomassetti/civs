@@ -77,6 +77,12 @@
 (defn isLand [world pos]
   (not (.get (.getOcean world) (:x pos) (:y pos))))
 
+(defn game-width [game]
+  (-> game .world .getDimension .getWidth))
+
+(defn game-height [game]
+  (-> game .world .getDimension .getHeight))
+
 (defn inside? [world pos]
   (let [x (:x pos)
         y (:y pos)
@@ -170,3 +176,6 @@
 
 (defn n-ghost-cities [game]
   (.size (filter #(ghost-city? game (.id %)) (towns game))))
+
+(defn game-total-pop-in-pos [game pos]
+  (reduce + 0 (map #(-> % .population total-persons) (filter #(= pos (.position %)) (tribes game)))))

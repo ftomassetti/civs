@@ -18,7 +18,7 @@
       (randomLandPos world))))
 
 (defn randomInitialPopulation []
-  (model/Population. (crand-int 12) (crand-int 12) (crand-int 12) (crand-int 4) (crand-int 4)))
+  (model/Population. (crand-int 15) (crand-int 15) (crand-int 15) (crand-int 5) (crand-int 5)))
 
 (defn generate-tribe
   "Return a map game, tribe"
@@ -38,12 +38,12 @@
         "TUNDRA"      0.2
         "ALPINE"      0.5
         "GLACIER"     0.05
-        "GRASSLAND"   1.0
+        "GRASSLAND"   0.95
         "ROCK_DESERT" 0.3
         "SAND_DESERT" 0.3
-        "FOREST"      0.8
-        "SAVANNA"     0.7
-        "JUNGLE"      0.8
+        "FOREST"      0.85
+        "SAVANNA"     0.8
+        "JUNGLE"      0.9
         (throw (Exception. (str "Unknown biome" b))))
       (case (.name b)
         "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))

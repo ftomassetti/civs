@@ -6,7 +6,8 @@
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]
-    [civs.logic.stats :refer :all]))
+    [civs.logic.stats :refer :all]
+    [civs.graphics :refer :all]))
 
 ;(require '[civs.model :refer :all])
 ;(require '[civs.logic :refer :all])
