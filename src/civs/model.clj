@@ -124,7 +124,7 @@
 ; TODO
 ;(defn remove-dead-tribes [game])
 
-(defn world-total-pop [game]
+(defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
 
 (defn n-tribes-alive [game]

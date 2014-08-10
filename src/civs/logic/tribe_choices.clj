@@ -104,10 +104,8 @@
             pop (-> tribe .population total-persons)]
         (if
           (and (> pop 30) (< c 0.9))
-          (if (roll (/ (opposite c) 2.0))
-            true
-            false)
-          false)))
+          (/ (opposite c) 2.0)
+          0.0)))
     (fn [game tribe]
       (let [ world (.world game)
              pos (.position tribe)
