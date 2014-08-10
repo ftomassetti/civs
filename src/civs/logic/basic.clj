@@ -24,16 +24,30 @@
 (defn roll [prob]
   (< (crand-float) prob))
 
+(defn check-in-range [n min max]
+  (when (< n min)
+    (throw (Exception. "Too low")))
+  (when (> n max)
+    (throw (Exception. (str "Too high: limit " max " value " n)))))
+
+(defn force-in-range [n min max]
+  (when (< n min)
+    min)
+  (when (> n max)
+    max)
+  n)
+
 (defn opposite [n]
+  (check-in-range n 0.0 1.0)
   (- 1.0 n))
 
 (defn perturbate
   "n should be in [0,1]"
-  [n factor]
-  (let [perturbation (/ (- (crand-float) 0.5) factor)
+  [n perturbaction-factor]
+  (check-in-range n 0.0 1.0)
+  (let [perturbation (* (- (crand-float) 0.5) perturbaction-factor)
         res (+ n perturbation)
-        res (if (< res 0.0) 0.0 res)
-        res (if (> res 1.0) 1.0 res)]
+        res (force-in-range res 0 1.0)]
     res))
 
 (defn perturbate-high
@@ -44,12 +58,12 @@
 (defn perturbate-med
   "n should be in [0,1]"
   [n]
-  (perturbate n 3.0))
+  (perturbate n 0.33))
 
 (defn perturbate-low
   "n should be in [0,1]"
   [n]
-  (perturbate n 5.0))
+  (perturbate n 0.2))
 
 (defn rand-range [a b]
   (when (> a b)
@@ -68,16 +82,10 @@
 (defn mean [a b]
   (/ (+ a b) 2.0))
 
-(defn force-in-range [n min max]
-  (when (< n min)
-    (throw (Exception. "Too low")))
-  (when (> n max)
-    (throw (Exception. (str "Too high: limit " max " value " n)))))
-
 (defn split-by
   "factor is in [0,1]"
   [n factor]
-  (force-in-range factor 0.0 1.0)
+  (check-in-range factor 0.0 1.0)
   (let [a (round (* n factor))
         b (- n a)]
     [a b]))
@@ -85,7 +93,7 @@
 (defn rsplit-by
   "factor is in [0,1]"
   [n factor]
-  (force-in-range factor 0.0 1.0)
+  (check-in-range factor 0.0 1.0)
   (let
     [values (repeatedly n #(if (< (crand-float) factor) [1 0] [0 1]))]
     (reduce #(map + %1 %2) [0 0] values)))

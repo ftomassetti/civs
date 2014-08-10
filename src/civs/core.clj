@@ -3,6 +3,7 @@
   (:require
     [civs.model :refer :all]
     [civs.logic :refer :all]
+    [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.stats :refer :all]))
