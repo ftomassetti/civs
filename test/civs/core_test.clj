@@ -7,7 +7,8 @@
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all]))
 
-(def t (generate-tribe w))
+(def g (generate-game w 1))
+(def t (:tribe (generate-tribe g)))
 
 (deftest langGenerationWorks
   (let [l (com.github.langgen.SamplesBasedLanguageFactory/getRandomLanguage)]

@@ -7,18 +7,21 @@
     [civs.logic.demographics :refer :all])
   (:import [civs.model Population Tribe]))
 
-(defn chance-to-become-semi-sedentary [world tribe]
-  (let [prosperity (prosperity world tribe)]
+(defn chance-to-become-semi-sedentary [game tribe]
+  (let [ world (.world game)
+         prosperity (prosperity world tribe)]
     (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0)))
 
-(defn chance-to-develop-agriculture [world tribe]
-  (let [prosperity (prosperity world tribe)
+(defn chance-to-develop-agriculture [game tribe]
+  (let [world (.world game)
+         prosperity (prosperity world tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss (not know-agriculture)) 0.1 0.0)))
 
-(defn chance-to-become-sedentary [world tribe]
-  (let [prosperity (prosperity world tribe)
+(defn chance-to-become-sedentary [game tribe]
+  (let [world (.world game)
+         prosperity (prosperity world tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss know-agriculture) 0.1 0.0)))
@@ -29,7 +32,7 @@
   (PossibleEvent.
     :become-semi-sedentary
     chance-to-become-semi-sedentary
-    (fn [world tribe]
+    (fn [game tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :semi-sedentary)]
         {
           :tribe (assoc tribe :culture new-culture)
@@ -41,7 +44,7 @@
   (PossibleEvent.
     :discover-agriculture
     chance-to-develop-agriculture
-    (fn [world tribe]
+    (fn [game tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
           :tribe (learn tribe :agriculture)
@@ -53,7 +56,7 @@
   (PossibleEvent.
     :become-sedentary
     chance-to-become-sedentary
-    (fn [world tribe]
+    (fn [game tribe]
       (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
           :tribe (assoc tribe :culture new-culture)
@@ -64,13 +67,14 @@
 (def migrate
   (PossibleEvent.
     :migrate
-    (fn [world tribe]
+    (fn [game tribe]
       (case
         (sedentary? tribe) 0
         (semi-sedentary? tribe) 0.15
         (nomadic? tribe) 0.85))
-    (fn [world tribe]
-      (let [ pos (.position tribe)
+    (fn [game tribe]
+      (let [ world (.world game)
+             pos (.position tribe)
              possible-destinations (land-cells-around world pos 3)
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos world tribe pos))
@@ -84,28 +88,78 @@
           :msg "migrate"
           }))))
 
-(defn consider-event [world tribe event]
-  (let [p ((.chance event) world tribe)]
+(defn- split-pop [population]
+  (let [[rc,lc] (rsplit-by (.children population) 0.4)
+        [rym,lym] (rsplit-by (.young-men population) 0.4)
+        [ryw,lyw] (rsplit-by (.young-women population) 0.4)
+        [rom,lom] (rsplit-by (.old-men population) 0.4)
+        [row,low] (rsplit-by (.old-women population) 0.4)]
+    {:remaining (Population. rc rym ryw rom row) :leaving (Population. lc lym lyw lom low)}))
+
+(def split
+  (PossibleEvent.
+    :split
+    (fn [game tribe]
+      (let [c (crowding (.world game) tribe (.position tribe))
+            pop (-> tribe .population total-persons)]
+        (if
+          (and (> pop 30) (< c 0.9))
+          (if (roll (/ (opposite c) 2.0))
+            true
+            false)
+          false)))
+    (fn [game tribe]
+      (let [ world (.world game)
+             pos (.position tribe)
+             sp (split-pop (.population tribe))
+             possible-destinations (land-cells-around world pos 3)
+             preferences (map (fn [pos] {
+                                          :preference (perturbate-low (prosperity-in-pos world tribe pos))
+                                          :pos pos
+                                          }) possible-destinations)
+             preferences (sort-by :preference preferences)
+             dest-target (:pos (first preferences))
+             game-with-new-tribe (:game (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe)))]
+        {
+          :game game-with-new-tribe
+          :tribe (assoc tribe :population (:remaining sp))
+          :params {}
+          :msg "split"
+          }))))
+
+(defn consider-event [game tribe event]
+  "Return a map of game and tribe, changed"
+  (let [p ((.chance event) game tribe)]
     (if (roll p)
-      (let [apply-res ((.apply event) world tribe)
+      (let [apply-res ((.apply event) game tribe)
             new-tribe (:tribe apply-res)
+            new-game (or (:game apply-res) game)
+            new-game (update-tribe new-game new-tribe)
             params (assoc (:params apply-res) :tribe new-tribe)
             msg (:msg apply-res)]
         (fact (:name event) params msg)
-        new-tribe)
-      tribe)))
+        {:game new-game :tribe new-tribe})
+      {:game game :tribe tribe} )))
 
-(defn consider-events [world tribe events]
+(defn consider-events
+  "Return a map of game and tribe, changed"
+  [game tribe events]
   (if (empty? events)
-    tribe
+    {:game game :tribe tribe}
     (let [e (first events)
-          re (rest events)]
-      (consider-events world (consider-event world tribe e) re))))
+          re (rest events)
+          res (consider-event game tribe e)]
+      (consider-events (:game res) (:tribe res) re))))
 
-(defn consider-all-events [world tribe]
-  (consider-events world tribe [become-semi-sedentary discover-agriculture become-sedentary migrate]))
+(defn consider-all-events
+  "Return a map of game and tribe, changed"
+  [game tribe]
+  (consider-events game tribe [become-semi-sedentary discover-agriculture become-sedentary migrate split]))
 
-(defn tribe-turn [world tribe]
-  (let [p (prosperity world tribe)]
-    (update-population world
-      (consider-all-events world tribe))))
+(defn tribe-turn
+  "Return the game, updated"
+  [game tribe]
+  (let [ world (.world game)
+         tribe (update-population world tribe)
+        game (update-tribe game tribe)]
+    (:game (consider-all-events game tribe))))

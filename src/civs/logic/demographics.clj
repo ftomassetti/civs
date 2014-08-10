@@ -21,8 +21,11 @@
 (defn randomInitialPopulation []
   (model/Population. (rand-int 15) (rand-int 15) (rand-int 15) (rand-int 5) (rand-int 5)))
 
-(defn generate-tribe [world]
-  (model/Tribe. :unnamed (randomLandPos world) (randomInitialPopulation) initial-culture))
+(defn generate-tribe
+  "Return a map game, tribe"
+  [game]
+  (let [world (.world game)]
+    (create-tribe game :unnamed (randomLandPos world) (randomInitialPopulation) initial-culture)))
 
 (defn base-prosperity [world tribe pos]
   (let [ x (:x pos)

@@ -3,7 +3,15 @@
   civs.model
   (:require [clojure.math.combinatorics :as combo]))
 
+; ###########################################################
+;  Generic
+; ###########################################################
+
 (defn in? [coll target] (some #(= target %) coll))
+
+; ###########################################################
+;  Population
+; ###########################################################
 
 (defrecord Population [children young-men young-women old-men old-women])
 
@@ -12,6 +20,10 @@
 
 (defn active-persons [pop]
   (+ (:young-men pop) (:young-women pop)))
+
+; ###########################################################
+;  Culture
+; ###########################################################
 
 ; The culture defines the behavior and beliefs of a population
 ; nomadism can be :nomadic, :semi-sedentary or :sedentary
@@ -33,7 +45,11 @@
 
 (def initial-culture (Culture. :nomadic []))
 
-(defrecord Tribe [name position population culture])
+; ###########################################################
+;  Tribe
+; ###########################################################
+
+(defrecord Tribe [id name position population culture])
 
 (defn is-dead? [tribe]
   (= 0 (total-persons (:population tribe))))
@@ -49,6 +65,10 @@
         new-knowledge (conj old-knowledge knowledge)
         new-culture (assoc (-> tribe .culture) :knowledge new-knowledge)]
     (assoc tribe :culture new-culture)))
+
+; ###########################################################
+;  World
+; ###########################################################
 
 (defn isLand [world pos]
   (not (.get (.getOcean world) (:x pos) (:y pos))))
@@ -75,7 +95,37 @@
 (defn land-cells-around [world pos radius]
   (filter #(isLand world %) (cells-around world pos radius)))
 
-(defrecord Game [world tribes])
+; ###########################################################
+;  Game
+; ###########################################################
+
+(defrecord Game [world tribes next_id])
+
+(defn create-game [world]
+  (Game. world {} 1))
+
+(defn create-tribe
+  "Return the game, updated and the new tribe"
+  [game name position population culture]
+  (let [tribe-id (:next_id game)
+        new-tribe (Tribe. tribe-id name position population culture)
+        tribes (assoc (:tribes game) tribe-id new-tribe)
+        game (assoc game :next_id (inc tribe-id))
+        game (assoc game :tribes tribes)]
+    {:game game :tribe new-tribe}))
+
+(defn update-tribe
+  "Return the game, updated"
+  [game tribe]
+  (let [tribe-id (:id tribe)
+        tribes (assoc (:tribes game) tribe-id tribe)]
+    (assoc game :tribes tribes)))
+
+; TODO
+;(defn remove-dead-tribes [game])
+
+(defn world-total-pop [game]
+  (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
 
 (defn n-tribes-alive [game]
   (.size (filter alive? (:tribes game))))
