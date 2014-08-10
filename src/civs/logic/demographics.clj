@@ -62,7 +62,7 @@
 (defn crowding
   "Factor which influence prosperity depending on the technology and the number of inhabitants:
   agriculture supports more inhabitants"
-  [world tribe pos]
+  [game tribe pos]
   (let [ actives (-> tribe .population active-persons)
          tot     (-> tribe .population total-persons)
          max-supportable (if (know? tribe :agriculture) 1000 150)
@@ -75,9 +75,10 @@
 
 (defn prosperity-in-pos
   "The prosperity a tribe would have in a given position"
-  [world tribe pos]
-  (let [ base     (base-prosperity world tribe pos)
-         crowding (crowding world tribe pos)]
+  [game tribe pos]
+  (let [ world    (.world game)
+         base     (base-prosperity world tribe pos)
+         crowding (crowding game tribe pos)]
     (* base crowding)))
 
 (defn prosperity
@@ -86,8 +87,8 @@
   Increase for young men and women, reduce for children and old people
   Depending on the kind of activity done (gathering/agriculture)
   certain number of people can be supported"
-  [world tribe]
-  (prosperity-in-pos world tribe (.position tribe)))
+  [game tribe]
+  (prosperity-in-pos game tribe (.position tribe)))
 
 (defn men-availability-factor [young-men young-women]
   (let [ men-factor (/ (float young-men) young-women)
@@ -170,8 +171,9 @@
    population and only then we apply all the changes, after all the calculations
    are done, otherwise the first calculations would influence the results of the
    other steps"
-  [world tribe]
-  (let [p (prosperity world tribe)
+  [game tribe]
+  (let [p (prosperity game tribe)
+        world (.world game)
         deltaFromChildren        (update-children         world tribe p)
         deltaFromYoungPopulation (update-young-population world tribe p)
         deltaFromOldPopulation   (update-old-population   world tribe p)

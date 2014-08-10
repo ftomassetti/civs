@@ -9,19 +9,19 @@
 
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
-         prosperity (prosperity world tribe)]
+         prosperity (prosperity game tribe)]
     (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0)))
 
 (defn chance-to-develop-agriculture [game tribe]
   (let [world (.world game)
-         prosperity (prosperity world tribe)
+         prosperity (prosperity game tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss (not know-agriculture)) 0.1 0.0)))
 
 (defn chance-to-become-sedentary [game tribe]
   (let [world (.world game)
-         prosperity (prosperity world tribe)
+         prosperity (prosperity game tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
     (if (and ss know-agriculture) 0.1 0.0)))
@@ -79,7 +79,7 @@
              pos (.position tribe)
              possible-destinations (land-cells-around world pos 3)
              preferences (map (fn [pos] {
-                                     :preference (perturbate-low (prosperity-in-pos world tribe pos))
+                                     :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                      :pos pos
                                      }) possible-destinations)
              preferences (sort-by :preference preferences)
@@ -114,7 +114,7 @@
              sp (split-pop (.population tribe))
              possible-destinations (land-cells-around world pos 3)
              preferences (map (fn [pos] {
-                                          :preference (perturbate-low (prosperity-in-pos world tribe pos))
+                                          :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                           :pos pos
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
