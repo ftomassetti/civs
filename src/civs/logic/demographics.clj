@@ -18,7 +18,7 @@
       (randomLandPos world))))
 
 (defn randomInitialPopulation []
-  (model/Population. (rand-int 12) (rand-int 12) (rand-int 12) (rand-int 4) (rand-int 4)))
+  (model/Population. (crand-int 12) (crand-int 12) (crand-int 12) (crand-int 4) (crand-int 4)))
 
 (defn generate-tribe
   "Return a map game, tribe"

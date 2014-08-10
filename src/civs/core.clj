@@ -10,11 +10,7 @@
 ;(require '[civs.model :refer :all])
 ;(require '[civs.logic :refer :all])
 
-(def filename "examples-worlds/seed_77.world")
-
-(def w
-  (let [f (java.io.File. filename)]
-    (. com.github.lands.PickleSerialization loadWorld f)))
+(def w (load-world "examples-worlds/seed_77.world"))
 
 (defn -main
   "I don't do a whole lot ... yet."

@@ -70,6 +70,10 @@
 ;  World
 ; ###########################################################
 
+(defn load-world [filename]
+  (let [f (java.io.File. filename)]
+    (. com.github.lands.PickleSerialization loadWorld f)))
+
 (defn isLand [world pos]
   (not (.get (.getOcean world) (:x pos) (:y pos))))
 
@@ -155,8 +159,11 @@
 (defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
 
+(defn tribes [game]
+  (vals (.tribes game)))
+
 (defn n-tribes-alive [game]
-  (.size (filter alive? (:tribes game))))
+  (.size (filter alive? (tribes game))))
 
 (defn towns [game]
   (vals (.towns game)))

@@ -11,14 +11,18 @@
 
 (def r (Random. 1))
 
-(defn rand-int [n]
+(defn crand-int
+  "c stands for c, so to not override clojure.core/rand-int"
+  [n]
   (.nextInt r n))
 
-(defn rand-float []
+(defn crand-float
+  "c stands for c, so to not override clojure.core/rand-float"
+  []
   (.nextFloat r))
 
 (defn roll [prob]
-  (< (rand-float) prob))
+  (< (crand-float) prob))
 
 (defn opposite [n]
   (- 1.0 n))
@@ -26,7 +30,7 @@
 (defn perturbate
   "n should be in [0,1]"
   [n factor]
-  (let [perturbation (/ (- (rand-float) 0.5) factor)
+  (let [perturbation (/ (- (crand-float) 0.5) factor)
         res (+ n perturbation)
         res (if (< res 0.0) 0.0 res)
         res (if (> res 1.0) 1.0 res)]
@@ -51,7 +55,7 @@
   (when (> a b)
     (throw (Exception. "Invalid range")))
   (let [diff (- b a)]
-    (+ a (rand-int diff))))
+    (+ a (crand-int diff))))
 
 (defn randomPos [dimension]
   (let [x (.nextInt r (.getWidth dimension))
@@ -83,7 +87,7 @@
   [n factor]
   (force-in-range factor 0.0 1.0)
   (let
-    [values (repeatedly n #(if (< (rand-float) factor) [1 0] [0 1]))]
+    [values (repeatedly n #(if (< (crand-float) factor) [1 0] [0 1]))]
     (reduce #(map + %1 %2) [0 0] values)))
 
 (defn fact [type params msg]
