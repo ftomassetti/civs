@@ -159,7 +159,7 @@
   (.size (filter alive? (:tribes game))))
 
 (defn towns [game]
-  (vals (.towns g)))
+  (vals (.towns game)))
 
 (defn n-ghost-cities [game]
   (.size (filter #(ghost-city? game (.id %)) (towns game))))
