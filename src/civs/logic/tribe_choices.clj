@@ -162,6 +162,6 @@
   "Return the game, updated"
   [game tribe]
   (let [ world (.world game)
-         tribe (update-population world tribe)
+         tribe (update-population game tribe)
         game (update-tribe game tribe)]
     (:game (consider-all-events game tribe))))

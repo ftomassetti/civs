@@ -9,7 +9,6 @@
   (:import [civs.model Population Tribe Town]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
-;(def g77 (create-game w77))
 
 (deftest test-total-persons
   (is (= 15 (total-persons (Population. 1 2 3 4 5)))))
