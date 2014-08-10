@@ -130,6 +130,17 @@
         game (assoc game :towns towns)]
     {:game game :town new-town}))
 
+(defn get-tribe [game id]
+  (get (:tribes game) id))
+
+(defn get-town [game id]
+  (get (:towns game) id))
+
+(defn ghost-city? [game town-id]
+  (let [town (get-town game town-id)
+        owner (.owner town)
+        tribe (get-tribe game owner)]
+    (alive? tribe)))
 
 (defn update-tribe
   "Return the game, updated"
@@ -146,3 +157,9 @@
 
 (defn n-tribes-alive [game]
   (.size (filter alive? (:tribes game))))
+
+(defn towns [game]
+  (vals (.towns g)))
+
+(defn n-ghost-cities [game]
+  (.size (filter #(ghost-city? game (.id %)) (towns game))))
