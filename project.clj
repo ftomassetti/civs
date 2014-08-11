@@ -9,4 +9,5 @@
                   [org.clojure/math.combinatorics "0.0.8"]]
   :main ^:skip-aot civs.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :repositories {"sonartype snapshots" "https://oss.sonatype.org/content/repositories/snapshots"})
