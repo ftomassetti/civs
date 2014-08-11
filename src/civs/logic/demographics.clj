@@ -17,14 +17,23 @@
       pos
       (randomLandPos world))))
 
+(defn random-pos-avoiding [world biomes-to-avoid]
+  (let [pos (randomPos (.getDimension world))
+        biome (biome-at world pos)]
+    (if (in? biomes-to-avoid biome)
+      (random-pos-avoiding world biomes-to-avoid)
+      pos)))
+
 (defn randomInitialPopulation []
   (model/Population. (crand-int 15) (crand-int 15) (crand-int 15) (crand-int 5) (crand-int 5)))
+
+(def unhospital-biomes #{com.github.lands.Biome/OCEAN com.github.lands.Biome/GLACIER com.github.lands.Biome/ICELAND})
 
 (defn generate-tribe
   "Return a map game, tribe"
   [game]
   (let [world (.world game)]
-    (create-tribe game :unnamed (randomLandPos world) (randomInitialPopulation) initial-culture)))
+    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (randomInitialPopulation) initial-culture)))
 
 (defn base-prosperity [world tribe pos]
   (let [ x (:x pos)

@@ -77,6 +77,9 @@
 (defn isLand [world pos]
   (not (.get (.getOcean world) (:x pos) (:y pos))))
 
+(defn biome-at [world pos]
+  (.get (.getBiome world) (:x pos) (:y pos)))
+
 (defn game-width [game]
   (-> game .world .getDimension .getWidth))
 
