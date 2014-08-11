@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [
                   [org.clojure/clojure "1.6.0"]
-                  [com.github.lands/lands-java-lib "0.2-SNAPSHOT"]
+                  [com.github.lands/lands-java-lib "0.3-SNAPSHOT"]
                   [org.clojure/math.combinatorics "0.0.8"]]
   :main ^:skip-aot civs.core
   :target-path "target/%s"

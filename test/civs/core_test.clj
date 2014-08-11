@@ -10,7 +10,7 @@
 (def g (generate-game w 1))
 (def t (:tribe (generate-tribe g)))
 
-(deftest langGenerationWorks
+(deftest test-lang-generation-works
   (let [l (com.github.langgen.SamplesBasedLanguageFactory/getRandomLanguage)]
     (is (not (empty? (.name l))))))
 
