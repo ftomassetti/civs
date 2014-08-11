@@ -35,8 +35,3 @@
 (deftest testLearn
   (let [t (learn t :agriculture)]
     (is (know? t :agriculture))))
-
-(deftest test-base-sanity
-  "No exceptions..."
-  (def g (generate-game w 10))
-  (do (repeatedly 5 (fn [] (def g (turn g))))))

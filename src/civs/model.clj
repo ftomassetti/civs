@@ -97,7 +97,14 @@
       (< x w)
       (< y h))))
 
+(defn check-valid-position [world pos]
+  (when (or (nil? (:x pos)) (nil? (:y pos)))
+    (throw (Exception. (str "Invalid position given " pos))))
+  (when (not (inside? world pos))
+    (throw (Exception. (str "Invalid position given " pos)))))
+
 (defn cells-around [world pos radius]
+  (check-valid-position world pos)
   (let [ x (:x pos)
          y (:y pos)
          r (range (* -1 radius) (+ 1 radius))
@@ -106,6 +113,7 @@
     (filter #(inside? world %) cells)))
 
 (defn land-cells-around [world pos radius]
+  (check-valid-position world pos)
   (filter #(isLand world %) (cells-around world pos radius)))
 
 ; ###########################################################

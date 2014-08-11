@@ -77,6 +77,7 @@
     (fn [game tribe]
       (let [ world (.world game)
              pos (.position tribe)
+             _ (check-valid-position world pos)
              possible-destinations (land-cells-around world pos 3)
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos game tribe pos))

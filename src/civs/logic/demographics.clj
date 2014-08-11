@@ -38,34 +38,34 @@
 (defn base-prosperity [world tribe pos]
   (let [ x (:x pos)
          y (:y pos)
-         b (.get (.getBiome world) x y)]
+         b (biome-at world {:x x :y y})]
     (if
       (know? tribe :agriculture)
       (case (.name b)
         "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
-        "ICELAND"     0.1
-        "TUNDRA"      0.2
-        "ALPINE"      0.5
-        "GLACIER"     0.05
-        "GRASSLAND"   0.95
-        "ROCK_DESERT" 0.3
-        "SAND_DESERT" 0.3
-        "FOREST"      0.85
-        "SAVANNA"     0.8
-        "JUNGLE"      0.9
+        "ICELAND"     0.5
+        "TUNDRA"      0.80
+        "ALPINE"      0.80
+        "GLACIER"     0.5
+        "GRASSLAND"   0.810
+        "ROCK_DESERT" 0.775
+        "SAND_DESERT" 0.775
+        "FOREST"      0.820
+        "SAVANNA"     0.805
+        "JUNGLE"      0.825
         (throw (Exception. (str "Unknown biome" b))))
       (case (.name b)
         "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
-        "ICELAND"     0.1
-        "TUNDRA"      0.2
-        "ALPINE"      0.5
-        "GLACIER"     0.05
-        "GRASSLAND"   1.0
-        "ROCK_DESERT" 0.3
-        "SAND_DESERT" 0.3
-        "FOREST"      0.8
-        "SAVANNA"     0.7
-        "JUNGLE"      0.8
+        "ICELAND"     0.5
+        "TUNDRA"      0.80
+        "ALPINE"      0.80
+        "GLACIER"     0.5
+        "GRASSLAND"   0.835
+        "ROCK_DESERT" 0.775
+        "SAND_DESERT" 0.775
+        "FOREST"      0.820
+        "SAVANNA"     0.805
+        "JUNGLE"      0.825
         (throw (Exception. (str "Unknown biome" b)))))))
 
 (defn crowding
