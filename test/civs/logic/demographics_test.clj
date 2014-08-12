@@ -20,12 +20,12 @@
 
 ; id name position population culture
 (deftest test-base-prosperity
-  (let [t (Tribe. nil nil nil nil initial-culture)]
+  (let [t (Tribe. nil nil nil nil initial-culture nil)]
     (= 0.2 (base-prosperity w77 t pos-tundra))
     (= 0.8 (base-prosperity w77 t pos-forest))
     (= 0.8 (base-prosperity w77 t pos-jungle))
     (= 0.3 (base-prosperity w77 t pos-sand-desert)))
-  (let [t (learn (Tribe. nil nil nil nil initial-culture) :agriculture)]
+  (let [t (learn (Tribe. nil nil nil nil initial-culture nil) :agriculture)]
     (= 0.2 (base-prosperity w77 t pos-tundra))
     (= 0.8 (base-prosperity w77 t pos-forest))
     (= 0.8 (base-prosperity w77 t pos-jungle))

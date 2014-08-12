@@ -49,7 +49,7 @@
 ;  Tribe
 ; ###########################################################
 
-(defrecord Tribe [id name position population culture])
+(defrecord Tribe [id name position population culture society])
 
 (defn is-dead? [tribe]
   (= 0 (total-persons (:population tribe))))
@@ -136,9 +136,9 @@
 
 (defn create-tribe
   "Return the game, updated and the new tribe"
-  [game name position population culture]
+  [game name position population culture society]
   (let [tribe-id (:next_id game)
-        new-tribe (Tribe. tribe-id name position population culture)
+        new-tribe (Tribe. tribe-id name position population culture society)
         tribes (assoc (:tribes game) tribe-id new-tribe)
         game (assoc game :next_id (inc tribe-id))
         game (assoc game :tribes tribes)]

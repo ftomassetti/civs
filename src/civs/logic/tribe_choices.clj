@@ -129,7 +129,7 @@
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
-             res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe))
+             res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe) (.society tribe))
              game (:game res)
              game (:game (create-town game :unnamed dest-target (:id (:tribe res))))]
         {

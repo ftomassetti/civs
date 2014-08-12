@@ -36,14 +36,16 @@
 ; The band society cannot develop agriculture or become sedentary. It can become semi-sedentary
 ; (considered in tribe_choices)
 
+(def initial-society :band)
+
 (defn band-society? [tribe]
-  (= :band (:society tribe)))
+  (= :band (.society tribe)))
 
 (defn tribe-society? [tribe]
-  (= :tribe (:society tribe)))
+  (= :tribe (.society tribe)))
 
 (defn chiefdom-society? [tribe]
-  (= :chiefdom (:society tribe)))
+  (= :chiefdom (.society tribe)))
 
 (defn possibility-of-evolving-into-tribe [tribe]
   (if (band-society? tribe)

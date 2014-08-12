@@ -3,6 +3,7 @@
   civs.logic.demographics
   (:require
     [civs.model :refer :all]
+    [civs.society :refer :all]
     [civs.logic.basic :refer :all])
   (:import [civs.model Population Tribe]))
 
@@ -33,7 +34,7 @@
   "Return a map game, tribe"
   [game]
   (let [world (.world game)]
-    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (randomInitialPopulation) initial-culture)))
+    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (randomInitialPopulation) initial-culture initial-society)))
 
 (defn base-prosperity [world tribe pos]
   (let [ x (:x pos)
