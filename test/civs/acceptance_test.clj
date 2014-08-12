@@ -53,8 +53,8 @@
           g (reduce (fn [g _] (turn g)) g0 (repeat nturns :_))
           final-pop (game-total-pop g)]
       (when verbose-acceptance-tests
-        (println (.toString biome) " scenario: initial population " start-pop)
-        (println (.toString biome) " scenario: final population "   final-pop))
+        (println (.toString biome) "scenario: initial population" start-pop)
+        (println (.toString biome) "scenario: final population"   final-pop "after" nturns "turns"))
       (is (> final-pop (* start-pop min-factor)))
       (is (< final-pop (* start-pop max-factor))))))
 
@@ -76,3 +76,9 @@
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest test-population-in-a-jungle
   (check-biome com.github.lands.Biome/JUNGLE 0.9 1.7 30 10))
+
+(deftest test-long-lasting-population-in-grassland
+  (check-biome com.github.lands.Biome/GRASSLAND 2.0 1000.0 50 100))
+
+(deftest test-long-lasting-population-in-savanna
+  (check-biome com.github.lands.Biome/SAVANNA 0.8 10.0 50 100))
