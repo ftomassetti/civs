@@ -47,6 +47,12 @@
 (defn chiefdom-society? [tribe]
   (= :chiefdom (.society tribe)))
 
+(defn evolve-in-tribe [tribe]
+  (assoc tribe :society :tribe))
+
+(defn evolve-in-chiefdom [tribe]
+  (assoc tribe :society :chiefdom))
+
 (defn possibility-of-evolving-into-tribe [tribe]
   (if (band-society? tribe)
     (let [pop (tribe-total-pop tribe)

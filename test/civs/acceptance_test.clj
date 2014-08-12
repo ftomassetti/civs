@@ -52,7 +52,7 @@
         (println "grassland scenario: initial population " start-pop)
         (println "grassland scenario: final population "   final-pop))
       (is (> final-pop (* start-pop 0.9)))
-      (is (< final-pop (* start-pop 1.5))))))
+      (is (< final-pop (* start-pop 1.7))))))
 
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest test-population-in-a-savanna
@@ -78,7 +78,7 @@
         (println "forest scenario: initial population " start-pop)
         (println "forest scenario: final population "   final-pop))
       (is (> final-pop (* start-pop 0.9)))
-      (is (< final-pop (* start-pop 1.5))))))
+      (is (< final-pop (* start-pop 1.6))))))
 
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest test-population-in-a-jungle

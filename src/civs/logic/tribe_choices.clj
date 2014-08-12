@@ -139,6 +139,30 @@
           :msg "split"
           }))))
 
+(def evolution-in-tribe
+  (PossibleEvent.
+    :evolve-in-tribe
+    (fn [game tribe]
+      (possibility-of-evolving-into-tribe tribe))
+    (fn [game tribe]
+      {
+        :tribe (evolve-in-tribe tribe)
+        :params {}
+        :msg "evolve in tribe"
+        })))
+
+(def evolution-in-chiefdom
+  (PossibleEvent.
+    :evolve-in-chiefdom
+    (fn [game tribe]
+      (possibility-of-evolving-into-chiefdom tribe))
+    (fn [game tribe]
+      {
+        :tribe (evolve-in-chiefdom tribe)
+        :params {}
+        :msg "evolve in chiefdom"
+        })))
+
 (defn consider-event [game tribe event]
   "Return a map of game and tribe, changed"
   (let [p ((.chance event) game tribe)]
@@ -166,7 +190,7 @@
 (defn consider-all-events
   "Return a map of game and tribe, changed"
   [game tribe]
-  (consider-events game tribe [become-semi-sedentary discover-agriculture become-sedentary migrate split]))
+  (consider-events game tribe [become-semi-sedentary discover-agriculture become-sedentary migrate split evolution-in-tribe evolution-in-chiefdom]))
 
 (defn tribe-turn
   "Return the game, updated"
