@@ -4,7 +4,8 @@
   (:require
     [civs.model :refer :all]
     [civs.logic.basic :refer :all]
-    [civs.logic.demographics :refer :all])
+    [civs.logic.demographics :refer :all]
+    [civs.society :refer :all])
   (:import [civs.model Population Tribe]))
 
 (defn chance-to-become-semi-sedentary [game tribe]
@@ -12,19 +13,27 @@
          prosperity (prosperity game tribe)]
     (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0)))
 
+; Must be at least a tribe society
 (defn chance-to-develop-agriculture [game tribe]
   (let [world (.world game)
          prosperity (prosperity game tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
-    (if (and ss (not know-agriculture)) 0.1 0.0)))
+    (if (and
+          ss
+          (not know-agriculture)
+          (not (band-society? tribe))) 0.1 0.0)))
 
+; Must be at least a tribe society
 (defn chance-to-become-sedentary [game tribe]
   (let [world (.world game)
          prosperity (prosperity game tribe)
          ss (semi-sedentary? tribe)
         know-agriculture (know? tribe :agriculture)]
-    (if (and ss know-agriculture) 0.1 0.0)))
+    (if (and
+          ss
+          know-agriculture
+          (not (band-society? tribe))) 0.1 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 

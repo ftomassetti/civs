@@ -66,6 +66,9 @@
         new-culture (assoc (-> tribe .culture) :knowledge new-knowledge)]
     (assoc tribe :culture new-culture)))
 
+(defn tribe-total-pop [tribe]
+  (-> tribe :population total-persons))
+
 ; ###########################################################
 ;  World
 ; ###########################################################
