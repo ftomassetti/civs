@@ -9,7 +9,8 @@
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.stats :refer :all]
     [civs.society :refer :all]
-    [civs.graphics :refer :all]))
+    [civs.graphics :refer :all]
+    [clojure.tools.cli :refer [parse-opts]]))
 
 ;(require '[civs.model :refer :all])
 ;(require '[civs.logic :refer :all])

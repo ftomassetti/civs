@@ -7,6 +7,8 @@
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all]))
 
+(import '(java.util Random))
+
 ; Here we just check nothing really weird happens and some basic
 ; expectations are met in a few random cases
 
@@ -26,28 +28,26 @@
   (fn [world pos] (if (isLand world pos) desired-biome com.github.lands.Biome/OCEAN)))
 
 (deftest test-not-everyone-dies-immediately
-  (with-redefs )
-  (let [g0 (generate-game w77 10)
-        g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))
-        crand-int   mock-crand-int
-        crand-float mock-crand-float]
-    (is (> (game-total-pop g) 0))))
+  (with-redefs [crand-int   (mock-crand-int)
+                crand-float (mock-crand-float)]
+    (let [g0 (generate-game w77 10)
+          g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))]
+      (is (> (game-total-pop g) 0)))))
 
 (deftest test-population-do-not-expand-too-much-too-fast
-  (let [g0 (generate-game w77 10)
-        start-pop (game-total-pop g0)
-        g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))
-        crand-int  mock-crand-int
-        rand-float mock-crand-float]
-    (is (< (game-total-pop g) (* start-pop 2)))))
+  (with-redefs [crand-int   (mock-crand-int)
+                crand-float (mock-crand-float)]
+    (let [g0 (generate-game w77 10)
+          start-pop (game-total-pop g0)
+          g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))]
+      (is (< (game-total-pop g) (* start-pop 2))))))
 
 ; We do not want to drop too drammatically and it should not increase too much
 
-(defn check-biome biome min-factor max-factor ntribes nturns
-  (with-redefs [
-                 biome-at (mock-land-biome biome)
-                 crand-int   mock-crand-int
-                 crand-float mock-crand-float]
+(defn check-biome [biome min-factor max-factor ntribes nturns]
+  (with-redefs [ biome-at (mock-land-biome biome)
+                 crand-int   (mock-crand-int)
+                 crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 ntribes)
           start-pop (game-total-pop g0)
           g (reduce (fn [g _] (turn g)) g0 (repeat nturns :_))
