@@ -13,8 +13,8 @@
     [clojure.tools.cli :refer [parse-opts]]
     [clojure.string :as string]))
 
-;(require '[civs.model :refer :all])
-;(require '[civs.logic :refer :all])
+(import '(com.github.lands.IncorrectFileException))
+(import '(java.io.IOException))
 
 (def w (load-world "examples-worlds/seed_77.world"))
 
@@ -38,6 +38,20 @@
     (string/join \newline)))
     (System/exit 0))
 
+(defn simulate [game n-turns]
+  (println "Simulating..."))
+
+(defn run [world-filename n-bands n-turns]
+  (println "World         :" world-filename)
+  (println "Initial bands :" n-bands)
+  (println "No. turns     :" n-turns)
+  (try
+    (let [w (load-world "examples-worlds/seed_77.world")
+          g (generate-game w n-bands)]
+      (simulate g n-turns))
+    (catch java.io.IOException e (failure "The world cannot be loaded because of an IO error"))
+    (catch com.github.lands.IncorrectFileException e (failure "The world cannot be loaded because it contains errors"))))
+
 (defn -main [& args]
   (println " Civs : a civilizations simulator ")
   (println "----------------------------------")
@@ -49,4 +63,4 @@
       (:help options)
         (usage summary)
       errors (failure errors))
-      (println "Not yet implemented...")))
+    (run (:world options) (:initial-bands options) (:turns options))))

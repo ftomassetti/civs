@@ -8,4 +8,12 @@
   [
     ["-w" "--world WORLD_FILE" "World file to be used"]
     ["-h" "--help"]
+    ["-b" "--initial-bands NBANDS" "Number of initial bands populatin the world"
+    :default 100
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(and (>= % 1) (<= % 1000)) "Must be a number in [1,1000]"]]
+    ["-t" "--turns NTURNS" "Number of turns to be simulated"
+     :default 100
+     :parse-fn #(Integer/parseInt %)
+     :validate [#(and (>= % 1) (<= % 1000)) "Must be a number in [1,1000]"]]
   ])
