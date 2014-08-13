@@ -11,18 +11,16 @@
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
-    (if (and (nomadic? tribe) (> prosperity 0.9)) 0.05 0.0)))
+    (if (and (nomadic? tribe) (> prosperity 0.6))
+      (saturate (- prosperity 0.75) 0.10)
+      0.0)))
 
 ; Must be at least a tribe society
 (defn chance-to-develop-agriculture [game tribe]
-  (let [world (.world game)
-         prosperity (prosperity game tribe)
-         ss (semi-sedentary? tribe)
-        know-agriculture (know? tribe :agriculture)]
-    (if (and
-          ss
-          (not know-agriculture)
-          (not (band-society? tribe))) 0.1 0.0)))
+  (if (and
+        (not (nomadic? tribe))
+        (not (know? tribe :agriculture))
+        (not (band-society? tribe))) 0.25 0.0))
 
 ; Must be at least a tribe society
 (defn chance-to-become-sedentary [game tribe]
@@ -33,7 +31,7 @@
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.1 0.0)))
+          (not (band-society? tribe))) 0.21 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 
@@ -54,12 +52,11 @@
     :discover-agriculture
     chance-to-develop-agriculture
     (fn [game tribe]
-      (let [new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
           :tribe (learn tribe :agriculture)
           :params {}
           :msg "discover agriculture"
-          }))))
+          })))
 
 (def become-sedentary
   (PossibleEvent.

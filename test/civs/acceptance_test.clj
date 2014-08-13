@@ -1,6 +1,7 @@
 (ns civs.acceptance-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
+            [civs.society :refer :all]
             [civs.model :refer :all]
             [civs.logic :refer :all]
             [civs.logic.basic :refer :all]
@@ -40,7 +41,7 @@
     (let [g0 (generate-game w77 10)
           start-pop (game-total-pop g0)
           g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))]
-      (is (< (game-total-pop g) (* start-pop 2))))))
+      (is (and (< (game-total-pop g) (* start-pop 2)))))))
 
 ; We do not want to drop too drammatically and it should not increase too much
 
@@ -82,3 +83,83 @@
 
 (deftest test-long-lasting-population-in-savanna
   (check-biome com.github.lands.Biome/SAVANNA 0.8 10.0 50 100))
+
+(def game-scenario-w77-100tribes-30turns
+  (with-redefs [ crand-int   (mock-crand-int)
+                 crand-float (mock-crand-float)]
+    (let [ ntribes 100
+           nturns  30
+           g0 (generate-game w77 ntribes)
+           g (reduce (fn [g _] (turn g)) g0 (repeat nturns :_))]
+      g)))
+
+(deftest test-some-societies-remain-nomadic
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         nsocieties-total            (.size societies)
+         nsocieties-still-nomadic    (.size (filter nomadic? societies))
+         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
+         nsocieties-sedentary        (.size (filter sedentary? societies))]
+    (when verbose-acceptance-tests
+      (println "scenario-w77-100tribes-30turns nomadic" nsocieties-still-nomadic)
+      (println "scenario-w77-100tribes-30turns semi-sedentary" nsocieties-semi-sedentary)
+      (println "scenario-w77-100tribes-30turns sedentary" nsocieties-sedentary))
+    (is (and (>= nsocieties-still-nomadic 10) (<= nsocieties-still-nomadic 50)))
+    ))
+
+(deftest test-some-societies-become-semi-sedentary
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         nsocieties-total            (.size societies)
+         nsocieties-still-nomadic    (.size (filter nomadic? societies))
+         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
+         nsocieties-sedentary        (.size (filter sedentary? societies))]
+    (is (and (>= nsocieties-semi-sedentary 10) (<= nsocieties-semi-sedentary 55)))
+    ))
+
+(deftest test-some-societies-become-sedentary
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         nsocieties-total            (.size societies)
+         nsocieties-still-nomadic    (.size (filter nomadic? societies))
+         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
+         nsocieties-sedentary        (.size (filter sedentary? societies))]
+    (is (and (>= nsocieties-sedentary 3) (<= nsocieties-sedentary 20)))))
+
+(deftest test-some-discover-agriculture
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         nsocieties-agriculture      (.size (filter #(know? % :agriculture) societies))]
+    (when verbose-acceptance-tests
+      (println "scenario-w77-100tribes-30turns agriculture" nsocieties-agriculture))
+    (is (and (>= nsocieties-agriculture 3) (<= nsocieties-agriculture 30)))))
+
+(deftest test-some-most-do-not-discover-agriculture
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         nsocieties-no-agriculture   (.size (filter #(not (know? % :agriculture)) societies))]
+    (when verbose-acceptance-tests
+      (println "scenario-w77-100tribes-30turns no agriculture" nsocieties-no-agriculture))
+    (is (and (>= nsocieties-no-agriculture 35) (<= nsocieties-no-agriculture 85)))))
+
+(deftest test-some-societies-are-band
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         target                      (.size (filter band-society? societies))]
+    (when verbose-acceptance-tests
+      (println "scenario-w77-100tribes-30turns band" target))
+    (is (and (>= target 10) (<= target 75)))))
+
+(deftest test-some-societies-are-tribe
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         target                      (.size (filter tribe-society? societies))]
+    (when verbose-acceptance-tests
+      (println "scenario-w77-100tribes-30turns tribe" target))
+    (is (and (>= target 5) (<= target 20)))))
+
+(deftest test-no-societies-are-yet-chiefdom
+  (let [ g game-scenario-w77-100tribes-30turns
+         societies                   (societies-alive g)
+         target                      (.size (filter chiefdom-society? societies))]
+    (is (= 0 target))))

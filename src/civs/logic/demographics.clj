@@ -78,7 +78,8 @@
          max-supportable (if (know? tribe :agriculture) 1000 150)
          pop-supportable (* actives (if (know? tribe :agriculture) 6.0 2.5))
          pop-supportable (min max-supportable pop-supportable)]
-    (if (< tot pop-supportable) 1.0
+    (if (< tot pop-supportable)
+      1.0
       (if (or (= pop-supportable 0.0) (= tot 0))
         0.0
         (/ 1.0 (/ tot pop-supportable))))))
@@ -101,9 +102,12 @@
   (prosperity-in-pos game tribe (.position tribe)))
 
 (defn men-availability-factor [young-men young-women]
-  (let [ men-factor (/ (float young-men) young-women)
-         res (/ (+ men-factor 0.5) 2)]
-    (saturate (saturate res 1.0) (* men-factor 3))))
+  ; check necessary to avoid division by zero
+  (if (> young-women 0)
+    (let [men-factor (/ (float young-men) young-women)
+          res (/ (+ men-factor 0.5) 2)]
+      (saturate (saturate res 1.0) (* men-factor 3)))
+    0))
 
 (defn update-births
   "This method returns a delta"

@@ -182,8 +182,11 @@
 (defn tribes [game]
   (vals (.tribes game)))
 
+(defn societies-alive [game]
+  (filter alive? (tribes game)))
+
 (defn n-societies-alive [game]
-  (.size (filter alive? (tribes game))))
+  (.size (societies-alive game)))
 
 (defn settlements [game]
   (let [s (vals (.settlements game))]

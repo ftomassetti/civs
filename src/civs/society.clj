@@ -56,9 +56,9 @@
 (defn possibility-of-evolving-into-tribe [tribe]
   (if (band-society? tribe)
     (let [pop (tribe-total-pop tribe)
-          surplus (- pop 90)]
-      (if (> pop 90)
-        0.1
+          surplus (- pop 80)]
+      (if (> surplus 0)
+        (saturate (/ surplus 40.0) 0.5)
         0.0))
     0.0))
 
@@ -71,7 +71,7 @@
         0.0))
     0.0))
 
-(defn possibility-of-developing-agriculture [tribe])
+;(defn possibility-of-developing-agriculture [tribe])
 
 (defn possibility-of-splitting [tribe]
   (cond
