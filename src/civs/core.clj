@@ -39,12 +39,19 @@
     (System/exit 0))
 
 (defn simulate [game n-turns]
-  (println "Simulating..."))
+  (def current-game game)
+  (dotimes [t n-turns]
+    (do
+      (println "=== Turn" (inc t) "===")
+      (def current-game (turn current-game))
+      (println "  population " (game-total-pop current-game))
+      (println ""))))
 
 (defn run [world-filename n-bands n-turns]
   (println "World         :" world-filename)
   (println "Initial bands :" n-bands)
   (println "No. turns     :" n-turns)
+  (println "")
   (try
     (let [w (load-world "examples-worlds/seed_77.world")
           g (generate-game w n-bands)]
