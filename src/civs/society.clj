@@ -95,3 +95,12 @@
         0.01))
     ; default
     :else 0.01))
+
+(defn n-bands-alive [game]
+  (.size (filter #(and (alive? %) (band-society? %)) (tribes game))))
+
+(defn n-tribes-alive [game]
+  (.size (filter #(and (alive? %) (tribe-society? %)) (tribes game))))
+
+(defn n-chiefdoms-alive [game]
+  (.size (filter #(and (alive? %) (chiefdom-society? %)) (tribes game))))

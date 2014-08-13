@@ -44,7 +44,11 @@
     (do
       (println "=== Turn" (inc t) "===")
       (def current-game (turn current-game))
-      (println "  population " (game-total-pop current-game))
+      (println "  population  " (game-total-pop current-game))
+      (println "  bands       " (n-bands-alive current-game))
+      (println "  tribes      " (n-tribes-alive current-game))
+      (println "  chiefdoms   " (n-chiefdoms-alive current-game))
+      (println "  settlements " (.size (settlements current-game)))
       (println ""))))
 
 (defn run [world-filename n-bands n-turns]

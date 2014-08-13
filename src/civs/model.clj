@@ -129,7 +129,7 @@
 ;  Game
 ; ###########################################################
 
-(defrecord Game [world tribes towns next_id])
+(defrecord Game [world tribes settlements next_id])
 
 (defn create-game [world]
   (Game. world {} {} 1))
@@ -149,16 +149,16 @@
   [game name position owner]
   (let [id (:next_id game)
         new-town (Town. id name position owner)
-        towns (assoc (:towns game) id new-town)
+        settlements (assoc (:settlements game) id new-town)
         game (assoc game :next_id (inc id))
-        game (assoc game :towns towns)]
+        game (assoc game :settlements settlements)]
     {:game game :town new-town}))
 
 (defn get-tribe [game id]
   (get (:tribes game) id))
 
 (defn get-town [game id]
-  (get (:towns game) id))
+  (get (:settlements game) id))
 
 (defn ghost-city? [game town-id]
   (let [town (get-town game town-id)
@@ -182,14 +182,17 @@
 (defn tribes [game]
   (vals (.tribes game)))
 
-(defn n-tribes-alive [game]
+(defn n-societies-alive [game]
   (.size (filter alive? (tribes game))))
 
-(defn towns [game]
-  (vals (.towns game)))
+(defn settlements [game]
+  (let [s (vals (.settlements game))]
+    (if (nil? s)
+      []
+      s)))
 
 (defn n-ghost-cities [game]
-  (.size (filter #(ghost-city? game (.id %)) (towns game))))
+  (.size (filter #(ghost-city? game (.id %)) (settlements game))))
 
 (defn game-total-pop-in-pos [game pos]
   (reduce + 0 (map #(-> % .population total-persons) (filter #(= pos (.position %)) (tribes game)))))

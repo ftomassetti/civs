@@ -67,7 +67,7 @@
         g (:game res)
         t (:town res)]
     ; there should be one town in the world
-    (= 1 (.size (towns g)))
+    (= 1 (.size (settlements g)))
     (= 1 (.id t))
     (= "name" (.name t))
     (= {:x 15 :y 18} (.position t))
@@ -102,13 +102,13 @@
     (= false (ghost-city? g2 2))
     (= true (ghost-city? g4 4))))
 
-(deftest test-n-tribes-alive
+(deftest test-n-societies-alive
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))]
-    (= 0 (n-tribes-alive g0))
-    (= 1 (n-tribes-alive g1))
-    (= 1 (n-tribes-alive g2))))
+    (= 0 (n-societies-alive g0))
+    (= 1 (n-societies-alive g1))
+    (= 1 (n-societies-alive g2))))
 
 (deftest test-update-tribe
   (let [g0 (create-game nil)
