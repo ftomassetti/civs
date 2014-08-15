@@ -1,6 +1,8 @@
 (defproject civs "0.1.0-SNAPSHOT"
   :description "A simulator of civilizations evolution"
   :url "https://github.com/ftomassetti/civs"
+  :license {:name "Apache License v 2.0"
+            :url "http://www.apache.org/licenses/"}
   :dependencies [
                   [org.clojure/clojure "1.6.0"]
                   [com.github.lands/lands-java-lib "0.3-SNAPSHOT"]
