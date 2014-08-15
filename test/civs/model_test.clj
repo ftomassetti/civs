@@ -34,11 +34,11 @@
 
 (deftest test-cells-around
   (is (= '({:x 4, :y 7} {:x 4, :y 8} {:x 4, :y 9} {:x 5, :y 7} {:x 5, :y 8} {:x 5, :y 9} {:x 6, :y 7} {:x 6, :y 8} {:x 6, :y 9})
-        (cells-around w {:x 5 :y 8} 1))))
+        (cells-around w77 {:x 5 :y 8} 1))))
 
 (deftest test-cells-around-near-borders
   (is (= '( {:x 0, :y 0} {:x 0, :y 1} {:x 1, :y 0} {:x 1, :y 1})
-        (cells-around w {:x 0 :y 0} 1))))
+        (cells-around w77 {:x 0 :y 0} 1))))
 
 (deftest test-land-cells-around-in-the-ocean
   ; We are in a corner, surrounded just by see

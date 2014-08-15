@@ -7,7 +7,8 @@
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all]))
 
-(def g (generate-game w 1))
+(def w77 (load-world "examples-worlds/seed_77.world"))
+(def g (generate-game w77 1))
 (def t (:tribe (generate-tribe g)))
 
 (deftest test-lang-generation-works

@@ -98,7 +98,10 @@
     [values (repeatedly n #(if (< (crand-float) factor) [1 0] [0 1]))]
     (reduce #(map + %1 %2) [0 0] values)))
 
+(def facts (atom []))
+
 (defn fact [type params msg]
+  (swap! facts conj {:type type, :params params :msg msg} )
   ;(println msg)
    )
 

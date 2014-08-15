@@ -16,4 +16,6 @@
      :default 100
      :parse-fn #(Integer/parseInt %)
      :validate [#(and (>= % 1) (<= % 1000)) "Must be a number in [1,1000]"]]
+    ["-f" "--history-filename HISTORY_FILENAME" "Name of the history file to be generated"
+     :default "my.history"]
   ])
