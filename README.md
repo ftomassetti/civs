@@ -6,6 +6,10 @@ A simulator of civilizations evolution written in Clojure
 
 [![Build Status](https://travis-ci.org/ftomassetti/civs.svg?branch=master)](https://travis-ci.org/ftomassetti/civs)
 
-# Libraries used
+# Related projects
 
-The project reuses the world generator [lands](https://github.com/ftomassetti/lands) and the names generation library [langgen](https://github.com/ftomassetti/langgen). These projects are written Python and wrapped in Java using Jython. The wrapper is [lands-java-lib](https://github.com/ftomassetti/lands-java-lib). 
+The project generate civilizations evolving in worlds which can be generated using the world generator [lands](https://github.com/ftomassetti/lands).
+To generate languages for the different civilizations it use the names generation library [langgen](https://github.com/ftomassetti/langgen). 
+Lands and langgen are written Python and wrapped in Java using Jython. The wrapper is [lands-java-lib](https://github.com/ftomassetti/lands-java-lib). 
+
+The history files produced by civs can be explored using [civs-browser](https://github.com/ftomassetti/civs-browser).
