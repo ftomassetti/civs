@@ -81,7 +81,7 @@
            complete-world-filename (resolver world-filename)]
       (when
         (nil? complete-world-filename)
-        (throw RuntimeException (str "Cannot find " world-filename)))
+        (throw RuntimeException. (str "Cannot find " world-filename)))
       (load-world complete-world-filename))))
 
 (defn PersistentArrayMapReader [value]
