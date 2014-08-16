@@ -5,10 +5,11 @@
             :url "http://www.apache.org/licenses/"}
   :dependencies [
                   [org.clojure/clojure "1.6.0"]
-                  [com.github.lands/lands-java-lib "0.3-SNAPSHOT"]
+                  [com.github.lands/lands-java-lib "0.3-20140813.200955-2"]
                   [org.clojure/math.combinatorics "0.0.8"]
                   [org.clojure/tools.cli "0.3.1"]
                   [org.clojure/data.json "0.2.5"]]
+  :scm git
   :main ^:skip-aot civs.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
