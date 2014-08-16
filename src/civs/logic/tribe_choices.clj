@@ -44,7 +44,6 @@
         {
           :tribe (assoc tribe :culture new-culture)
           :params {}
-          :msg "became semi-sedentary"
           }))))
 
 (def discover-agriculture
@@ -55,7 +54,6 @@
         {
           :tribe (learn tribe :agriculture)
           :params {}
-          :msg "discover agriculture"
           })))
 
 (def become-sedentary
@@ -69,7 +67,6 @@
           :game (:game (create-town game :unnamed pos (:id tribe)))
           :tribe (assoc tribe :culture new-culture)
           :params {}
-          :msg "became sedentary"
           }))))
 
 (def migrate
@@ -94,7 +91,6 @@
         {
           :tribe (assoc tribe :position target)
           :params {:to target}
-          :msg "migrate"
           }))))
 
 (defn- split-pop [population]
@@ -133,7 +129,6 @@
           :game game
           :tribe (assoc tribe :population (:remaining sp))
           :params {}
-          :msg "split"
           }))))
 
 (def evolution-in-tribe
@@ -145,7 +140,6 @@
       {
         :tribe (evolve-in-tribe tribe)
         :params {}
-        :msg "evolve in tribe"
         })))
 
 (def evolution-in-chiefdom
@@ -157,7 +151,6 @@
       {
         :tribe (evolve-in-chiefdom tribe)
         :params {}
-        :msg "evolve in chiefdom"
         })))
 
 (defn consider-event [game tribe event]
@@ -168,9 +161,8 @@
             new-tribe (:tribe apply-res)
             new-game (or (:game apply-res) game)
             new-game (update-tribe new-game new-tribe)
-            params (assoc (:params apply-res) :tribe (.id new-tribe))
-            msg (:msg apply-res)]
-        (fact (:name event) params msg)
+            params (assoc (:params apply-res) :tribe (.id new-tribe))]
+        (fact (:name event) params)
         {:game new-game :tribe new-tribe})
       {:game game :tribe tribe} )))
 
