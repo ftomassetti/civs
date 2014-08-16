@@ -168,7 +168,7 @@
             new-tribe (:tribe apply-res)
             new-game (or (:game apply-res) game)
             new-game (update-tribe new-game new-tribe)
-            params (assoc (:params apply-res) :tribe new-tribe)
+            params (assoc (:params apply-res) :tribe (.id new-tribe))
             msg (:msg apply-res)]
         (fact (:name event) params msg)
         {:game new-game :tribe new-tribe})
