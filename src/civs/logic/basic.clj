@@ -101,7 +101,7 @@
 (def facts (atom []))
 
 (defn fact [type params]
-  (swap! facts conj {:type type, :params params} ))
+  (swap! facts conj (assoc params :type type)))
 
 (defn saturate [value max]
   (if (> value max)
