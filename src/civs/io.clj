@@ -86,10 +86,11 @@
   value)
 
 (defn from-serialized-str [serialized-str options]
-  (let [unserialized-data (clojure.edn/read-string
+  (let [ resolver (:resolver options)
+         unserialized-data (clojure.edn/read-string
                             {
                               :readers {
-                                         'com.github.lands.World (world-reader (dir-lists-resolver [""]))
+                                         'com.github.lands.World (world-reader resolver)
                                          'clojure.lang/PersistentArrayMap PersistentArrayMapReader
                                        }
                               :default tag/tagged-default-reader
