@@ -13,10 +13,13 @@
     [civs.graphics :refer :all]
     [clojure.tools.cli :refer [parse-opts]]
     [clojure.string :as string]
-    [miner.tagged :as tag])
-  (:import [civs.model Population Tribe Culture Game Population Town])
+    [miner.tagged :as tag]
+    [clojure.data.fressian :as fress])
+  (:import [civs.model Population Tribe Culture Game Population Town]
+           [org.fressian.handlers WriteHandler ReadHandler ILookup WriteHandlerLookup])
   (:use clojure.java.io))
 
+(import '(com.github.lands.World))
 (import '(com.github.lands.IncorrectFileException))
 (import '(java.io.IOException))
 
@@ -104,3 +107,43 @@
   (let [ str (to-serialized-str simulation-result {:world-filename world-filename})]
     (spit history-filename str)))
 
+; (require '[clojure.data.fressian :as fress])
+; (def w77 (load-world "examples-worlds/seed_77.world"))
+
+(def world-ftag "world")
+
+(def world-fwriter
+  (reify WriteHandler
+    (write [_ writer world]
+      (.writeTag writer world-ftag 1)
+      (.writeObject writer (.getName world) false))))
+
+(defn world-freader [resolve]
+  (reify ReadHandler
+    (read [_ reader tag component-count]
+      (let [name (.readObject reader)]
+        (resolve name)))))
+
+(def fress-write-handlers
+  (-> (merge {com.github.lands.World {world-ftag world-fwriter}}
+        fress/clojure-write-handlers)
+    fress/associative-lookup
+    fress/inheritance-lookup))
+
+(defn fress-read-handlers [resolve]
+  (-> (merge {world-ftag (world-freader resolve)} fress/clojure-read-handlers)
+          fress/associative-lookup))
+
+(defn to-serialized-bytes [data]
+  (let [os (java.io.ByteArrayOutputStream.)
+        fw (fress/create-writer os :handlers fress-write-handlers)]
+    (fress/write-object fw data)
+    (.toByteArray os)))
+
+(defn from-serialized-bytes [bytes resolve]
+  (let [bais (java.io.ByteArrayInputStream. bytes)
+        reader (fress/create-reader bais :handlers (fress-read-handlers resolve))
+        out (fress/read-object reader)]
+  out))
+
+(defn save-simulation-result-fressian [simulation-result history-filename _])

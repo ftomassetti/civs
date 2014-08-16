@@ -5,10 +5,11 @@
             :url "http://www.apache.org/licenses/"}
   :dependencies [
                   [org.clojure/clojure "1.6.0"]
-                  [com.github.lands/lands-java-lib "0.3-20140816.110821-3"]
+                  [com.github.lands/lands-java-lib "0.3-20140816.150316-4"]
                   [org.clojure/math.combinatorics "0.0.8"]
                   [org.clojure/tools.cli "0.3.1"]
-                  [com.velisco/tagged "0.3.0"] ]
+                  [com.velisco/tagged "0.3.0"]
+                  [org.clojure/data.fressian "0.2.0"] ]
   :scm git
   :main ^:skip-aot civs.core
   :target-path "target/%s"
