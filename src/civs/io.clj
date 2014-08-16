@@ -70,13 +70,31 @@
 
 (defn to-serialized-str [data options]
   (let [writer (java.io.StringWriter.)
-        serializable-data (to-serializable-data data options)]
+        serializable-data data]
+    (set-world-print-method (:world-filename options))
     (miner.tagged/pr-tagged-record-on serializable-data writer)
     (.toString writer)))
 
+(defn world-reader [resolver]
+  (fn [value]
+    (let [ world-filename (:filename value)
+           complete-world-filename (resolver world-filename)
+           world (load-world complete-world-filename)]
+        world)))
+
+(defn PersistentArrayMapReader [value]
+  value)
+
 (defn from-serialized-str [serialized-str options]
-  (let [unserialized-data (clojure.edn/read-string {:default tag/tagged-default-reader} serialized-str)
-        original-data (from-serializable-data unserialized-data options)]
+  (let [unserialized-data (clojure.edn/read-string
+                            {
+                              :readers {
+                                         'com.github.lands.World (world-reader (dir-lists-resolver [""]))
+                                         'clojure.lang/PersistentArrayMap PersistentArrayMapReader
+                                       }
+                              :default tag/tagged-default-reader
+                            } serialized-str)
+        original-data unserialized-data]
     original-data))
 
 (defn save-simulation-result [simulation-result history-filename world-filename]

@@ -26,22 +26,8 @@
   (is (= nil ((dir-lists-resolver ["unexisting1" "unexisting2"]) "seed_77.world"))))
 
 (deftest test-serialization
-  (let [g (generate-game w77 5)
-        simulation-result (simulate g 10 false)
+  (let [g (generate-game w77 1)
+        simulation-result (simulate g 1 false)
         ser-str (to-serialized-str simulation-result {:world-filename "examples-worlds/seed_77.world"})
         loaded (from-serialized-str ser-str {:resolver (dir-lists-resolver [""])})]
     (is (= loaded simulation-result))))
-
-; (require '[miner.tagged :as tag])
-; (require '[clojure.edn :as edn])
-;(is (= (edn/read-string {:default tag/tagged-default-reader}
-; (pr-str data))))
-
-;(defn my-reader [tag value]
-;  (println "TAG " tag)
-;  (tag/tagged-default-reader tag value))
-
-;(defn check-serialization [data]
-;  (=
-;    data
-;    (edn/read-string {:default my-reader} (pr-str data))))

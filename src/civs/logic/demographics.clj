@@ -117,7 +117,7 @@
         men-availability-factor (men-availability-factor young-men young-women)
         women-fertility         (* young-women 1.1 (perturbate-high prosperity))
         births                  (round (* women-fertility men-availability-factor))]
-    (fact :births {:tribe tribe :n births} (str births " children were born"))
+    (fact :births {:tribe (.id tribe) :n births} (str births " children were born"))
     (Population. births 0 0 0 0)))
 
 (defn update-children
@@ -128,9 +128,9 @@
         n-children (-> tribe :population :children)
         [dead, grown] (rsplit-by n-children mortality)
         [men, women] (rsplit-by grown 0.5)]
-    (fact :children-dead {:tribe tribe :n dead} (str dead " children died"))
-    (fact :children-grown-as-men {:tribe tribe :n men} (str men " children grew as men"))
-    (fact :children-grown-as-women {:tribe tribe :n women} (str women " children grew as women"))
+    (fact :children-dead {:tribe (.id tribe) :n dead} (str dead " children died"))
+    (fact :children-grown-as-men {:tribe (.id tribe) :n men} (str men " children grew as men"))
+    (fact :children-grown-as-women {:tribe (.id tribe) :n women} (str women " children grew as women"))
     (Population. (* -1 n-children) men women 0 0)))
 
 (defn update-young-population
@@ -145,10 +145,10 @@
         [dead-w, alive-w] (rsplit-by n-young-women mortality-women)
         [grown-m, _]      (rsplit-by alive-m 0.25)
         [grown-w, _]      (rsplit-by alive-w 0.25)]
-    (fact :young-men-dead {:tribe tribe :n dead-m} (str dead-m " young men died"))
-    (fact :young-women-dead {:tribe tribe :n dead-w} (str dead-w " young women died"))
-    (fact :young-men-grew-old {:tribe tribe :n grown-m} (str grown-m " young men grew old"))
-    (fact :young-women-grew-old {:tribe tribe :n grown-w} (str grown-w " young women grew old"))
+    (fact :young-men-dead {:tribe (.id tribe) :n dead-m} (str dead-m " young men died"))
+    (fact :young-women-dead {:tribe (.id tribe) :n dead-w} (str dead-w " young women died"))
+    (fact :young-men-grew-old {:tribe (.id tribe) :n grown-m} (str grown-m " young men grew old"))
+    (fact :young-women-grew-old {:tribe (.id tribe) :n grown-w} (str grown-w " young women grew old"))
     (Population. 0 (* -1 (+ dead-m grown-m)) (* -1 (+ dead-w grown-w)) grown-m grown-w)))
 
 (defn update-old-population
@@ -161,8 +161,8 @@
         n-old-women (-> tribe :population :old-women)
         [dead-m, alive-m] (rsplit-by n-old-men mortality-men)
         [dead-w, alive-w] (rsplit-by n-old-women mortality-women)]
-    (fact :old-men-dead {:tribe tribe :n dead-m} (str dead-m " old men died"))
-    (fact :old-women-dead {:tribe tribe :n dead-w} (str dead-w " old women died"))
+    (fact :old-men-dead {:tribe (.id tribe) :n dead-m} (str dead-m " old men died"))
+    (fact :old-women-dead {:tribe (.id tribe) :n dead-w} (str dead-w " old women died"))
     (Population. 0 0 0 (* -1 dead-m) (* -1 dead-w))))
 
 

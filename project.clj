@@ -5,7 +5,7 @@
             :url "http://www.apache.org/licenses/"}
   :dependencies [
                   [org.clojure/clojure "1.6.0"]
-                  [com.github.lands/lands-java-lib "0.3-20140813.200955-2"]
+                  [com.github.lands/lands-java-lib "0.3-20140816.110821-3"]
                   [org.clojure/math.combinatorics "0.0.8"]
                   [org.clojure/tools.cli "0.3.1"]
                   [com.velisco/tagged "0.3.0"] ]
