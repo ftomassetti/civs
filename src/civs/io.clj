@@ -103,12 +103,9 @@
         original-data unserialized-data]
     original-data))
 
-(defn save-simulation-result [simulation-result history-filename world-filename]
+(defn save-simulation-result-edn [simulation-result history-filename world-filename]
   (let [ str (to-serialized-str simulation-result {:world-filename world-filename})]
     (spit history-filename str)))
-
-; (require '[clojure.data.fressian :as fress])
-; (def w77 (load-world "examples-worlds/seed_77.world"))
 
 (def world-ftag "world")
 
@@ -118,7 +115,7 @@
       (.writeTag writer world-ftag 1)
       (.writeObject writer (.getName world) false))))
 
-(defn world-freader [resolve]
+(defn- world-freader [resolve]
   (reify ReadHandler
     (read [_ reader tag component-count]
       (let [name (.readObject reader)]
@@ -130,7 +127,7 @@
     fress/associative-lookup
     fress/inheritance-lookup))
 
-(defn fress-read-handlers [resolve]
+(defn- fress-read-handlers [resolve]
   (-> (merge {world-ftag (world-freader resolve)} fress/clojure-read-handlers)
           fress/associative-lookup))
 
@@ -146,4 +143,20 @@
         out (fress/read-object reader)]
   out))
 
-(defn save-simulation-result-fressian [simulation-result history-filename _])
+(defn save-simulation-result-fressian [simulation-result history-filename]
+  (let [ bytes (to-serialized-bytes simulation-result)
+         bos (java.io.BufferedOutputStream. (java.io.FileOutputStream. (as-file history-filename)))]
+    (.write bos bytes)
+    (.flush bos)
+    (.close bos)))
+
+(defn load-simulation-result-fressian [history-filename resolve]
+  (let [ raf (java.io.RandomAccessFile. history-filename "r")
+         ba (byte-array (.length raf))]
+    (.read raf ba)
+    (from-serialized-bytes ba resolve)))
+
+(defn save-simulation-result [simulation-result history-filename world-filename use-fressian]
+  (if use-fressian
+    (save-simulation-result-fressian simulation-result history-filename)
+    (save-simulation-result-edn simulation-result history-filename world-filename)))

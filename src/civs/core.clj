@@ -58,7 +58,7 @@
           (println ""))))
       {:facts (deref facts), :game-snapshots (deref game-snapshots)}))
 
-(defn run [world-filename n-bands n-turns history-filename]
+(defn run [world-filename n-bands n-turns history-filename use-fressian]
   (println "World            :" world-filename)
   (println "Initial bands    :" n-bands)
   (println "No. turns        :" n-turns)
@@ -68,7 +68,7 @@
     (let [w (load-world "examples-worlds/seed_77.world")
           g (generate-game w n-bands)
           simulation-result (simulate g n-turns)]
-      (save-simulation-result simulation-result history-filename world-filename))
+      (save-simulation-result simulation-result history-filename world-filename use-fressian))
     (catch java.io.IOException e (failure "The world cannot be loaded because of an IO error"))
     (catch com.github.lands.IncorrectFileException e (failure "The world cannot be loaded because it contains errors"))))
 
@@ -83,4 +83,4 @@
       (:help options)
         (usage summary)
       errors (failure errors))
-    (run (:world options) (:initial-bands options) (:turns options) (:history-filename options))))
+    (run (:world options) (:initial-bands options) (:turns options) (:history-filename options) (nil? (:readable-format options)))))
