@@ -31,7 +31,7 @@
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.21 0.0)))
+          (not (band-society? tribe))) 0.24 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 

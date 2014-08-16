@@ -124,7 +124,7 @@
          nsocieties-still-nomadic    (.size (filter nomadic? societies))
          nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
          nsocieties-sedentary        (.size (filter sedentary? societies))]
-    (is (and (>= nsocieties-sedentary 3) (<= nsocieties-sedentary 20)))))
+    (is (and (>= nsocieties-sedentary 3) (<= nsocieties-sedentary 10)))))
 
 (deftest test-some-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
