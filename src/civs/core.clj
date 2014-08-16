@@ -42,13 +42,16 @@
   [initial-game n-turns & [verbosity]]
   (def current-game initial-game)
   (let [game-snapshots (atom {0 initial-game})
+        facts-by-turn  (atom {})
         verbosity (if (nil? verbosity) true verbosity)]
     (dotimes [t n-turns]
       (do
         (when verbosity
           (println "=== Turn" (inc t) "==="))
         (def current-game (turn current-game))
-        (swap! game-snapshots assoc (int t) current-game)
+        (swap! game-snapshots assoc (inc t) current-game)
+        (swap! facts-by-turn assoc (inc t) (deref facts))
+        (swap! facts (fn [_] []))
         (when verbosity
           (println "  population  " (game-total-pop current-game))
           (println "  bands       " (n-bands-alive current-game))
@@ -56,7 +59,7 @@
           (println "  chiefdoms   " (n-chiefdoms-alive current-game))
           (println "  settlements " (.size (settlements current-game)))
           (println ""))))
-      {:facts (deref facts), :game-snapshots (deref game-snapshots)}))
+      {:facts (deref facts-by-turn), :game-snapshots (deref game-snapshots)}))
 
 (defn run [world-filename n-bands n-turns history-filename use-fressian]
   (println "World            :" world-filename)
