@@ -6,6 +6,8 @@ A simulator of civilizations evolution written in Clojure
 
 [![Build Status](https://travis-ci.org/ftomassetti/civs.svg?branch=master)](https://travis-ci.org/ftomassetti/civs)
 
+[![Clojars Project](http://clojars.org/civs/latest-version.svg)](http://clojars.org/civs)
+
 # Related projects
 
 The project generate civilizations evolving in worlds which can be generated using the world generator [lands](https://github.com/ftomassetti/lands).
