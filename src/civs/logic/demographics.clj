@@ -52,7 +52,7 @@
         "ROCK_DESERT" 0.775
         "SAND_DESERT" 0.775
         "FOREST"      0.820
-        "SAVANNA"     0.805
+        "SAVANNA"     0.800
         "JUNGLE"      0.825
         (throw (Exception. (str "Unknown biome" b))))
       (case (.name b)
@@ -65,7 +65,7 @@
         "ROCK_DESERT" 0.775
         "SAND_DESERT" 0.775
         "FOREST"      0.820
-        "SAVANNA"     0.805
+        "SAVANNA"     0.800
         "JUNGLE"      0.825
         (throw (Exception. (str "Unknown biome" b)))))))
 

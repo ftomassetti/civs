@@ -8,7 +8,7 @@
                   [com.github.lands/lands-java-lib "0.3-20140813.200955-2"]
                   [org.clojure/math.combinatorics "0.0.8"]
                   [org.clojure/tools.cli "0.3.1"]
-                  [org.clojure/data.json "0.2.5"]]
+                  [com.velisco/tagged "0.3.0"] ]
   :scm git
   :main ^:skip-aot civs.core
   :target-path "target/%s"

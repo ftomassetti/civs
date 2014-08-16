@@ -2,6 +2,7 @@
   (:gen-class)
   (:require
     [civs.cli :refer :all]
+    [civs.io :refer :all]
     [civs.model :refer :all]
     [civs.logic :refer :all]
     [civs.logic.basic :refer :all]
@@ -11,8 +12,7 @@
     [civs.society :refer :all]
     [civs.graphics :refer :all]
     [clojure.tools.cli :refer [parse-opts]]
-    [clojure.string :as string]
-    [clojure.data.json :as json]))
+    [clojure.string :as string]))
 
 (import '(com.github.lands.IncorrectFileException))
 (import '(java.io.IOException))
@@ -39,31 +39,24 @@
 
 (defn simulate
   "Return a map of history and game-snapshots"
-  [initial-game n-turns]
+  [initial-game n-turns & [verbosity]]
   (def current-game initial-game)
-  (let [game-snapshots (atom {0 initial-game})]
+  (let [game-snapshots (atom {0 initial-game})
+        verbosity (if (nil? verbosity) true verbosity)]
     (dotimes [t n-turns]
       (do
-        (println "=== Turn" (inc t) "===")
+        (when verbosity
+          (println "=== Turn" (inc t) "==="))
         (def current-game (turn current-game))
         (swap! game-snapshots assoc (int t) current-game)
-        (println "  population  " (game-total-pop current-game))
-        (println "  bands       " (n-bands-alive current-game))
-        (println "  tribes      " (n-tribes-alive current-game))
-        (println "  chiefdoms   " (n-chiefdoms-alive current-game))
-        (println "  settlements " (.size (settlements current-game)))
-        (println "")))
+        (when verbosity
+          (println "  population  " (game-total-pop current-game))
+          (println "  bands       " (n-bands-alive current-game))
+          (println "  tribes      " (n-tribes-alive current-game))
+          (println "  chiefdoms   " (n-chiefdoms-alive current-game))
+          (println "  settlements " (.size (settlements current-game)))
+          (println ""))))
       {:facts (deref facts), :game-snapshots (deref game-snapshots)}))
-
-(defn my-json-converter [world-filename]
-  (fn [key value]
-    (cond
-      (instance? com.github.lands.World value) world-filename
-      :default value)))
-
-(defn- save-simulation-result [simulation-result history-filename world-filename]
-  (let [json-str (json/write-str simulation-result :value-fn (my-json-converter world-filename))]
-    (spit history-filename json-str)))
 
 (defn run [world-filename n-bands n-turns history-filename]
   (println "World            :" world-filename)
