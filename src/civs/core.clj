@@ -4,12 +4,12 @@
     [civs.cli :refer :all]
     [civs.io :refer :all]
     [civs.model.core :refer :all]
+    [civs.model.society :refer :all]
     [civs.logic.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.stats :refer :all]
-    [civs.society :refer :all]
     [civs.graphics :refer :all]
     [clojure.tools.cli :refer [parse-opts]]
     [clojure.string :as string]))

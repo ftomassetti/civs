@@ -1,9 +1,9 @@
-(ns civs.society-test
+(ns civs.model.society-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model.core :refer :all]
             [civs.logic.core :refer :all]
-            [civs.society :refer :all]
+            [civs.model.society :refer :all]
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])

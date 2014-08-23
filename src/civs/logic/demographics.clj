@@ -3,7 +3,7 @@
   civs.logic.demographics
   (:require
     [civs.model.core :refer :all]
-    [civs.society :refer :all]
+    [civs.model.society :refer :all]
     [civs.logic.basic :refer :all])
   (:import [civs.model.core Population Tribe]))
 

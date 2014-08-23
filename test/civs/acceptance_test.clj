@@ -1,7 +1,7 @@
 (ns civs.acceptance-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
-            [civs.society :refer :all]
+            [civs.model.society :refer :all]
             [civs.model.core :refer :all]
             [civs.logic.core :refer :all]
             [civs.logic.basic :refer :all]

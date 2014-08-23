@@ -1,6 +1,6 @@
 (ns
   ^{:author ftomassetti}
-  civs.society
+  civs.model.society
   (:require [civs.model.core :refer :all]
             [civs.logic.basic :refer :all]))
 
