@@ -16,11 +16,16 @@
       0.0)))
 
 ; Must be at least a tribe society
-(defn chance-to-develop-agriculture [game tribe]
+(defn chance-to-develop-agriculture [game group]
   (if (and
-        (not (nomadic? tribe))
-        (not (know? tribe :agriculture))
-        (not (band-society? tribe))) 0.35 0.0))
+        (not (nomadic? group))
+        (not (know? group :agriculture))
+        (not (band-society? group)))
+    (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
+          prob (saturate (max 0.0 (* (- agr-prosperity 0.7) 3.0)) 0.5)]
+      ; agriculture is discovered in places good for agriculture
+      prob)
+    0.0))
 
 ; Must be at least a tribe society
 (defn chance-to-become-sedentary [game tribe]
