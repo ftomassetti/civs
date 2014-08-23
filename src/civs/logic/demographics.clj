@@ -2,15 +2,15 @@
   ^{:author ftomassetti}
   civs.logic.demographics
   (:require
-    [civs.model :refer :all]
+    [civs.model.core :refer :all]
     [civs.society :refer :all]
     [civs.logic.basic :refer :all])
-  (:import [civs.model Population Tribe]))
+  (:import [civs.model.core Population Tribe]))
 
 (import '(java.util Random))
 (import '(com.github.lands Biome))
 
-(require '[civs.model :as model])
+(require '[civs.model.core :as model])
 
 (defn randomLandPos [world]
   (let [pos (randomPos (.getDimension world))]

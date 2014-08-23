@@ -1,7 +1,7 @@
 (ns
   ^{:author ftomassetti}
   civs.society
-  (:require [civs.model :refer :all]
+  (:require [civs.model.core :refer :all]
             [civs.logic.basic :refer :all]))
 
 ; See http://en.wikipedia.org/wiki/Tribe

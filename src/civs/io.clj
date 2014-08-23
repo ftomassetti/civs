@@ -3,7 +3,7 @@
   civs.io
   (:require
     [civs.cli :refer :all]
-    [civs.model :refer :all]
+    [civs.model.core :refer :all]
     [civs.logic :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
@@ -15,7 +15,7 @@
     [clojure.string :as string]
     [miner.tagged :as tag]
     [clojure.data.fressian :as fress])
-  (:import [civs.model Population Tribe Culture Game Population Town]
+  (:import [civs.model.core Population Tribe Culture Game Population Town]
            [org.fressian.handlers WriteHandler ReadHandler ILookup WriteHandlerLookup])
   (:use clojure.java.io))
 

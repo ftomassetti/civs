@@ -1,6 +1,6 @@
 (ns
   ^{:author ftomassetti}
-  civs.model
+  civs.model.core
   (:require [clojure.math.combinatorics :as combo]))
 
 ; ###########################################################

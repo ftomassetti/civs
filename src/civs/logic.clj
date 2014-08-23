@@ -1,9 +1,9 @@
 (ns
   ^{:author ftomassetti}
   civs.logic
-  (:import [civs.model Population Tribe Game])
+  (:import [civs.model.core Population Tribe Game])
   (:require
-    [civs.model :refer :all]
+    [civs.model.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.demographics :refer :all]))
@@ -11,7 +11,7 @@
 (import '(java.util Random))
 (import '(com.github.lands Biome))
 
-(require '[civs.model :as model])
+(require '[civs.model.core :as model])
 
 (defn generate-game [world n-tribes]
   (let [ game (create-game world)

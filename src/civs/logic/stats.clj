@@ -2,7 +2,7 @@
   ^{:author ftomassetti}
   civs.logic.stats
   (:require
-    [civs.model :refer :all]
+    [civs.model.core :refer :all]
     [civs.logic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]))

@@ -1,7 +1,7 @@
 (ns civs.io-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
-            [civs.model :refer :all]
+            [civs.model.core :refer :all]
             [civs.io :refer :all]
             [civs.logic :refer :all]
             [civs.logic.basic :refer :all]

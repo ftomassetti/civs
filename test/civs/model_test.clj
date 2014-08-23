@@ -1,13 +1,13 @@
 (ns civs.model-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
-            [civs.model :refer :all]
+            [civs.model.core :refer :all]
             [civs.logic :refer :all]
             [civs.society :refer :all]
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])
-  (:import [civs.model Population Tribe Town]))
+  (:import [civs.model.core Population Tribe Town]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
 

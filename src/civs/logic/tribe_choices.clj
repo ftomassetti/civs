@@ -2,11 +2,11 @@
   ^{:author ftomassetti}
   civs.logic.tribe-choices
   (:require
-    [civs.model :refer :all]
+    [civs.model.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.society :refer :all])
-  (:import [civs.model Population Tribe]))
+  (:import [civs.model.core Population Tribe]))
 
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
