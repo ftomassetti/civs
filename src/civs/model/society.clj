@@ -56,9 +56,9 @@
 (defn possibility-of-evolving-into-tribe [tribe]
   (if (band-society? tribe)
     (let [pop (tribe-total-pop tribe)
-          surplus (- pop 80)]
+          surplus (- pop 33)]
       (if (> surplus 0)
-        (saturate (/ surplus 40.0) 0.5)
+        (saturate (/ surplus 110.0) 0.75)
         0.0))
     0.0))
 

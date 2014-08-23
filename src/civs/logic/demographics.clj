@@ -36,47 +36,52 @@
   (let [world (.world game)]
     (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (randomInitialPopulation) initial-culture initial-society)))
 
-(defn base-prosperity [world tribe pos]
-  (let [ x (:x pos)
-         y (:y pos)
-         b (biome-at world {:x x :y y})]
-    (if
-      (know? tribe :agriculture)
-      (case (.name b)
-        "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
-        "ICELAND"     0.5
-        "TUNDRA"      0.80
-        "ALPINE"      0.80
-        "GLACIER"     0.5
-        "GRASSLAND"   0.810
-        "ROCK_DESERT" 0.775
-        "SAND_DESERT" 0.775
-        "FOREST"      0.820
-        "SAVANNA"     0.800
-        "JUNGLE"      0.825
-        (throw (Exception. (str "Unknown biome" b))))
-      (case (.name b)
-        "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
-        "ICELAND"     0.5
-        "TUNDRA"      0.80
-        "ALPINE"      0.80
-        "GLACIER"     0.5
-        "GRASSLAND"   0.835
-        "ROCK_DESERT" 0.775
-        "SAND_DESERT" 0.775
-        "FOREST"      0.820
-        "SAVANNA"     0.800
-        "JUNGLE"      0.825
-        (throw (Exception. (str "Unknown biome" b)))))))
+(defn- base-prosperity-per-activity-in-biome
+  "Do not consider population limits"
+  [biome activity]
+  (case activity
+    :gathering-and-hunting (case (.name biome)
+                           "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
+                           "ICELAND"     0.5
+                           "TUNDRA"      0.80
+                           "ALPINE"      0.80
+                           "GLACIER"     0.5
+                           "GRASSLAND"   0.835
+                           "ROCK_DESERT" 0.775
+                           "SAND_DESERT" 0.775
+                           "FOREST"      0.820
+                           "SAVANNA"     0.800
+                           "JUNGLE"      0.825
+                           (throw (Exception. (str "Unknown biome" biome))))
+    :agriculture (case (.name biome)
+                   "OCEAN" (throw (Exception. (str "No prosperity in the ocean")))
+                   "ICELAND"     0.5
+                   "TUNDRA"      0.80
+                   "ALPINE"      0.80
+                   "GLACIER"     0.5
+                   "GRASSLAND"   0.835
+                   "ROCK_DESERT" 0.65
+                   "SAND_DESERT" 0.65
+                   "FOREST"      0.78
+                   "SAVANNA"     0.800
+                   "JUNGLE"      0.785
+                   (throw (Exception. (str "Unknown biome" biome))))
+  (throw Exception (str "Unknown activity " activity))))
 
-(defn crowding
-  "Factor which influence prosperity depending on the technology and the number of inhabitants:
-  agriculture supports more inhabitants"
-  [game tribe pos]
-  (let [ actives (-> tribe .population active-persons)
-         tot     (-> tribe .population total-persons)
-         max-supportable (if (know? tribe :agriculture) 1000 150)
-         pop-supportable (* actives (if (know? tribe :agriculture) 6.0 2.5))
+(defn base-prosperity-per-activity [world pos activity]
+  (base-prosperity-per-activity-in-biome (biome-at world pos) activity))
+
+(defn crowding-per-activity [group activity]
+  (let [ actives (-> group .population active-persons)
+         tot     (-> group .population total-persons)
+         max-supportable (case activity
+                           :gathering-and-hunting 110
+                           :agriculture           1000
+                           (throw Exception (str "Unknown activity " activity)))
+         pop-supportable (* actives (case activity
+                                      :gathering-and-hunting 3.5
+                                      :agriculture           6.5
+                                      (throw Exception (str "Unknown activity " activity))))
          pop-supportable (min max-supportable pop-supportable)]
     (if (< tot pop-supportable)
       1.0
@@ -84,13 +89,39 @@
         0.0
         (/ 1.0 (/ tot pop-supportable))))))
 
+(defn prosperity-in-pos-per-activity [game tribe pos activity]
+  (let [world    (.world game)
+        base     (base-prosperity-per-activity world pos activity)
+        crowding (crowding-per-activity tribe activity)]
+    (* base crowding)))
+
+(defn known-activities [group]
+  (if (know? group :agriculture)
+    [:gathering-and-hunting :agriculture ]
+    [:gathering-and-hunting]))
+
+(defn chosen-activity
+  [game group pos]
+  (let [prosperity-by-activity (map
+                                 (fn [activity] {:activity activity :prosperity (prosperity-in-pos-per-activity game group pos activity)})
+                                 (known-activities group))]
+    (:activity (first (sort-by :prosperity prosperity-by-activity)))))
+
+(defn crowding
+  "The current crowding of the group at this time"
+  [game group]
+  (let [activity (chosen-activity game group (.position group))]
+    (crowding-per-activity group activity)))
+
 (defn prosperity-in-pos
   "The prosperity a tribe would have in a given position"
-  [game tribe pos]
-  (let [ world    (.world game)
-         base     (base-prosperity world tribe pos)
-         crowding (crowding game tribe pos)]
-    (* base crowding)))
+  [game group pos]
+  (let [world (.world game)]
+    (apply max
+      (map
+        (fn [activity]
+          (prosperity-in-pos-per-activity game group pos activity))
+        (known-activities group)))))
 
 (defn prosperity
   "A number in [0,1] whic indicates how well the tribe is living.
@@ -98,8 +129,8 @@
   Increase for young men and women, reduce for children and old people
   Depending on the kind of activity done (gathering/agriculture)
   certain number of people can be supported"
-  [game tribe]
-  (prosperity-in-pos game tribe (.position tribe)))
+  [game group]
+  (prosperity-in-pos game group (.position group)))
 
 (defn men-availability-factor [young-men young-women]
   ; check necessary to avoid division by zero
@@ -116,7 +147,10 @@
         young-women             (-> tribe :population :young-women)
         men-availability-factor (men-availability-factor young-men young-women)
         women-fertility         (* young-women 1.1 (perturbate-high prosperity))
-        births                  (round (* women-fertility men-availability-factor))]
+        births                  (round (* women-fertility men-availability-factor))
+        ; In primitive nomadic societies mothers tend to have one child every four
+        ; years
+        births                  (if (nomadic? tribe) (* 0.75 births) births)]
     (when (> births 0)
       (fact :births {:tribe (.id tribe) :n births}))
     (Population. births 0 0 0 0)))
@@ -141,8 +175,8 @@
   "Young men and women can die, remain young or grow old.
   This method returns a delta"
   [world tribe prosperity]
-  (let [mortality-men     (* (opposite prosperity) 0.25)
-        mortality-women   (* (opposite prosperity) 0.25)
+  (let [mortality-men     (* (opposite prosperity) 0.22)
+        mortality-women   (* (opposite prosperity) 0.22)
         n-young-men       (-> tribe :population :young-men)
         n-young-women     (-> tribe :population :young-women)
         [dead-m, alive-m] (rsplit-by n-young-men mortality-men)

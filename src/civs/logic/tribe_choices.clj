@@ -12,7 +12,7 @@
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
     (if (and (nomadic? tribe) (> prosperity 0.6))
-      (saturate (- prosperity 0.75) 0.10)
+      (saturate (/ (- prosperity 0.75) 1.2) 0.10)
       0.0)))
 
 ; Must be at least a tribe society
@@ -20,7 +20,7 @@
   (if (and
         (not (nomadic? tribe))
         (not (know? tribe :agriculture))
-        (not (band-society? tribe))) 0.25 0.0))
+        (not (band-society? tribe))) 0.35 0.0))
 
 ; Must be at least a tribe society
 (defn chance-to-become-sedentary [game tribe]
@@ -31,7 +31,7 @@
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.24 0.0)))
+          (not (band-society? tribe))) 0.18 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 
@@ -105,11 +105,11 @@
   (PossibleEvent.
     :split
     (fn [game tribe]
-      (let [c (crowding (.world game) tribe (.position tribe))
+      (let [c (crowding game tribe)
             pop (-> tribe .population total-persons)]
         (if
-          (and (> pop 30) (< c 0.9))
-          (/ (opposite c) 2.0)
+          (and (> pop 35) (< c 0.9))
+          (/ (opposite c) 2.7)
           0.0)))
     (fn [game tribe]
       (let [ world (.world game)
