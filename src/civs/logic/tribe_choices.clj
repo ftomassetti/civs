@@ -22,7 +22,7 @@
         (not (know? group :agriculture))
         (not (band-society? group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
-          prob (saturate (max 0.0 (* (- agr-prosperity 0.7) 3.0)) 0.5)]
+          prob (saturate (max 0.0 (* (- agr-prosperity 0.78) 3.0)) 0.30)]
       ; agriculture is discovered in places good for agriculture
       prob)
     0.0))
@@ -36,7 +36,7 @@
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.18 0.0)))
+          (not (band-society? tribe))) 0.15 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 

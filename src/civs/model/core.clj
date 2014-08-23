@@ -83,6 +83,9 @@
 (defn biome-at [world pos]
   (.get (.getBiome world) (:x pos) (:y pos)))
 
+(defn temperature-at [world pos]
+  (.get (.getTemperature world) (:x pos) (:y pos)))
+
 (defn game-width [game]
   (-> game .world .getDimension .getWidth))
 

@@ -24,11 +24,12 @@
 (defn roll [prob]
   (< (crand-float) prob))
 
-(defn check-in-range [n min max]
-  (when (< n min)
-    (throw (Exception. "Too low")))
-  (when (> n max)
-    (throw (Exception. (str "Too high: limit " max " value " n)))))
+(defn check-in-range [n min max & msg]
+  (let [msg (if (nil? msg) "" msg)]
+    (when (< n min)
+      (throw (Exception. (str "Too low" msg)))
+    (when (> n max)
+      (throw (Exception. (str "Too high: limit " max " value " n msg)))))))
 
 (defn force-in-range [n min max]
   (when (< n min)

@@ -28,6 +28,9 @@
 (defn mock-land-biome [desired-biome]
   (fn [world pos] (if (isLand world pos) desired-biome com.github.lands.Biome/OCEAN)))
 
+(defn mock-prosperity-temperature-multiplier-at []
+  (fn [world pos] 1.0))
+
 (deftest test-not-everyone-dies-immediately
   (with-redefs [crand-int   (mock-crand-int)
                 crand-float (mock-crand-float)]
@@ -47,6 +50,7 @@
 
 (defn check-biome [biome min-factor max-factor ntribes nturns]
   (with-redefs [ biome-at (mock-land-biome biome)
+                 prosperity-temperature-multiplier-at (mock-prosperity-temperature-multiplier-at)
                  crand-int   (mock-crand-int)
                  crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 ntribes)
@@ -148,7 +152,7 @@
          target                      (.size (filter band-society? societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns band" target))
-    (is (and (>= target 10) (<= target 80)))))
+    (is (and (>= target 10) (<= target 85)))))
 
 (deftest test-some-societies-are-tribe
   (let [ g game-scenario-w77-100tribes-30turns
@@ -156,7 +160,7 @@
          target                      (.size (filter tribe-society? societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns tribe" target))
-    (is (and (>= target 5) (<= target 30)))))
+    (is (and (>= target 5) (<= target 35)))))
 
 (deftest test-no-societies-are-yet-chiefdom
   (let [ g game-scenario-w77-100tribes-30turns

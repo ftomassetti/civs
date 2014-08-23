@@ -30,6 +30,8 @@
 
 (def unhospital-biomes #{com.github.lands.Biome/OCEAN com.github.lands.Biome/GLACIER com.github.lands.Biome/ICELAND})
 
+; (.get (-> w77 .getTemperature .thresholds) com.github.lands.Thresholds$Level/HIGH)
+
 (defn generate-tribe
   "Return a map game, tribe"
   [game]
@@ -50,7 +52,7 @@
                            "ROCK_DESERT" 0.775
                            "SAND_DESERT" 0.775
                            "FOREST"      0.820
-                           "SAVANNA"     0.800
+                           "SAVANNA"     0.805
                            "JUNGLE"      0.825
                            (throw (Exception. (str "Unknown biome" biome))))
     :agriculture (case (.name biome)
@@ -68,8 +70,74 @@
                    (throw (Exception. (str "Unknown biome" biome))))
   (throw Exception (str "Unknown activity " activity))))
 
+(defn- prosperity-temperature-multiplier-with-range [negative-limit neutral-value positive-limit temperature]
+  (let [direction (if (> positive-limit negative-limit) :asc :desc)
+        mod (case direction
+                  :asc (if (< temperature neutral-value)
+                         (let [diff       (- neutral-value temperature)
+                               max-diff   (- neutral-value negative-limit)
+                               negativity (/ diff max-diff)]
+                           (* negativity -0.2))
+                         (let [diff       (- temperature neutral-value )
+                               max-diff   (- positive-limit neutral-value )
+                               positivity (/ diff max-diff)]
+                           (* positivity 0.2)))
+                  :desc (if (< temperature neutral-value)
+                          (let [diff       (- neutral-value temperature)
+                                max-diff   (- neutral-value positive-limit)
+                                positivity (/ diff max-diff)]
+                            (* positivity 0.2))
+                          (let [diff       (- temperature neutral-value )
+                                max-diff   (- negative-limit neutral-value )
+                                negativity (/ diff max-diff)]
+                            (* negativity -0.2)))
+                  nil)]
+    (+ 1.0 mod)))
+
+(defn- prosperity-temperature-multiplier
+  "A factor depending on the temperature"
+  [world biome temperature]
+  (let [ temperature (if (< temperature 0.0) 0.0 temperature) ; glaciers could be below...
+         res (let [low (.get (-> world .getTemperature .thresholds) com.github.lands.Thresholds$Level/LOW)
+         med (.get (-> world .getTemperature .thresholds) com.github.lands.Thresholds$Level/MEDIUM)
+         high (.get (-> world .getTemperature .thresholds) com.github.lands.Thresholds$Level/HIGH)]
+      (case (.name biome)
+        "OCEAN"       (throw (Exception. (str "No prosperity in the ocean")))
+        "ICELAND"     (prosperity-temperature-multiplier-with-range 0.0  (mean 0.0 low)   low  temperature)
+        "TUNDRA"      (prosperity-temperature-multiplier-with-range low          (mean low med)           med  temperature)
+        "ALPINE"      (prosperity-temperature-multiplier-with-range 0.0  (mean 0.0 low)   low  temperature)
+        "GLACIER"     (prosperity-temperature-multiplier-with-range 0.0  (mean 0.0 low)   low  temperature)
+        "GRASSLAND"   (prosperity-temperature-multiplier-with-range med          (mean med high)          high temperature)
+        "ROCK_DESERT" (prosperity-temperature-multiplier-with-range med          (mean med high)          high temperature)
+        "SAND_DESERT" (prosperity-temperature-multiplier-with-range (* high 3.0) (mean high (* high 3.0)) high temperature)
+        "FOREST"      (prosperity-temperature-multiplier-with-range med          (mean med high)          high temperature)
+        "SAVANNA"     (prosperity-temperature-multiplier-with-range (* high 3.0) (mean high (* high 3.0)) high temperature)
+        "JUNGLE"      (prosperity-temperature-multiplier-with-range (* high 3.0) (mean high (* high 3.0)) high temperature)
+        (throw (Exception. (str "Unknown biome" biome)))))]
+    (check-in-range res 0.8 1.2 (str "Prosperity temperature modifier for " biome " at " temperature " : " res))
+    res))
+
+;(for [x (range 512)]
+;  (for [y (range 512)]
+;    (when (not (= com.github.lands.Biome/OCEAN (biome-at w77 {:x x :y y})))
+;      (println x y (prosperity-temperature-multiplier-at w77 {:x x :y y})))))
+
+(defn prosperity-temperature-multiplier-at [world pos]
+  (let [biome (biome-at world pos)
+        temperature (temperature-at world pos)]
+    (try
+      (prosperity-temperature-multiplier world biome temperature)
+      (catch Exception e
+        (throw
+          (Exception.
+            (str "Problem while calculating prosperity temperature multiplier at " pos
+              " where biome should be " biome
+              ". World " (.getName world)) e))))))
+
 (defn base-prosperity-per-activity [world pos activity]
-  (base-prosperity-per-activity-in-biome (biome-at world pos) activity))
+  (*
+    (base-prosperity-per-activity-in-biome (biome-at world pos) activity)
+    (prosperity-temperature-multiplier-at world pos)))
 
 (defn crowding-per-activity [group activity]
   (let [ actives (-> group .population active-persons)
@@ -93,7 +161,7 @@
   (let [world    (.world game)
         base     (base-prosperity-per-activity world pos activity)
         crowding (crowding-per-activity tribe activity)]
-    (* base crowding)))
+    (saturate (* base crowding) 1.0)))
 
 (defn known-activities [group]
   (if (know? group :agriculture)
