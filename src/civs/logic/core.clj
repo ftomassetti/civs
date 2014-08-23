@@ -1,6 +1,6 @@
 (ns
   ^{:author ftomassetti}
-  civs.logic
+  civs.logic.core
   (:import [civs.model.core Population Tribe Game])
   (:require
     [civs.model.core :refer :all]

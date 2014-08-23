@@ -4,7 +4,7 @@
   (:require
     [civs.cli :refer :all]
     [civs.model.core :refer :all]
-    [civs.logic :refer :all]
+    [civs.logic.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]

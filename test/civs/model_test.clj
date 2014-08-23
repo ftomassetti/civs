@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model.core :refer :all]
-            [civs.logic :refer :all]
+            [civs.logic.core :refer :all]
             [civs.society :refer :all]
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]

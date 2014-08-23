@@ -3,7 +3,7 @@
   civs.logic.stats
   (:require
     [civs.model.core :refer :all]
-    [civs.logic :refer :all]
+    [civs.logic.core :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]))
 
