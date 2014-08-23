@@ -9,7 +9,8 @@
                   [org.clojure/math.combinatorics "0.0.8"]
                   [org.clojure/tools.cli "0.3.1"]
                   [com.velisco/tagged "0.3.0"]
-                  [org.clojure/data.fressian "0.2.0"] ]
+                  [org.clojure/data.fressian "0.2.0"]
+                  [potemkin "0.3.8"]]
   :scm git
   :main ^:skip-aot civs.core
   :target-path "target/%s"
