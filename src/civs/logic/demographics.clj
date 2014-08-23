@@ -92,7 +92,7 @@
                                 negativity (/ diff max-diff)]
                             (* negativity -0.2)))
                   nil)]
-    (+ 1.0 mod)))
+    (+ 1.0 (/ mod 10.0))))
 
 (defn- prosperity-temperature-multiplier
   "A factor depending on the temperature"
@@ -114,7 +114,7 @@
         "SAVANNA"     (prosperity-temperature-multiplier-with-range (* high 3.0) (mean high (* high 3.0)) high temperature)
         "JUNGLE"      (prosperity-temperature-multiplier-with-range (* high 3.0) (mean high (* high 3.0)) high temperature)
         (throw (Exception. (str "Unknown biome" biome)))))]
-    (check-in-range res 0.8 1.2 (str "Prosperity temperature modifier for " biome " at " temperature " : " res))
+    (check-in-range res 0.98 1.02 (str "Prosperity temperature modifier for " biome " at " temperature " : " res))
     res))
 
 ;(for [x (range 512)]
