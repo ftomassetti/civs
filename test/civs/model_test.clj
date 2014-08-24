@@ -102,13 +102,13 @@
     (= false (ghost-city? g2 2))
     (= true (ghost-city? g4 4))))
 
-(deftest test-n-societies-alive
+(deftest test-n-groups-alive
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))]
-    (= 0 (n-societies-alive g0))
-    (= 1 (n-societies-alive g1))
-    (= 1 (n-societies-alive g2))))
+    (= 0 (n-groups-alive g0))
+    (= 1 (n-groups-alive g1))
+    (= 1 (n-groups-alive g2))))
 
 (deftest test-update-tribe
   (let [g0 (create-game nil)

@@ -99,7 +99,7 @@
 
 (deftest test-some-societies-remain-nomadic
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          nsocieties-total            (.size societies)
          nsocieties-still-nomadic    (.size (filter nomadic? societies))
          nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
@@ -113,7 +113,7 @@
 
 (deftest test-some-societies-become-semi-sedentary
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          nsocieties-total            (.size societies)
          nsocieties-still-nomadic    (.size (filter nomadic? societies))
          nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
@@ -123,7 +123,7 @@
 
 (deftest test-some-societies-become-sedentary
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          nsocieties-total            (.size societies)
          nsocieties-still-nomadic    (.size (filter nomadic? societies))
          nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
@@ -132,7 +132,7 @@
 
 (deftest test-some-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          nsocieties-agriculture      (.size (filter #(know? % :agriculture) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns agriculture" nsocieties-agriculture))
@@ -140,7 +140,7 @@
 
 (deftest test-some-most-do-not-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          nsocieties-no-agriculture   (.size (filter #(not (know? % :agriculture)) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns no agriculture" nsocieties-no-agriculture))
@@ -148,7 +148,7 @@
 
 (deftest test-some-societies-are-band
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          target                      (.size (filter band-society? societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns band" target))
@@ -156,7 +156,7 @@
 
 (deftest test-some-societies-are-tribe
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          target                      (.size (filter tribe-society? societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns tribe" target))
@@ -164,6 +164,6 @@
 
 (deftest test-no-societies-are-yet-chiefdom
   (let [ g game-scenario-w77-100tribes-30turns
-         societies                   (societies-alive g)
+         societies                   (groups-alive g)
          target                      (.size (filter chiefdom-society? societies))]
     (is (= 0 target))))

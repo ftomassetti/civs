@@ -182,14 +182,18 @@
 (defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
 
+; Deprecated, use groups instead
 (defn tribes [game]
   (vals (.tribes game)))
 
-(defn societies-alive [game]
-  (filter alive? (tribes game)))
+(defn groups [game]
+  (vals (.tribes game)))
 
-(defn n-societies-alive [game]
-  (.size (societies-alive game)))
+(defn groups-alive [game]
+  (filter alive? (groups game)))
+
+(defn n-groups-alive [game]
+  (.size (groups-alive game)))
 
 (defn settlements [game]
   (let [s (vals (.settlements game))]
