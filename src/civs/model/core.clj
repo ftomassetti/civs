@@ -16,10 +16,10 @@
 (defrecord Population [children young-men young-women old-men old-women])
 
 (defn total-persons [pop]
-  (+ (:children pop) (:young-men pop) (:young-women pop) (:old-men pop) (:old-women pop)))
+  (int (+ (:children pop) (:young-men pop) (:young-women pop) (:old-men pop) (:old-women pop))))
 
 (defn active-persons [pop]
-  (+ (:young-men pop) (:young-women pop)))
+  (int (+ (:young-men pop) (:young-women pop))))
 
 ; ###########################################################
 ;  Culture
