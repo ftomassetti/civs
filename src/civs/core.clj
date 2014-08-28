@@ -41,6 +41,7 @@
   "Return a map of history and game-snapshots"
   [initial-game n-turns & [verbosity]]
   (def current-game initial-game)
+  (reset-current-turn)
   (let [game-snapshots (atom {0 initial-game})
         facts-by-turn  (atom {})
         verbosity (if (nil? verbosity) true verbosity)]
@@ -48,6 +49,7 @@
       (do
         (when verbosity
           (println "=== Turn" (inc t) "==="))
+        (inc-current-turn)
         (def current-game (turn current-game))
         (swap! game-snapshots assoc (inc t) current-game)
         (swap! facts-by-turn assoc (inc t) (deref facts))

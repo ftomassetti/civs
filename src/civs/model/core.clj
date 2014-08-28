@@ -123,10 +123,10 @@
   (filter #(isLand world %) (cells-around world pos radius)))
 
 ; ###########################################################
-;  Town
+;  Settlement
 ; ###########################################################
 
-(defrecord Town [id name position owner])
+(defrecord Settlement [id name foundation-turn position owner])
 
 ; ###########################################################
 ;  Game
@@ -147,25 +147,25 @@
         game (assoc game :tribes tribes)]
     {:game game :tribe new-tribe}))
 
-(defn create-town
-  "Return the game, updated and the new town"
-  [game name position owner]
+(defn create-settlement
+  "Return the game, updated and the new settlement"
+  [game name position owner foundation-time]
   (let [id (:next_id game)
-        new-town (Town. id name position owner)
+        new-town (Settlement. id name foundation-time position owner)
         settlements (assoc (:settlements game) id new-town)
         game (assoc game :next_id (inc id))
         game (assoc game :settlements settlements)]
-    {:game game :town new-town}))
+    {:game game :settlement new-town}))
 
 (defn get-tribe [game id]
   (get (:tribes game) id))
 
-(defn get-town [game id]
+(defn get-settlement [game id]
   (get (:settlements game) id))
 
-(defn ghost-city? [game town-id]
-  (let [town (get-town game town-id)
-        owner (.owner town)
+(defn ghost-city? [game settlement-id]
+  (let [settlement (get-settlement game settlement-id)
+        owner (.owner settlement)
         tribe (get-tribe game owner)]
     (alive? tribe)))
 

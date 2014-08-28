@@ -69,7 +69,7 @@
       (let [ pos (.position tribe)
              new-culture (assoc (.culture tribe) :nomadism :sedentary)]
         {
-          :game (:game (create-town game :unnamed pos (:id tribe)))
+          :game (:game (create-settlement game :unnamed pos (:id tribe) current-turn))
           :tribe (assoc tribe :culture new-culture)
           :params {}
           }))))
@@ -129,7 +129,7 @@
              dest-target (:pos (first preferences))
              res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe) (.society tribe))
              game (:game res)
-             game (:game (create-town game :unnamed dest-target (:id (:tribe res))))]
+             game (:game (create-settlement game :unnamed dest-target (:id (:tribe res)) current-turn))]
         {
           :game game
           :tribe (assoc tribe :population (:remaining sp))

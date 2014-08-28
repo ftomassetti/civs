@@ -15,7 +15,7 @@
     [clojure.string :as string]
     [miner.tagged :as tag]
     [clojure.data.fressian :as fress])
-  (:import [civs.model.core Population Tribe Culture Game Population Town]
+  (:import [civs.model.core Population Tribe Culture Game Population Settlement]
            [org.fressian.handlers WriteHandler ReadHandler ILookup WriteHandlerLookup])
   (:use clojure.java.io))
 
@@ -35,7 +35,7 @@
 (defmethod print-method Population [this w]
   (tag/pr-tagged-record-on this w))
 
-(defmethod print-method Town [this w]
+(defmethod print-method Settlement [this w]
   (tag/pr-tagged-record-on this w))
 
 (defn set-world-print-method [world-filename]

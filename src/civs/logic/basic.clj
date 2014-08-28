@@ -11,6 +11,17 @@
 
 (def r (Random. 1))
 
+(def current-turn nil)
+
+(defn get-current-turn []
+  current-turn)
+
+(defn inc-current-turn []
+  (def current-turn (inc (get-current-turn))))
+
+(defn reset-current-turn []
+  (def current-turn 0))
+
 (defn crand-int
   "c stands for c, so to not override clojure.core/rand-int"
   [n]

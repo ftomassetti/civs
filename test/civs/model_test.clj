@@ -7,7 +7,7 @@
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])
-  (:import [civs.model.core Population Tribe Town]))
+  (:import [civs.model.core Population Tribe Settlement]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
 
@@ -61,17 +61,18 @@
     (= (Population. 1 2 3 4 5) (.population t))
     (= initial-culture (.culture t))))
 
-(deftest test-create-town
+(deftest test-create-settlement
   (let [initial-g (create-game nil)
-        res (create-town initial-g "name" {:x 15 :y 18} :123)
+        res (create-settlement initial-g "name" {:x 15 :y 18} :123 456)
         g (:game res)
-        t (:town res)]
+        t (:settlement res)]
     ; there should be one town in the world
     (= 1 (.size (settlements g)))
     (= 1 (.id t))
     (= "name" (.name t))
     (= {:x 15 :y 18} (.position t))
-    (= :123 (.owner t))))
+    (= :123 (.owner t))
+    (= 456 (.foundation-turn t))))
 
 (deftest test-game-total-pop
   (let [g0 (create-game nil)
@@ -87,18 +88,18 @@
     (= nil (get-tribe g0 1))
     (= (Tribe. 1 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society) (get-tribe g1 1))))
 
-(deftest test-get-town
+(deftest test-get-settlement
   (let [g0 (create-game nil)
-        g1 (:game (create-town g0 "name" {:x 15 :y 18} :123))]
-    (= nil (get-town g0 1))
-    (= (Town. 1 "name" {:x 15 :y 18} :123) (get-town g1 1))))
+        g1 (:game (create-settlement g0 "name" {:x 15 :y 18} :123 10))]
+    (= nil (get-settlement g0 1))
+    (= (Settlement. 1 "name" {:x 15 :y 18} 10 :123) (get-settlement g1 1))))
 
 (deftest test-ghost-city
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
-        g2 (:game (create-town g1 "name" {:x 15 :y 18} 1))
+        g2 (:game (create-settlement g1 "name" {:x 15 :y 18} 1 11))
         g3 (:game (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))
-        g4 (:game (create-town g3 "name" {:x 15 :y 18} 3))]
+        g4 (:game (create-settlement g3 "name" {:x 15 :y 18} 3 12))]
     (= false (ghost-city? g2 2))
     (= true (ghost-city? g4 4))))
 
@@ -120,9 +121,9 @@
 (deftest test-n-ghost-cities
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
-        g2 (:game (create-town g1 "name" {:x 15 :y 18} 1))
+        g2 (:game (create-settlement g1 "name" {:x 15 :y 18} 1 20))
         g3 (:game (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))
-        g4 (:game (create-town g3 "name" {:x 15 :y 18} 3))]
+        g4 (:game (create-settlement g3 "name" {:x 15 :y 18} 3 21))]
     (= 0 (n-ghost-cities g0))
     (= 0 (n-ghost-cities g2))
     (= 1 (n-ghost-cities g4))))
