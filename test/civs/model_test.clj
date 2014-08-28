@@ -54,12 +54,12 @@
         g (:game res)
         t (:tribe res)]
     ; there should be one tribe in the world
-    (= 1 (.size (tribes g)))
-    (= 1 (.id t))
-    (= "name" (.name t))
-    (= {:x 15 :y 18} (.position t))
-    (= (Population. 1 2 3 4 5) (.population t))
-    (= initial-culture (.culture t))))
+    (is (= 1 (.size (tribes g))))
+    (is (= 1 (.id t)))
+    (is (= "name" (.name t)))
+    (is (= {:x 15 :y 18} (.position t)))
+    (is (= (Population. 1 2 3 4 5) (.population t)))
+    (is (= initial-culture (.culture t)))))
 
 (deftest test-create-settlement
   (let [initial-g (create-game nil)
@@ -67,32 +67,32 @@
         g (:game res)
         t (:settlement res)]
     ; there should be one town in the world
-    (= 1 (.size (settlements g)))
-    (= 1 (.id t))
-    (= "name" (.name t))
-    (= {:x 15 :y 18} (.position t))
-    (= :123 (.owner t))
-    (= 456 (.foundation-turn t))))
+    (is (= 1 (.size (settlements g))))
+    (is (= 1 (.id t)))
+    (is (= "name" (.name t)))
+    (is (= {:x 15 :y 18} (.position t)))
+    (is (= :123 (.owner t)))
+    (is (= 456 (.foundation-turn t)))))
 
 (deftest test-game-total-pop
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 1 2 0 0) initial-culture initial-society))]
-    (= 0 (game-total-pop g0))
-    (= 15 (game-total-pop g1))
-    (= 18 (game-total-pop g2))))
+    (is (= 0 (game-total-pop g0)))
+    (is (= 15 (game-total-pop g1)))
+    (is (= 18 (game-total-pop g2)))))
 
 (deftest test-get-tribe
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))]
-    (= nil (get-tribe g0 1))
-    (= (Tribe. 1 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society) (get-tribe g1 1))))
+    (is (= nil (get-tribe g0 1)))
+    (is (= (Tribe. 1 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society) (get-tribe g1 1)))))
 
 (deftest test-get-settlement
   (let [g0 (create-game nil)
         g1 (:game (create-settlement g0 "name" {:x 15 :y 18} :123 10))]
-    (= nil (get-settlement g0 1))
-    (= (Settlement. 1 "name" {:x 15 :y 18} 10 :123) (get-settlement g1 1))))
+    (is (= nil (get-settlement g0 1)))
+    (is (= (Settlement. 1 "name" 10 {:x 15 :y 18} :123) (get-settlement g1 1)))))
 
 (deftest test-ghost-city
   (let [g0 (create-game nil)
@@ -100,23 +100,23 @@
         g2 (:game (create-settlement g1 "name" {:x 15 :y 18} 1 11))
         g3 (:game (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))
         g4 (:game (create-settlement g3 "name" {:x 15 :y 18} 3 12))]
-    (= false (ghost-city? g2 2))
-    (= true (ghost-city? g4 4))))
+    (is (= false (ghost-city? g2 2)))
+    (is (= true (ghost-city? g4 4)))))
 
 (deftest test-n-groups-alive
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))]
-    (= 0 (n-groups-alive g0))
-    (= 1 (n-groups-alive g1))
-    (= 1 (n-groups-alive g2))))
+    (is (= 0 (n-groups-alive g0)))
+    (is (= 1 (n-groups-alive g1)))
+    (is (= 1 (n-groups-alive g2)))))
 
 (deftest test-update-tribe
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (update-tribe g1 (Tribe. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) initial-culture initial-society))]
-    (= (Tribe. 1 "name"  {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society) (get-tribe g1 1))
-    (= (Tribe. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) initial-culture initial-society) (get-tribe g2 1))))
+    (is (= (Tribe. 1 "name"  {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society) (get-tribe g1 1)))
+    (is (= (Tribe. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) initial-culture initial-society) (get-tribe g2 1)))))
 
 (deftest test-n-ghost-cities
   (let [g0 (create-game nil)
@@ -124,6 +124,6 @@
         g2 (:game (create-settlement g1 "name" {:x 15 :y 18} 1 20))
         g3 (:game (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))
         g4 (:game (create-settlement g3 "name" {:x 15 :y 18} 3 21))]
-    (= 0 (n-ghost-cities g0))
-    (= 0 (n-ghost-cities g2))
-    (= 1 (n-ghost-cities g4))))
+    (is (= 0 (n-ghost-cities g0)))
+    (is (= 0 (n-ghost-cities g2)))
+    (is (= 1 (n-ghost-cities g4)))))
