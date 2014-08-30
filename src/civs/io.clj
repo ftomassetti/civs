@@ -20,6 +20,7 @@
   (:use clojure.java.io))
 
 (import '(com.github.lands.World))
+(import '(com.github.langgen.Language))
 (import '(com.github.lands.IncorrectFileException))
 (import '(java.io.IOException))
 
