@@ -167,7 +167,9 @@
   (let [settlement (get-settlement game settlement-id)
         owner (.owner settlement)
         tribe (get-tribe game owner)]
-    (not (alive? tribe))))
+    (if (nil? tribe)
+      true
+      (not (alive? tribe)))))
 
 (defn update-tribe
   "Return the game, updated"
