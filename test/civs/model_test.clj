@@ -2,8 +2,9 @@
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model.core :refer :all]
-            [civs.logic.core :refer :all]
+            [civs.model.language :refer :all]
             [civs.model.society :refer :all]
+            [civs.logic.core :refer :all]
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])
@@ -127,3 +128,12 @@
     (is (= 0 (n-ghost-cities g0)))
     (is (= 0 (n-ghost-cities g2)))
     (is (= 1 (n-ghost-cities g4)))))
+
+(deftest test-assoc-and-use-language
+  (let [ ga (create-game nil)
+         gr (:tribe (create-tribe ga nil nil nil initial-culture initial-society))
+         gr (assoc-language gr (generate-language))
+         l  (get-language gr)
+         n  (.name l)]
+    (is (not (nil? n)))
+    (is (not (.isEmpty n)))))

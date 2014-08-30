@@ -41,21 +41,23 @@
 (defn nomadic? [t]
   (= :nomadic (-> t .culture .nomadism)))
 
-(defrecord Culture [nomadism knowledge])
+(defrecord Culture [nomadism knowledge language])
 
-(def initial-culture (Culture. :nomadic []))
+(def initial-culture (Culture. :nomadic [] nil))
 
 ; ###########################################################
-;  Tribe
+;  Group (lecay name: Tribe)
 ; ###########################################################
 
 (defrecord Tribe [id name position population culture society])
 
-(defn is-dead? [tribe]
+(defn dead? [tribe]
   (= 0 (total-persons (:population tribe))))
 
+(def ^:deprecated is-dead? dead?)
+
 (defn alive? [tribe]
-  (not (is-dead? tribe)))
+  (not (dead? tribe)))
 
 (defn know? [tribe knowledge]
   (in? (-> tribe .culture .knowledge) knowledge))
@@ -68,6 +70,14 @@
 
 (defn tribe-total-pop [tribe]
   (-> tribe :population total-persons))
+
+(defn get-language [group]
+  (-> group .culture .language))
+
+(defn assoc-language [group language]
+  (let [old-culture (.culture group)
+        new-culture (assoc old-culture :language language)]
+    (assoc group :culture new-culture)))
 
 ; ###########################################################
 ;  World

@@ -4,4 +4,3 @@
 
 (defn generate-language []
   (com.github.langgen.SamplesBasedLanguageFactory/getRandomLanguage))
-
