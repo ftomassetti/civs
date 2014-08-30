@@ -160,11 +160,14 @@
     (fn [game tribe]
       (possibility-of-evolving-into-tribe tribe))
     (fn [game group]
-      {
-        :game (develop-a-language game (:id group))
-        :tribe (evolve-in-tribe group)
-        :params {}
-        })))
+      (let [game (develop-a-language game (:id group))
+            group (get-group game (:id group))
+            group (evolve-in-tribe group)]
+        {
+          :game game
+          :tribe group
+          :params {}
+          }))))
 
 (def evolution-in-chiefdom
   (PossibleEvent.
