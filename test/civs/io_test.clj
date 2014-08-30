@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model.core :refer :all]
+            [civs.model.language :refer :all]
             [civs.io :refer :all]
             [civs.logic.core :refer :all]
             [civs.logic.basic :refer :all]
@@ -38,3 +39,9 @@
         ser-bytes (to-serialized-bytes simulation-result)
         loaded (from-serialized-bytes ser-bytes (fn [name] w77))]
     (is (= loaded simulation-result))))
+
+(deftest test-fressian-serialization-of-language
+  (let [l-original (generate-language)
+        ser-bytes (to-serialized-bytes l-original)
+        l-deserialized (from-serialized-bytes ser-bytes nil)]
+    (is (= l-original l-deserialized))))

@@ -23,6 +23,8 @@
 (import '(com.github.lands.IncorrectFileException))
 (import '(java.io.IOException))
 
+; TODO extend EDN to support saving Language
+
 (defmethod print-method Culture [this w]
   (tag/pr-tagged-record-on this w))
 
@@ -108,6 +110,7 @@
     (spit history-filename str)))
 
 (def world-ftag "world")
+(def language-ftag "language")
 
 (def world-fwriter
   (reify WriteHandler
@@ -121,14 +124,32 @@
       (let [name (.readObject reader)]
         (resolve name)))))
 
+(def language-fwriter
+  (reify WriteHandler
+    (write [_ writer language]
+      (.writeTag writer language-ftag 1)
+      (.writeObject writer (.getSamples language) false))))
+
+(defn- language-freader []
+  (reify ReadHandler
+    (read [_ reader tag component-count]
+      (let [samples (.readObject reader)]
+        (com.github.langgen.Language. samples)))))
+
 (def fress-write-handlers
-  (-> (merge {com.github.lands.World {world-ftag world-fwriter}}
+  (-> (merge {
+               com.github.lands.World      {world-ftag    world-fwriter}
+               com.github.langgen.Language {language-ftag language-fwriter}
+             }
         fress/clojure-write-handlers)
     fress/associative-lookup
     fress/inheritance-lookup))
 
 (defn- fress-read-handlers [resolve]
-  (-> (merge {world-ftag (world-freader resolve)} fress/clojure-read-handlers)
+  (-> (merge {
+               world-ftag    (world-freader resolve)
+               language-ftag (language-freader)
+             } fress/clojure-read-handlers)
           fress/associative-lookup))
 
 (defn to-serialized-bytes [data]

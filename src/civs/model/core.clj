@@ -1,7 +1,8 @@
 (ns
   ^{:author ftomassetti}
   civs.model.core
-  (:require [clojure.math.combinatorics :as combo]))
+  (:require [clojure.math.combinatorics :as combo]
+            [civs.model.language]))
 
 ; ###########################################################
 ;  Generic
@@ -167,11 +168,16 @@
         game (assoc game :settlements settlements)]
     {:game game :settlement new-town}))
 
-(defn get-tribe [game id]
+(defn get-group [game id]
   (get (:tribes game) id))
+
+(def ^:deprecated get-tribe get-group)
 
 (defn get-settlement [game id]
   (get (:settlements game) id))
+
+(defn get-settlements-owned-by [game group-id]
+  (filter #(= group-id (:owner %)) (:settlements game)))
 
 (defn ghost-city? [game settlement-id]
   (let [settlement (get-settlement game settlement-id)
@@ -181,12 +187,25 @@
       true
       (not (alive? tribe)))))
 
-(defn update-tribe
+(defn update-group
   "Return the game, updated"
   [game tribe]
   (let [tribe-id (:id tribe)
         tribes (assoc (:tribes game) tribe-id tribe)]
     (assoc game :tribes tribes)))
+
+(def ^:deprecated update-tribe update-group)
+
+(defn update-settlement
+  "Return the game, updated"
+  [game settlement]
+  (let [settlement-id (:id settlement)
+        settlements (assoc (:settelements game) settlement-id settlement)]
+    (assoc game :settlements settlements)))
+
+(defn update-settlements
+  [game settlements]
+  (reduce (fn [acc s] (update-settlement acc s)) game settlements))
 
 ; TODO
 ;(defn remove-dead-tribes [game])

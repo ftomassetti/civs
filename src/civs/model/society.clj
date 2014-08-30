@@ -48,17 +48,9 @@
 (defn chiefdom-society? [tribe]
   (= :chiefdom (.society tribe)))
 
-; TODO assign names to all the settlements
-; TODO when creating settlements for a group with a language they get a name
-(defn develop-a-language [group]
-  (let [group (assoc-language group (generate-language))
-        language (get-language group)
-        group (assoc group :name (.name language))]
-    group))
-
 (defn evolve-in-tribe
-  "The group evolve into a tribe and develop a language"
-  [tribe] (develop-a-language (assoc tribe :society :tribe)))
+  "The group evolve into a tribe"
+  [tribe] (assoc tribe :society :tribe))
 
 (defn evolve-in-chiefdom [tribe]
   (assoc tribe :society :chiefdom))

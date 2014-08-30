@@ -3,6 +3,7 @@
   civs.logic.tribe-choices
   (:require
     [civs.model.core :refer :all]
+    [civs.model.language :refer :all]
     [civs.model.society :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all])
@@ -67,9 +68,11 @@
     chance-to-become-sedentary
     (fn [game tribe]
       (let [ pos (.position tribe)
-             new-culture (assoc (.culture tribe) :nomadism :sedentary)]
+             new-culture (assoc (.culture tribe) :nomadism :sedentary)
+             language (get-language tribe)
+             settlement-name (if (nil? language) :unnamed (.name language))]
         {
-          :game (:game (create-settlement game :unnamed pos (:id tribe) current-turn))
+          :game (:game (create-settlement game settlement-name pos (:id tribe) current-turn))
           :tribe (assoc tribe :culture new-culture)
           :params {}
           }))))
@@ -127,23 +130,39 @@
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
+             language (get-language tribe)
+             settlement-name (if (nil? language) :unnamed (.name language))
              res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe) (.society tribe))
              game (:game res)
-             game (:game (create-settlement game :unnamed dest-target (:id (:tribe res)) current-turn))]
+             game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
         {
           :game game
           :tribe (assoc tribe :population (:remaining sp))
           :params {}
           }))))
 
+(defn develop-a-language
+  "Return a game"
+  [game group-id]
+  (let [group (get-group game group-id)
+        group (assoc-language group (generate-language))
+        language (get-language group)
+        group (assoc group :name (.name language))
+        game (update-group game group)
+        settlements (get-settlements-owned-by game (:id group))
+        settlements (map #(assoc % :name (.name language)) settlements)
+        game (update-settlements game settlements)]
+    game))
+
 (def evolution-in-tribe
   (PossibleEvent.
     :evolve-in-tribe
     (fn [game tribe]
       (possibility-of-evolving-into-tribe tribe))
-    (fn [game tribe]
+    (fn [game group]
       {
-        :tribe (evolve-in-tribe tribe)
+        :game (develop-a-language game (:id group))
+        :tribe (evolve-in-tribe group)
         :params {}
         })))
 
