@@ -5,6 +5,7 @@
     [civs.cli :refer :all]
     [civs.model.core :refer :all]
     [civs.model.society :refer :all]
+    [civs.model.history :refer :all]
     [civs.logic.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
@@ -165,8 +166,65 @@
         out (fress/read-object reader)]
   out))
 
+(defn- prepare-game-for-serialization
+  "Return game, updated"
+  [history game t prev-t]
+  (reduce
+    (fn [game group-id]
+      (let [current-group (group-at history t group-id)
+            prev-group    (group-at history prev-t group-id)]
+        (if (not (nil? prev-group))
+          (if (= (.culture current-group) (.culture prev-group))
+            (let [updated-group (assoc current-group :culture :unchanged)]
+              (update-group game updated-group))
+          game)
+        game)))
+    game
+    (groups-ids-in-game game)))
+
+(defn- prepare-history-turn-for-serialization
+  "Return history, updated"
+  [history turn]
+  (let [prev-t (dec turn)
+        game (game-at history turn)
+        game (prepare-game-for-serialization history game turn prev-t)]
+    (update-game history turn game)))
+
+(defn prepare-history-for-serialization
+  "We replace elements unchanged from turn to turn with :unchanged"
+  [history]
+  (reduce (fn [acc turn] (prepare-history-turn-for-serialization acc turn)) history (rest (turns history))))
+
+(defn- restore-game-from-serialization
+  "Return game, updated"
+  [history game t prev-t]
+  (reduce
+    (fn [game group-id]
+      (let [current-group (group-at history t group-id)
+            prev-group    (group-at history prev-t group-id)]
+        (if (not (nil? prev-group))
+          (if (= :unchanged (.culture current-group))
+            (let [updated-group (assoc current-group :culture  (.culture prev-group))]
+              (update-group game updated-group))
+            game)
+          game)))
+    game
+    (groups-ids-in-game game)))
+
+(defn- restore-history-turn-from-serialization
+  "Return history, updated"
+  [history turn]
+  (let [prev-t (dec turn)
+        game (game-at history turn)
+        game (restore-game-from-serialization history game turn prev-t)]
+    (update-game history turn game)))
+
+(defn restore-history-from-serialization [history]
+  [history]
+  (reduce (fn [acc turn] (restore-history-turn-from-serialization acc turn)) history (rest (turns history))))
+
 (defn save-simulation-result-fressian [simulation-result history-filename]
-  (let [ bytes (to-serialized-bytes simulation-result)
+  (let [ bytes (to-serialized-bytes (prepare-history-for-serialization simulation-result))
          bos (java.io.BufferedOutputStream. (java.io.FileOutputStream. (as-file history-filename)))]
     (.write bos bytes)
     (.flush bos)
@@ -176,7 +234,7 @@
   (let [ raf (java.io.RandomAccessFile. history-filename "r")
          ba (byte-array (.length raf))]
     (.read raf ba)
-    (from-serialized-bytes ba resolve)))
+    (restore-history-from-serialization (from-serialized-bytes ba resolve))))
 
 (defn save-simulation-result [simulation-result history-filename world-filename use-fressian]
   (if use-fressian

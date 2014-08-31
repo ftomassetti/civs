@@ -40,8 +40,22 @@
         loaded (from-serialized-bytes ser-bytes (fn [name] w77))]
     (is (= loaded simulation-result))))
 
+(deftest test-fressian-serialization-complex-simulation
+  (let [g (generate-game w77 20)
+        simulation-result (simulate g 80 false)
+        ser-bytes (to-serialized-bytes simulation-result)
+        loaded (from-serialized-bytes ser-bytes (fn [name] w77))]
+    (is (= loaded simulation-result))))
+
 (deftest test-fressian-serialization-of-language
   (let [l-original (generate-language)
         ser-bytes (to-serialized-bytes l-original)
         l-deserialized (from-serialized-bytes ser-bytes nil)]
     (is (= l-original l-deserialized))))
+
+(deftest test-prepare-and-restore-for-serialization
+  (let [g (generate-game w77 3)
+        history (simulate g 1 false)
+        prep-history (prepare-history-for-serialization history)
+        unprep-history (restore-history-from-serialization prep-history)]
+    (is (= history unprep-history))))

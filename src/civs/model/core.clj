@@ -207,18 +207,19 @@
   [game settlements]
   (reduce (fn [acc s] (update-settlement acc s)) game settlements))
 
+(defn groups-ids-in-game [game]
+  (into #{} (keys (:tribes game))))
+
 ; TODO
 ;(defn remove-dead-tribes [game])
 
 (defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
 
-; Deprecated, use groups instead
-(defn tribes [game]
-  (vals (.tribes game)))
-
 (defn groups [game]
   (vals (.tribes game)))
+
+(def ^:deprecated tribes groups)
 
 (defn groups-alive [game]
   (filter alive? (groups game)))
