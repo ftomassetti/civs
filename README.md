@@ -1,6 +1,6 @@
 # civs
 
-A simulator of civilizations evolution written in Clojure
+A simulator of civilizations evolution written in Clojure. By simulating migrations, language development, evolution of tribes, chiefdoms and nations, creation and destruction of settlements it builds a realistic world with a complete history. That history can be observed for fun or be used as base for future games.
 
 ## Status
 
