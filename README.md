@@ -8,6 +8,17 @@ A simulator of civilizations evolution written in Clojure. By simulating migrati
 
 [![Clojars Project](http://clojars.org/civs/latest-version.svg)](http://clojars.org/civs)
 
+Currently the simulation can be started with any number of bands (small groups of humans). During the turns they can:
+* evolve into tribe or chiefdoms
+* migrate towards better lands
+* settle new cities
+* develop languages
+* grow or perish
+* develop agriculture
+* change their lifestyle from nomadic to semi-sedentary or sedentary
+* split into separate groups
+* and so on... I am constantly improving the simulation
+
 ## Related projects
 
 The project generate civilizations evolving in worlds which can be generated using the world generator [lands](https://github.com/ftomassetti/lands).
