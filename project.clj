@@ -1,4 +1,4 @@
-(defproject civs "0.2.2"
+(defproject civs "0.2.3-SNAPSHOT"
   :description "A simulator of civilizations evolution"
   :url "https://github.com/ftomassetti/civs"
   :license {:name "Apache License v 2.0"
