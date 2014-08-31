@@ -51,6 +51,7 @@ Maven
 </dependency>
 ```
 
-## Unrelated projects which involves history simulation
+## Interesting links about human history and history simulation
 
 [world-js](http://anvoz.github.io/world-js/) *an attempt to show you a brief history of humankind via a simulation game.*
+[A Brief History of Humankind](https://www.coursera.org/course/humankind) *a Coursera course on human history*
