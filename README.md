@@ -29,4 +29,4 @@ The history files produced by civs can be explored using [civs-browser](https://
 
 ## Unrelated projects which involves history simulation
 
-[world-js](http://anvoz.github.io/world-js/)
+[world-js](http://anvoz.github.io/world-js/) *an attempt to show you a brief history of humankind via a simulation game.*
