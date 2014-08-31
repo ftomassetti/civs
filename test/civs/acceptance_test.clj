@@ -31,6 +31,9 @@
 (defn mock-prosperity-temperature-multiplier-at []
   (fn [world pos] 1.0))
 
+(defn mock-prosperity-humidity-multiplier-at []
+  (fn [world pos] 1.0))
+
 (deftest test-not-everyone-dies-immediately
   (with-redefs [crand-int   (mock-crand-int)
                 crand-float (mock-crand-float)]
@@ -51,6 +54,7 @@
 (defn check-biome [biome min-factor max-factor ntribes nturns]
   (with-redefs [ biome-at (mock-land-biome biome)
                  prosperity-temperature-multiplier-at (mock-prosperity-temperature-multiplier-at)
+                 prosperity-humidity-multiplier-at (mock-prosperity-humidity-multiplier-at)
                  crand-int   (mock-crand-int)
                  crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 ntribes)

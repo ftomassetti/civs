@@ -97,6 +97,9 @@
 (defn temperature-at [world pos]
   (.get (.getTemperature world) (:x pos) (:y pos)))
 
+(defn humidity-at [world pos]
+  (.get (.getHumidity world) (:x pos) (:y pos)))
+
 (defn game-width [game]
   (-> game .world .getDimension .getWidth))
 

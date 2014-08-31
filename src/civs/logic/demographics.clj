@@ -94,6 +94,33 @@
                   nil)]
     (+ 1.0 (/ mod 10.0))))
 
+(defn- prosperity-humidity-multiplier-with-range
+  ([negative-limit positive-limit value]
+    (prosperity-humidity-multiplier-with-range negative-limit (mean negative-limit positive-limit) positive-limit value))
+  ([negative-limit neutral-value positive-limit value]
+    (let [ direction (if (> positive-limit negative-limit) :asc :desc)
+      mod (case direction
+            :asc (if (< value neutral-value)
+                   (let [diff       (- neutral-value value)
+                         max-diff   (- neutral-value negative-limit)
+                         negativity (/ diff max-diff)]
+                     (* negativity -0.2))
+                   (let [diff       (- value neutral-value )
+                         max-diff   (- positive-limit neutral-value )
+                         positivity (/ diff max-diff)]
+                     (* positivity 0.2)))
+            :desc (if (< value neutral-value)
+                    (let [diff       (- neutral-value value)
+                          max-diff   (- neutral-value positive-limit)
+                          positivity (/ diff max-diff)]
+                      (* positivity 0.2))
+                    (let [diff       (- value neutral-value )
+                          max-diff   (- negative-limit neutral-value )
+                          negativity (/ diff max-diff)]
+                      (* negativity -0.2)))
+            nil)]
+      (+ 1.0 (/ mod 10.0)))))
+
 (defn- prosperity-temperature-multiplier
   "A factor depending on the temperature"
   [world biome temperature]
@@ -117,10 +144,32 @@
     (check-in-range res 0.98 1.02 (str "Prosperity temperature modifier for " biome " at " temperature " : " res))
     res))
 
-;(for [x (range 512)]
-;  (for [y (range 512)]
-;    (when (not (= com.github.lands.Biome/OCEAN (biome-at w77 {:x x :y y})))
-;      (println x y (prosperity-temperature-multiplier-at w77 {:x x :y y})))))
+(defn- prosperity-humidity-multiplier
+  "A factor depending on the humidity"
+  [world biome humidity]
+  (let [ res (let [bottom -0.50
+                   q75 (.get (-> world .getHumidity .quantiles) 75)
+                   q66 (.get (-> world .getHumidity .quantiles) 66)
+                   q50 (.get (-> world .getHumidity .quantiles) 50)
+                   q33 (.get (-> world .getHumidity .quantiles) 33)
+                   q10 (.get (-> world .getHumidity .quantiles) 10)
+                   top (* 3.0 q10)]
+               (case (.name biome)
+                 "OCEAN"       (throw (Exception. (str "No prosperity in the ocean")))
+                 "ICELAND"     1.0
+                 "TUNDRA"      1.0
+                 "ALPINE"      1.0
+                 "GLACIER"     1.0
+                 "GRASSLAND"   (prosperity-humidity-multiplier-with-range q66    q33 humidity)
+                 "ROCK_DESERT" (prosperity-humidity-multiplier-with-range bottom q66 humidity)
+                 "SAND_DESERT" (prosperity-humidity-multiplier-with-range bottom q50 humidity)
+                 "FOREST"      (prosperity-humidity-multiplier-with-range top    q33 humidity)
+                 "SAVANNA"     (prosperity-humidity-multiplier-with-range q50 (mean q50 q10) top humidity)
+                 "JUNGLE"      (prosperity-humidity-multiplier-with-range top    q33 humidity)
+                 (throw (Exception. (str "Unknown biome" biome)))))]
+    (check-in-range res 0.975 1.025 (str "Prosperity humidity modifier for " biome " at " humidity " : " res))
+    res))
+
 
 (defn prosperity-temperature-multiplier-at [world pos]
   (let [biome (biome-at world pos)
@@ -134,10 +183,23 @@
               " where biome should be " biome
               ". World " (.getName world)) e))))))
 
+(defn prosperity-humidity-multiplier-at [world pos]
+  (let [biome (biome-at world pos)
+        humidity (humidity-at world pos)]
+    (try
+      (prosperity-humidity-multiplier world biome humidity)
+      (catch Exception e
+        (throw
+          (Exception.
+            (str "Problem while calculating prosperity humidity multiplier at " pos
+              " where biome should be " biome
+              ". World " (.getName world)) e))))))
+
 (defn base-prosperity-per-activity [world pos activity]
   (*
     (base-prosperity-per-activity-in-biome (biome-at world pos) activity)
-    (prosperity-temperature-multiplier-at world pos)))
+    (prosperity-temperature-multiplier-at world pos)
+    (prosperity-humidity-multiplier-at world pos)))
 
 (defn crowding-per-activity [group activity]
   (let [ actives (-> group .population active-persons)
