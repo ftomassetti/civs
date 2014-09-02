@@ -73,8 +73,8 @@
     (+ a (crand-int diff))))
 
 (defn random-pos [dimension]
-  (let [x (.nextInt r (.getWidth dimension))
-        y (.nextInt r (.getHeight dimension))]
+  (let [x (crand-int (.getWidth dimension))
+        y (crand-int (.getHeight dimension))]
     {:x x :y y}))
 
 (defn round [v]
