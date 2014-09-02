@@ -19,7 +19,7 @@ Currently the simulation can be started with any number of bands (small groups o
 * split into separate groups
 * and so on... I am constantly improving the simulation
 
-## Related projects
+## How to use it: related projects
 
 The project generate civilizations evolving in worlds which can be generated using the world generator [lands](https://github.com/ftomassetti/lands).
 To generate languages for the different civilizations it use the names generation library [langgen](https://github.com/ftomassetti/langgen). 
@@ -27,6 +27,32 @@ Lands and langgen are written Python and wrapped in Java using Jython. The wrapp
 
 The history files produced by civs can be explored using [civs-browser](https://github.com/ftomassetti/civs-browser).
 
-## Unrelated projects which involves history simulation
+## Include it as a dependency
+
+Leiningen
+
+```
+[civs "0.2.2"]
+```
+
+Gradle
+
+```
+compile "civs:civs:0.2.2"
+```
+
+Maven
+
+```
+<dependency>
+  <groupId>civs</groupId>
+  <artifactId>civs</artifactId>
+  <version>0.2.2</version>
+</dependency>
+```
+
+## Interesting links about human history and history simulation
 
 [world-js](http://anvoz.github.io/world-js/) *an attempt to show you a brief history of humankind via a simulation game.*
+
+[A Brief History of Humankind](https://www.coursera.org/course/humankind) *a Coursera course on human history*
