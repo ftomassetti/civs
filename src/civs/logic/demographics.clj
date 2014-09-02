@@ -19,7 +19,7 @@
       (random-pos-avoiding world biomes-to-avoid)
       pos)))
 
-(defn randomInitialPopulation []
+(defn- random-initial-population []
   (model/Population. (crand-int 15) (crand-int 15) (crand-int 15) (crand-int 5) (crand-int 5)))
 
 (def unhospital-biomes #{com.github.lands.Biome/OCEAN com.github.lands.Biome/GLACIER com.github.lands.Biome/ICELAND})
@@ -28,7 +28,7 @@
   "Return a map game, tribe"
   [game]
   (let [world (.world game)]
-    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (randomInitialPopulation) initial-culture initial-society)))
+    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (random-initial-population) initial-culture initial-society)))
 
 (defn- base-prosperity-per-activity-in-biome
   "Do not consider population limits"
