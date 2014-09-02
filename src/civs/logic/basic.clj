@@ -9,19 +9,6 @@
 
 (require '[civs.model.core :as model])
 
-(def r (Random. 1))
-
-(def current-turn nil)
-
-(defn get-current-turn []
-  current-turn)
-
-(defn inc-current-turn []
-  (def current-turn (inc (get-current-turn))))
-
-(defn reset-current-turn []
-  (def current-turn 0))
-
 (defn crand-int
   "c stands for c, so to not override clojure.core/rand-int"
   [n]
@@ -83,7 +70,7 @@
   (let [diff (- b a)]
     (+ a (crand-int diff))))
 
-(defn randomPos [dimension]
+(defn random-pos [dimension]
   (let [x (.nextInt r (.getWidth dimension))
         y (.nextInt r (.getHeight dimension))]
     {:x x :y y}))
@@ -110,12 +97,28 @@
     [values (repeatedly n #(if (< (crand-float) factor) [1 0] [0 1]))]
     (reduce #(map + %1 %2) [0 0] values)))
 
-(def facts (atom []))
-
-(defn fact [type params]
-  (swap! facts conj (assoc params :type type)))
-
 (defn saturate [value max]
   (if (> value max)
     max
     value))
+
+; ======================================
+; Globals
+; ======================================
+
+(def current-turn nil)
+
+(defn get-current-turn []
+  current-turn)
+
+(defn inc-current-turn []
+  (def current-turn (inc (get-current-turn))))
+
+(defn reset-current-turn []
+  (def current-turn 0))
+
+
+(def facts (atom []))
+
+(defn fact [type params]
+  (swap! facts conj (assoc params :type type)))

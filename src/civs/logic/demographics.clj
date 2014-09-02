@@ -13,13 +13,13 @@
 (require '[civs.model.core :as model])
 
 (defn randomLandPos [world]
-  (let [pos (randomPos (.getDimension world))]
+  (let [pos (random-pos (.getDimension world))]
     (if (isLand world pos)
       pos
       (randomLandPos world))))
 
 (defn random-pos-avoiding [world biomes-to-avoid]
-  (let [pos (randomPos (.getDimension world))
+  (let [pos (random-pos (.getDimension world))
         biome (biome-at world pos)]
     (if (in? biomes-to-avoid biome)
       (random-pos-avoiding world biomes-to-avoid)
