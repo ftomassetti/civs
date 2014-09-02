@@ -14,4 +14,7 @@
   :main ^:skip-aot civs.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :repositories {"sonartype snapshots" "https://oss.sonatype.org/content/repositories/snapshots"})
+  :repositories {"sonartype snapshots" "https://oss.sonatype.org/content/repositories/snapshots"}
+  :test-selectors {:default (complement :acceptance)
+                   :acceptance :acceptance
+                   :all (constantly true)})

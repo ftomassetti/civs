@@ -34,14 +34,14 @@
 (defn mock-prosperity-humidity-multiplier-at []
   (fn [world pos] 1.0))
 
-(deftest test-not-everyone-dies-immediately
+(deftest ^:acceptance test-not-everyone-dies-immediately
   (with-redefs [crand-int   (mock-crand-int)
                 crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 10)
           g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))]
       (is (> (game-total-pop g) 0)))))
 
-(deftest test-population-do-not-expand-too-much-too-fast
+(deftest ^:acceptance test-population-do-not-expand-too-much-too-fast
   (with-redefs [crand-int   (mock-crand-int)
                 crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 10)
@@ -67,29 +67,29 @@
       (is (> final-pop (* start-pop min-factor)))
       (is (< final-pop (* start-pop max-factor))))))
 
-(deftest test-population-in-a-sand-desert
+(deftest ^:acceptance test-population-in-a-sand-desert
   (check-biome com.github.lands.Biome/SAND_DESERT 0.5 1.3 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
-(deftest test-population-in-a-grassland
+(deftest ^:acceptance test-population-in-a-grassland
   (check-biome com.github.lands.Biome/GRASSLAND 0.9 1.8 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
-(deftest test-population-in-a-savanna
+(deftest ^:acceptance test-population-in-a-savanna
   (check-biome com.github.lands.Biome/SAVANNA 0.9 1.5 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
-(deftest test-population-in-a-forest
+(deftest ^:acceptance test-population-in-a-forest
   (check-biome com.github.lands.Biome/FOREST 0.9 1.6 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
-(deftest test-population-in-a-jungle
+(deftest ^:acceptance test-population-in-a-jungle
   (check-biome com.github.lands.Biome/JUNGLE 0.9 1.7 30 10))
 
-(deftest test-long-lasting-population-in-grassland
+(deftest ^:acceptance test-long-lasting-population-in-grassland
   (check-biome com.github.lands.Biome/GRASSLAND 2.0 1000.0 50 100))
 
-(deftest test-long-lasting-population-in-savanna
+(deftest ^:acceptance test-long-lasting-population-in-savanna
   (check-biome com.github.lands.Biome/SAVANNA 0.8 10.0 50 100))
 
 (def game-scenario-w77-100tribes-30turns
@@ -101,7 +101,7 @@
            g (reduce (fn [g _] (turn g)) g0 (repeat nturns :_))]
       g)))
 
-(deftest test-some-societies-remain-nomadic
+(deftest ^:acceptance test-some-societies-remain-nomadic
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
@@ -115,7 +115,7 @@
     (is (and (>= nsocieties-still-nomadic 10) (<= nsocieties-still-nomadic 60)))
     ))
 
-(deftest test-some-societies-become-semi-sedentary
+(deftest ^:acceptance test-some-societies-become-semi-sedentary
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
@@ -125,7 +125,7 @@
     (is (and (>= nsocieties-semi-sedentary 10) (<= nsocieties-semi-sedentary 55)))
     ))
 
-(deftest test-some-societies-become-sedentary
+(deftest ^:acceptance test-some-societies-become-sedentary
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
@@ -134,7 +134,7 @@
          nsocieties-sedentary        (.size (filter sedentary? societies))]
     (is (and (>= nsocieties-sedentary 3) (<= nsocieties-sedentary 15)))))
 
-(deftest test-some-discover-agriculture
+(deftest ^:acceptance test-some-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-agriculture      (.size (filter #(know? % :agriculture) societies))]
@@ -142,7 +142,7 @@
       (println "scenario-w77-100tribes-30turns agriculture" nsocieties-agriculture))
     (is (and (>= nsocieties-agriculture 3) (<= nsocieties-agriculture 25)))))
 
-(deftest test-some-most-do-not-discover-agriculture
+(deftest ^:acceptance test-some-most-do-not-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-no-agriculture   (.size (filter #(not (know? % :agriculture)) societies))]
@@ -150,7 +150,7 @@
       (println "scenario-w77-100tribes-30turns no agriculture" nsocieties-no-agriculture))
     (is (and (>= nsocieties-no-agriculture 35) (<= nsocieties-no-agriculture 90)))))
 
-(deftest test-some-societies-are-band
+(deftest ^:acceptance test-some-societies-are-band
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          target                      (.size (filter band-society? societies))]
@@ -158,7 +158,7 @@
       (println "scenario-w77-100tribes-30turns band" target))
     (is (and (>= target 10) (<= target 85)))))
 
-(deftest test-some-societies-are-tribe
+(deftest ^:acceptance test-some-societies-are-tribe
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          target                      (.size (filter tribe-society? societies))]
@@ -166,7 +166,7 @@
       (println "scenario-w77-100tribes-30turns tribe" target))
     (is (and (>= target 5) (<= target 35)))))
 
-(deftest test-no-societies-are-yet-chiefdom
+(deftest ^:acceptance test-no-societies-are-yet-chiefdom
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          target                      (.size (filter chiefdom-society? societies))]
