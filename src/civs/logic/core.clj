@@ -1,17 +1,11 @@
 (ns
   ^{:author ftomassetti}
   civs.logic.core
-  (:import [civs.model.core Population Tribe Game])
   (:require
     [civs.model.core :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.demographics :refer :all]))
-
-(import '(java.util Random))
-(import '(com.github.lands Biome))
-
-(require '[civs.model.core :as model])
 
 (defn generate-game [world n-tribes]
   (let [ game (create-game world)
@@ -28,5 +22,3 @@
 (defn turn [game]
   (let [ tribes (vals (.tribes game))]
     (clean-game (reduce (fn [acc t] (tribe-turn acc t)) game tribes))))
-
-;(repeatedly 100 (fn [] (def g (turn g))))
