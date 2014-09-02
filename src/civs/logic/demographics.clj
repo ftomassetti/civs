@@ -4,7 +4,8 @@
   (:require
     [civs.model.core :refer :all]
     [civs.model.society :refer :all]
-    [civs.logic.basic :refer :all])
+    [civs.logic.basic :refer :all]
+    [civs.logic.globals :refer :all])
   (:import [civs.model.core Population Tribe]))
 
 (import '(java.util Random))

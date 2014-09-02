@@ -1,11 +1,6 @@
 (ns
   ^{:author ftomassetti}
-  civs.logic.basic
-  (:import [civs.model.core Population Tribe])
-  (:require
-    [civs.model.core :refer :all]))
-
-(import '(java.util Random))
+  civs.logic.globals)
 
 ; ======================================
 ; Turn

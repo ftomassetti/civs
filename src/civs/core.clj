@@ -6,6 +6,7 @@
     [civs.model.core :refer :all]
     [civs.model.society :refer :all]
     [civs.logic.core :refer :all]
+    [civs.logic.globals :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.demographics :refer :all]
     [civs.logic.tribe-choices :refer :all]
