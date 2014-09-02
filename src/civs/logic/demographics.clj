@@ -8,7 +8,6 @@
     [civs.logic.globals :refer :all])
   (:import [civs.model.core Population Tribe]))
 
-(import '(java.util Random))
 (import '(com.github.lands Biome))
 
 (require '[civs.model.core :as model])
@@ -162,7 +161,6 @@
                  (throw (Exception. (str "Unknown biome" biome)))))]
     (check-in-range res 0.975 1.025 (str "Prosperity humidity modifier for " biome " at " humidity " : " res))
     res))
-
 
 (defn prosperity-temperature-multiplier-at [world pos]
   (let [biome (biome-at world pos)
@@ -342,7 +340,7 @@
     (Population. new-children new-young-men new-young-women new-old-men new-old-women)))
 
 (defn update-tribe-population
-  "TODO this sum the various deltas to the tribe population"
+  "this sum the various deltas to the tribe population"
   [tribe deltas]
   (let [new-population (reduce sum-population (.population tribe) deltas)]
     (assoc tribe :population new-population)))
