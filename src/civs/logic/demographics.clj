@@ -13,12 +13,6 @@
 
 (require '[civs.model.core :as model])
 
-(defn randomLandPos [world]
-  (let [pos (random-pos (.getDimension world))]
-    (if (isLand world pos)
-      pos
-      (randomLandPos world))))
-
 (defn random-pos-avoiding [world biomes-to-avoid]
   (let [pos (random-pos (.getDimension world))
         biome (biome-at world pos)]
@@ -30,8 +24,6 @@
   (model/Population. (crand-int 15) (crand-int 15) (crand-int 15) (crand-int 5) (crand-int 5)))
 
 (def unhospital-biomes #{com.github.lands.Biome/OCEAN com.github.lands.Biome/GLACIER com.github.lands.Biome/ICELAND})
-
-; (.get (-> w77 .getTemperature .thresholds) com.github.lands.Thresholds$Level/HIGH)
 
 (defn generate-tribe
   "Return a map game, tribe"
