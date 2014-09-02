@@ -1,5 +1,5 @@
 (ns
   ^{:author ftomassetti}
-  civs.commerce)
+  civs.activities.commerce)
 
 ; See http://en.wikipedia.org/wiki/Trade
