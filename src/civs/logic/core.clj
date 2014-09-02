@@ -7,6 +7,8 @@
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.demographics :refer :all]))
 
+; Asked question about this function:
+; http://stackoverflow.com/questions/25632388/clojure-executing-an-operation-n-times-using-the-output-as-input-of-next-operat
 (defn generate-game [world n-tribes]
   (let [ game (create-game world)
          game (reduce (fn [acc, _] (:game (generate-tribe acc))) game (repeat n-tribes :just_something))]
