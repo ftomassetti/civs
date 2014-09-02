@@ -9,15 +9,17 @@
 
 (require '[civs.model.core :as model])
 
+(def __internal_random__ (Random. 1))
+
 (defn crand-int
   "c stands for c, so to not override clojure.core/rand-int"
   [n]
-  (.nextInt r n))
+  (.nextInt __internal_random__ n))
 
 (defn crand-float
   "c stands for c, so to not override clojure.core/rand-float"
   []
-  (.nextFloat r))
+  (.nextFloat __internal_random__))
 
 (defn roll [prob]
   (< (crand-float) prob))
@@ -102,23 +104,3 @@
     max
     value))
 
-; ======================================
-; Globals
-; ======================================
-
-(def current-turn nil)
-
-(defn get-current-turn []
-  current-turn)
-
-(defn inc-current-turn []
-  (def current-turn (inc (get-current-turn))))
-
-(defn reset-current-turn []
-  (def current-turn 0))
-
-
-(def facts (atom []))
-
-(defn fact [type params]
-  (swap! facts conj (assoc params :type type)))
