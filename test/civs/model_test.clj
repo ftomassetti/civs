@@ -26,6 +26,14 @@
   (is (= true  (alive?  (Tribe. nil nil nil (Population. 1 2 3 4 5) nil nil))))
   (is (= false (alive?  (Tribe. nil nil nil (Population. 0 0 0 0 0) nil nil)))))
 
+(deftest test-game-width
+  (let [g (create-game w77)]
+    (is (= 512 (game-width g)))))
+
+(deftest test-game-height
+  (let [g (create-game w77)]
+    (is (= 512 (game-height g)))))
+
 (deftest test-create-tribe
   (let [g (create-game nil)
         g (:game (create-tribe g "Tribe1" nil nil nil nil))
