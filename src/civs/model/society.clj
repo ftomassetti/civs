@@ -57,7 +57,7 @@
 
 (defn possibility-of-evolving-into-tribe [tribe]
   (if (band-society? tribe)
-    (let [pop (tribe-total-pop tribe)
+    (let [pop (group-total-pop tribe)
           surplus (- pop 45)]
       (if (> surplus 0)
         (saturate (/ surplus 250.0) 0.75)
@@ -66,7 +66,7 @@
 
 (defn possibility-of-evolving-into-chiefdom [tribe]
   (if (tribe-society? tribe)
-    (let [pop (tribe-total-pop tribe)
+    (let [pop (group-total-pop tribe)
           surplus (- pop 900)]
       (if (> pop 900)
         0.1
@@ -78,19 +78,19 @@
 (defn possibility-of-splitting [tribe]
   (cond
     (band-society? tribe)
-      (let [pop (tribe-total-pop tribe)
+      (let [pop (group-total-pop tribe)
             surplus (- pop 70)]
         (if (> pop 70)
           (saturate (* surplus 0.015) 0.80)
           0.02))
     (tribe-society? tribe)
-    (let [pop (tribe-total-pop tribe)
+    (let [pop (group-total-pop tribe)
           surplus (- pop 900)]
       (if (> pop 900)
         (saturate (* surplus 0.002) 0.40)
         0.01))
     (chiefdom-society? tribe)
-    (let [pop (tribe-total-pop tribe)
+    (let [pop (group-total-pop tribe)
           surplus (- pop 9000)]
       (if (> pop 9000)
         (saturate (* surplus 0.0002) 0.25)

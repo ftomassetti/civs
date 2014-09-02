@@ -69,8 +69,10 @@
         new-culture (assoc (-> tribe .culture) :knowledge new-knowledge)]
     (assoc tribe :culture new-culture)))
 
-(defn tribe-total-pop [tribe]
-  (-> tribe :population total-persons))
+(defn group-total-pop [group]
+  (-> group :population total-persons))
+
+(def ^:deprecated tribe-total-pos group-total-pop)
 
 (defn get-language [group]
   (-> group .culture .language))
