@@ -9,9 +9,9 @@
 
 ; Asked question about this function:
 ; http://stackoverflow.com/questions/25632388/clojure-executing-an-operation-n-times-using-the-output-as-input-of-next-operat
-(defn generate-game [world n-tribes]
-  (let [ game (create-game world)
-         game (reduce (fn [acc, _] (:game (generate-tribe acc))) game (repeat n-tribes :just_something))]
+(defn generate-game [world n-groups]
+  (let [ game0 (create-game world)
+         game (nth (iterate #(:game (generate-tribe %)) game0) n-groups :just_something)]
     game))
 
 (defn- clean-game
