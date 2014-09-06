@@ -50,8 +50,8 @@
                            "ALPINE"      0.80
                            "GLACIER"     0.5
                            "GRASSLAND"   0.835
-                           "ROCK_DESERT" 0.770
-                           "SAND_DESERT" 0.760
+                           "ROCK_DESERT" 0.750
+                           "SAND_DESERT" 0.735
                            "FOREST"      0.820
                            "SAVANNA"     0.800
                            "JUNGLE"      0.825
@@ -64,7 +64,7 @@
                    "GLACIER"     0.5
                    "GRASSLAND"   0.835
                    "ROCK_DESERT" 0.65
-                   "SAND_DESERT" 0.65
+                   "SAND_DESERT" 0.63
                    "FOREST"      0.78
                    "SAVANNA"     0.800
                    "JUNGLE"      0.785

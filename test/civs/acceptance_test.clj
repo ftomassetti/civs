@@ -87,10 +87,16 @@
   (check-biome com.github.lands.Biome/JUNGLE 0.9 1.7 30 10))
 
 (deftest ^:acceptance test-long-lasting-population-in-grassland
-  (check-biome com.github.lands.Biome/GRASSLAND 2.0 1000.0 50 100))
+  (check-biome com.github.lands.Biome/GRASSLAND 2.0 (Math/pow 1.075 100) 50 100))
 
 (deftest ^:acceptance test-long-lasting-population-in-savanna
-  (check-biome com.github.lands.Biome/SAVANNA 0.8 10.0 50 100))
+  (check-biome com.github.lands.Biome/SAVANNA 2.0 (Math/pow 1.035 100) 50 100))
+
+(deftest ^:acceptance test-long-lasting-population-in-forest
+  (check-biome com.github.lands.Biome/FOREST 2.5 (Math/pow 1.05 100) 50 100))
+
+(deftest ^:acceptance test-long-lasting-population-in-sand-desert
+  (check-biome com.github.lands.Biome/SAND_DESERT 0.1 (Math/pow 1.02 100) 50 100))
 
 (def game-scenario-w77-100tribes-30turns
   (with-redefs [ crand-int   (mock-crand-int)
