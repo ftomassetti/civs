@@ -10,7 +10,12 @@
     [civs.logic.demographics :refer :all])
   (:import [civs.model.core Population Tribe]))
 
-(def migration-radius 3)
+(defn- migration-radius [group]
+  (cond
+    (nomadic? group) 2
+    (semi-sedentary? group) 2
+    (sedentary? group) 4
+    :default (throw (Exception. "Unexpected"))))
 
 (defn- discovery-population-factor [total-pop required-pop]
   (+ 1.0 (Math/log10 (/ (float total-pop) required-pop))))
@@ -91,7 +96,7 @@
     (fn [game group]
       (let [ world (.world game)
              pos (.position group)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))]
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))]
         (if (empty? possible-destinations)
           0.0
           (let [p (prosperity-in-pos game group pos)
@@ -104,7 +109,7 @@
       (let [ world (.world game)
              pos (.position group)
              _ (check-valid-position world pos)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos game group pos))
                                      :pos pos
@@ -132,7 +137,7 @@
             pop (-> tribe .population total-persons)
             world (.world game)
             pos (.position tribe)
-            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))]
+            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))]
         (if
           (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
           (/ (opposite c) 2.7)
@@ -141,7 +146,7 @@
       (let [ world (.world game)
              pos (.position tribe)
              sp (split-pop (.population tribe))
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))
              preferences (map (fn [pos] {
                                           :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                           :pos pos
