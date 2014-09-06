@@ -82,15 +82,20 @@
   (PossibleEvent.
     :migrate
     (fn [game tribe]
-      (case
-        (sedentary? tribe) 0
-        (semi-sedentary? tribe) 0.15
-        (nomadic? tribe) 0.85))
+      (let [ world (.world game)
+             pos (.position tribe)
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))]
+        (if (empty? possible-destinations)
+          0.0
+          (case
+            (sedentary? tribe) 0
+            (semi-sedentary? tribe) 0.15
+            (nomadic? tribe) 0.85))))
     (fn [game tribe]
       (let [ world (.world game)
              pos (.position tribe)
              _ (check-valid-position world pos)
-             possible-destinations (land-cells-around world pos 3)
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                      :pos pos
@@ -115,16 +120,19 @@
     :split
     (fn [game tribe]
       (let [c (crowding game tribe)
-            pop (-> tribe .population total-persons)]
+            pop (-> tribe .population total-persons)
+            world (.world game)
+            pos (.position tribe)
+            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))]
         (if
-          (and (> pop 35) (< c 0.9))
+          (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
           (/ (opposite c) 2.7)
           0.0)))
     (fn [game tribe]
       (let [ world (.world game)
              pos (.position tribe)
              sp (split-pop (.population tribe))
-             possible-destinations (land-cells-around world pos 3)
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))
              preferences (map (fn [pos] {
                                           :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                           :pos pos
@@ -132,15 +140,22 @@
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
              language (get-language tribe)
-             settlement-name (if (nil? language) :unnamed (.name language))
-             res (create-tribe game :unnamed dest-target (:leaving sp) (.culture tribe) (.society tribe))
-             game (:game res)
-             game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
-        {
-          :game game
-          :tribe (assoc tribe :population (:remaining sp))
-          :params {}
-          }))))
+             new-group-name (if (nil? language) :unnamed (.name language))
+             res (create-tribe game new-group-name dest-target (:leaving sp) (.culture tribe) (.society tribe))
+             game (:game res)]
+        (if (sedentary? tribe)
+          (let [settlement-name (if (nil? language) :unnamed (.name language))
+                game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
+            {
+              :game game
+              :tribe (assoc tribe :population (:remaining sp))
+              :params {}
+            })
+          {
+            :game game
+            :tribe (assoc tribe :population (:remaining sp))
+            :params {}
+            })))))
 
 (defn develop-a-language
   "Return a game"

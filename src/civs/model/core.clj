@@ -177,6 +177,9 @@
 (defn get-group [game id]
   (get (:tribes game) id))
 
+(defn groups [game]
+  (vals (.tribes game)))
+
 (defn group-in-pos [game pos]
   (let [groups (filter #(= pos (.position %)) (groups game))]
     (when (> (.size groups) 1)
@@ -229,9 +232,6 @@
 
 (defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
-
-(defn groups [game]
-  (vals (.tribes game)))
 
 (def ^:deprecated tribes groups)
 
