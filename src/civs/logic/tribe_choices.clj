@@ -132,42 +132,42 @@
 (def split
   (PossibleEvent.
     :split
-    (fn [game tribe]
-      (let [c (crowding game tribe)
-            pop (-> tribe .population total-persons)
+    (fn [game group]
+      (let [c (crowding game group)
+            pop (-> group .population total-persons)
             world (.world game)
-            pos (.position tribe)
+            pos (.position group)
             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))]
         (if
           (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
           (/ (opposite c) 2.7)
           0.0)))
-    (fn [game tribe]
+    (fn [game group]
       (let [ world (.world game)
-             pos (.position tribe)
-             sp (split-pop (.population tribe))
+             pos (.position group)
+             sp (split-pop (.population group))
              possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))
              preferences (map (fn [pos] {
-                                          :preference (perturbate-low (prosperity-in-pos game tribe pos))
+                                          :preference (perturbate-low (prosperity-in-pos game group pos))
                                           :pos pos
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
-             language (get-language tribe)
+             language (get-language group)
              new-group-name (if (nil? language) :unnamed (.name language))
-             res (create-tribe game new-group-name dest-target (:leaving sp) (.culture tribe) (.society tribe))
+             res (create-tribe game new-group-name dest-target (:leaving sp) (.culture group) (.society group))
              game (:game res)]
-        (if (sedentary? tribe)
+        (if (sedentary? group)
           (let [settlement-name (if (nil? language) :unnamed (.name language))
                 game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
             {
               :game game
-              :tribe (assoc tribe :population (:remaining sp))
+              :tribe (assoc group :population (:remaining sp))
               :params {}
             })
           {
             :game game
-            :tribe (assoc tribe :population (:remaining sp))
+            :tribe (assoc group :population (:remaining sp))
             :params {}
             })))))
 
