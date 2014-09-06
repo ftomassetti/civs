@@ -30,7 +30,7 @@
         (not (band-society? group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
           prob (* (- agr-prosperity 0.75) 6.0)
-          prob (* (discovery-population-factor (total-pop group) 80) prob)
+          prob (* (discovery-population-factor (group-total-pop group) 80) prob)
           prob (saturate (max 0.0 prob) 0.30)]
       ; agriculture is discovered in places good for agriculture
       prob)
