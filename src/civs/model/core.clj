@@ -52,22 +52,22 @@
 
 (defrecord Tribe [id name position population culture society])
 
-(defn dead? [tribe]
-  (= 0 (total-persons (:population tribe))))
+(defn dead? [group]
+  (= 0 (total-persons (:population group))))
 
 (def ^:deprecated is-dead? dead?)
 
-(defn alive? [tribe]
-  (not (dead? tribe)))
+(defn alive? [group]
+  (not (dead? group)))
 
-(defn know? [tribe knowledge]
-  (in? (-> tribe .culture .knowledge) knowledge))
+(defn know? [group knowledge]
+  (in? (-> group .culture .knowledge) knowledge))
 
-(defn learn [tribe knowledge]
-  (let [old-knowledge (-> tribe .culture .knowledge)
+(defn learn [group knowledge]
+  (let [old-knowledge (-> group .culture .knowledge)
         new-knowledge (conj old-knowledge knowledge)
-        new-culture (assoc (-> tribe .culture) :knowledge new-knowledge)]
-    (assoc tribe :culture new-culture)))
+        new-culture (assoc (-> group .culture) :knowledge new-knowledge)]
+    (assoc group :culture new-culture)))
 
 (defn group-total-pop [group]
   (-> group :population total-persons))
