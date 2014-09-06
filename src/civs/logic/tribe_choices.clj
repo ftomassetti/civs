@@ -81,29 +81,31 @@
 (def migrate
   (PossibleEvent.
     :migrate
-    (fn [game tribe]
+    (fn [game group]
       (let [ world (.world game)
-             pos (.position tribe)
+             pos (.position group)
              possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))]
         (if (empty? possible-destinations)
           0.0
-          (case
-            (sedentary? tribe) 0
-            (semi-sedentary? tribe) 0.15
-            (nomadic? tribe) 0.85))))
-    (fn [game tribe]
+          (let [p (prosperity-in-pos game group pos)
+                ip (- 1.0 p)]
+            (* ip (case
+              (sedentary? group) 0
+              (semi-sedentary? group) 0.15
+              (nomadic? group) 0.85))))))
+    (fn [game group]
       (let [ world (.world game)
-             pos (.position tribe)
+             pos (.position group)
              _ (check-valid-position world pos)
              possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))
              preferences (map (fn [pos] {
-                                     :preference (perturbate-low (prosperity-in-pos game tribe pos))
+                                     :preference (perturbate-low (prosperity-in-pos game group pos))
                                      :pos pos
                                      }) possible-destinations)
              preferences (sort-by :preference preferences)
              target (:pos (first preferences))]
         {
-          :tribe (assoc tribe :position target)
+          :tribe (assoc group :position target)
           :params {:to target}
           }))))
 
