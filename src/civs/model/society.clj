@@ -39,58 +39,56 @@
 
 (def initial-society :band)
 
-(defn band-society? [tribe]
-  (= :band (.society tribe)))
+(defn band-society? [group]
+  (= :band (.society group)))
 
-(defn tribe-society? [tribe]
-  (= :tribe (.society tribe)))
+(defn group-society? [tribe]
+  (= :tribe (.society group)))
 
-(defn chiefdom-society? [tribe]
-  (= :chiefdom (.society tribe)))
+(defn chiefdom-society? [group]
+  (= :chiefdom (.society group)))
 
 (defn evolve-in-tribe
   "The group evolve into a tribe"
   [tribe] (assoc tribe :society :tribe))
 
-(defn evolve-in-chiefdom [tribe]
-  (assoc tribe :society :chiefdom))
+(defn evolve-in-chiefdom [group]
+  (assoc group :society :chiefdom))
 
-(defn possibility-of-evolving-into-tribe [tribe]
-  (if (band-society? tribe)
-    (let [pop (group-total-pop tribe)
+(defn possibility-of-evolving-into-tribe [group]
+  (if (band-society? group)
+    (let [pop (group-total-pop group)
           surplus (- pop 45)]
       (if (> surplus 0)
         (saturate (/ surplus 250.0) 0.75)
         0.0))
     0.0))
 
-(defn possibility-of-evolving-into-chiefdom [tribe]
-  (if (tribe-society? tribe)
-    (let [pop (group-total-pop tribe)
+(defn possibility-of-evolving-into-chiefdom [group]
+  (if (tribe-society? group)
+    (let [pop (group-total-pop group)
           surplus (- pop 900)]
       (if (> pop 900)
         0.1
         0.0))
     0.0))
 
-;(defn possibility-of-developing-agriculture [tribe])
-
-(defn possibility-of-splitting [tribe]
+(defn possibility-of-splitting [group]
   (cond
-    (band-society? tribe)
-      (let [pop (group-total-pop tribe)
+    (band-society? group)
+      (let [pop (group-total-pop group)
             surplus (- pop 70)]
         (if (> pop 70)
           (saturate (* surplus 0.015) 0.80)
           0.02))
-    (tribe-society? tribe)
-    (let [pop (group-total-pop tribe)
+    (tribe-society? group)
+    (let [pop (group-total-pop group)
           surplus (- pop 900)]
       (if (> pop 900)
         (saturate (* surplus 0.002) 0.40)
         0.01))
-    (chiefdom-society? tribe)
-    (let [pop (group-total-pop tribe)
+    (chiefdom-society? group)
+    (let [pop (group-total-pop group)
           surplus (- pop 9000)]
       (if (> pop 9000)
         (saturate (* surplus 0.0002) 0.25)
@@ -99,10 +97,10 @@
     :else 0.01))
 
 (defn n-bands-alive [game]
-  (.size (filter #(and (alive? %) (band-society? %)) (tribes game))))
+  (.size (filter #(and (alive? %) (band-society? %)) (groups game))))
 
 (defn n-tribes-alive [game]
-  (.size (filter #(and (alive? %) (tribe-society? %)) (tribes game))))
+  (.size (filter #(and (alive? %) (tribe-society? %)) (groups game))))
 
 (defn n-chiefdoms-alive [game]
-  (.size (filter #(and (alive? %) (chiefdom-society? %)) (tribes game))))
+  (.size (filter #(and (alive? %) (chiefdom-society? %)) (groups game))))

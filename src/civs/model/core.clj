@@ -239,4 +239,4 @@
   (.size (filter #(ghost-city? game (.id %)) (settlements game))))
 
 (defn game-total-pop-in-pos [game pos]
-  (reduce + 0 (map #(-> % .population total-persons) (filter #(= pos (.position %)) (tribes game)))))
+  (reduce + 0 (map #(-> % .population total-persons) (filter #(= pos (.position %)) (groups game)))))
