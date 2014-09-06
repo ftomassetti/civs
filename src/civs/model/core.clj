@@ -47,7 +47,7 @@
 (def initial-culture (Culture. :nomadic [] nil))
 
 ; ###########################################################
-;  Group (lecay name: Tribe)
+;  Group (lecagy name: Tribe)
 ; ###########################################################
 
 (defrecord Tribe [id name position population culture society])
