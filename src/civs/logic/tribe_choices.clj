@@ -19,7 +19,7 @@
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
     (if (and (nomadic? tribe) (> prosperity 0.6))
-      (saturate (/ (- prosperity 0.75) 1.2) 0.10)
+      (saturate (/ (- prosperity 0.75) 1.3) 0.10)
       0.0)))
 
 ; Must be at least a tribe society
@@ -30,7 +30,7 @@
         (not (band-society? group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
           prob (* (- agr-prosperity 0.75) 6.0)
-          prob (* (discovery-population-factor (group-total-pop group) 80) prob)
+          prob (* (discovery-population-factor (group-total-pop group) 125) prob)
           prob (saturate (max 0.0 prob) 0.30)]
       ; agriculture is discovered in places good for agriculture
       prob)
@@ -45,7 +45,7 @@
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.15 0.0)))
+          (not (band-society? tribe))) 0.13 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 

@@ -50,10 +50,10 @@
                            "ALPINE"      0.80
                            "GLACIER"     0.5
                            "GRASSLAND"   0.835
-                           "ROCK_DESERT" 0.775
-                           "SAND_DESERT" 0.775
+                           "ROCK_DESERT" 0.770
+                           "SAND_DESERT" 0.760
                            "FOREST"      0.820
-                           "SAVANNA"     0.805
+                           "SAVANNA"     0.800
                            "JUNGLE"      0.825
                            (throw (Exception. (str "Unknown biome" biome))))
     :agriculture (case (.name biome)

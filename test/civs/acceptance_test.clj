@@ -68,7 +68,7 @@
       (is (< final-pop (* start-pop max-factor))))))
 
 (deftest ^:acceptance test-population-in-a-sand-desert
-  (check-biome com.github.lands.Biome/SAND_DESERT 0.5 1.3 30 10))
+  (check-biome com.github.lands.Biome/SAND_DESERT 0.5 1.25 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest ^:acceptance test-population-in-a-grassland
@@ -76,7 +76,7 @@
 
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest ^:acceptance test-population-in-a-savanna
-  (check-biome com.github.lands.Biome/SAVANNA 0.9 1.5 30 10))
+  (check-biome com.github.lands.Biome/SAVANNA 0.85 1.5 30 10))
 
 ; We do not want to drop too drammatically and it should not increase too much
 (deftest ^:acceptance test-population-in-a-forest
