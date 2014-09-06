@@ -42,7 +42,7 @@
 (defn band-society? [group]
   (= :band (.society group)))
 
-(defn group-society? [group]
+(defn tribe-society? [group]
   (= :tribe (.society group)))
 
 (defn chiefdom-society? [group]
