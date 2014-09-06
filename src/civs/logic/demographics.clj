@@ -6,7 +6,7 @@
     [civs.model.society :refer :all]
     [civs.logic.basic :refer :all]
     [civs.logic.globals :refer :all])
-  (:import [civs.model.core Population Tribe]))
+  (:import [civs.model.core Population Group]))
 
 (import '(com.github.lands Biome))
 

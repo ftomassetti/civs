@@ -47,10 +47,10 @@
 (def initial-culture (Culture. :nomadic [] nil))
 
 ; ###########################################################
-;  Group (lecagy name: Tribe)
+;  Group
 ; ###########################################################
 
-(defrecord Tribe [id name position population culture society])
+(defrecord Group [id name position population culture society])
 
 (defn dead? [group]
   (= 0 (total-persons (:population group))))
@@ -158,7 +158,7 @@
   "Return the game, updated and the new tribe"
   [game name position population culture society]
   (let [tribe-id (:next_id game)
-        new-tribe (Tribe. tribe-id name position population culture society)
+        new-tribe (Group. tribe-id name position population culture society)
         tribes (assoc (:tribes game) tribe-id new-tribe)
         game (assoc game :next_id (inc tribe-id))
         game (assoc game :tribes tribes)]

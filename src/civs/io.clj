@@ -16,7 +16,7 @@
     [clojure.string :as string]
     [miner.tagged :as tag]
     [clojure.data.fressian :as fress])
-  (:import [civs.model.core Population Tribe Culture Game Population Settlement]
+  (:import [civs.model.core Population Group Culture Game Population Settlement]
            [org.fressian.handlers WriteHandler ReadHandler ILookup WriteHandlerLookup])
   (:use clojure.java.io))
 
@@ -30,7 +30,7 @@
 (defmethod print-method Culture [this w]
   (tag/pr-tagged-record-on this w))
 
-(defmethod print-method Tribe [this w]
+(defmethod print-method Group [this w]
   (tag/pr-tagged-record-on this w))
 
 (defmethod print-method Game [this w]

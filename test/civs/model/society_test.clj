@@ -7,7 +7,7 @@
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])
-  (:import [civs.model.core Population Tribe Settlement]))
+  (:import [civs.model.core Population Settlement]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
 

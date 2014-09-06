@@ -1,7 +1,7 @@
 (ns
   ^{:author ftomassetti}
   civs.logic.basic
-  (:import [civs.model.core Population Tribe])
+  (:import [civs.model.core Population Group])
   (:require
     [civs.model.core :refer :all]))
 

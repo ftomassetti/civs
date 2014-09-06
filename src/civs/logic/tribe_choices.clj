@@ -8,7 +8,7 @@
     [civs.logic.basic :refer :all]
     [civs.logic.globals :refer :all]
     [civs.logic.demographics :refer :all])
-  (:import [civs.model.core Population Tribe]))
+  (:import [civs.model.core Population]))
 
 (defn- migration-radius [group]
   (cond

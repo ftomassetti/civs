@@ -6,7 +6,7 @@
             [civs.logic.basic :refer :all]
             [civs.logic.demographics :refer :all]
             [civs.logic.tribe-choices :refer :all])
-  (:import [civs.model.core Population Tribe Settlement]))
+  (:import [civs.model.core Population Settlement]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
 ; x 100 y 100 TUNDRA
@@ -18,14 +18,4 @@
 ; x 222 y 222 SAND_DESERT
 (def pos-sand-desert {:x 222 :y 222})
 
-;(deftest test-base-prosperity
-;  (let [t (Tribe. nil nil nil nil initial-culture nil)]
-;    (= 0.2 (base-prosperity w77 t pos-tundra))
-;    (= 0.8 (base-prosperity w77 t pos-forest))
-;    (= 0.8 (base-prosperity w77 t pos-jungle))
-;    (= 0.3 (base-prosperity w77 t pos-sand-desert)))
-;  (let [t (learn (Tribe. nil nil nil nil initial-culture nil) :agriculture)]
-;    (= 0.2 (base-prosperity w77 t pos-tundra))
-;    (= 0.8 (base-prosperity w77 t pos-forest))
-;    (= 0.8 (base-prosperity w77 t pos-jungle))
-;    (= 0.3 (base-prosperity w77 t pos-sand-desert))))
+
