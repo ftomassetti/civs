@@ -10,6 +10,8 @@
     [civs.logic.demographics :refer :all])
   (:import [civs.model.core Population Tribe]))
 
+(def migration-radius 3)
+
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
@@ -84,7 +86,7 @@
     (fn [game group]
       (let [ world (.world game)
              pos (.position group)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))]
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))]
         (if (empty? possible-destinations)
           0.0
           (let [p (prosperity-in-pos game group pos)
@@ -97,7 +99,7 @@
       (let [ world (.world game)
              pos (.position group)
              _ (check-valid-position world pos)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos game group pos))
                                      :pos pos
@@ -125,7 +127,7 @@
             pop (-> tribe .population total-persons)
             world (.world game)
             pos (.position tribe)
-            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))]
+            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))]
         (if
           (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
           (/ (opposite c) 2.7)
@@ -134,7 +136,7 @@
       (let [ world (.world game)
              pos (.position tribe)
              sp (split-pop (.population tribe))
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos 3))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos migration-radius))
              preferences (map (fn [pos] {
                                           :preference (perturbate-low (prosperity-in-pos game tribe pos))
                                           :pos pos
