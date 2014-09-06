@@ -60,7 +60,7 @@
           (println "  bands       " (n-bands-alive current-game))
           (println "  tribes      " (n-tribes-alive current-game))
           (println "  chiefdoms   " (n-chiefdoms-alive current-game))
-          (println "  settlements " (.size (settlements current-game)))
+          (println "  settlements " (.size (populated-settlements current-game)))
           (println ""))))
       {:facts (deref facts-by-turn), :game-snapshots (deref game-snapshots)}))
 

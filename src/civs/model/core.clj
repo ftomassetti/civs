@@ -247,6 +247,9 @@
       []
       s)))
 
+(defn populated-settlements [game]
+  (filter #(not (ghost-city? game (.id %))) (settlements game)))
+
 (defn n-ghost-cities [game]
   (.size (filter #(ghost-city? game (.id %)) (settlements game))))
 
