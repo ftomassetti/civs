@@ -12,12 +12,12 @@
 
 (require '[civs.model.core :as model])
 
-(defn random-pos-avoiding [world biomes-to-avoid]
-  (let [pos (random-pos (.getDimension world))
-        biome (biome-at world pos)]
-    (if (in? biomes-to-avoid biome)
-      (random-pos-avoiding world biomes-to-avoid)
-      pos)))
+(defn- random-pos-with-condition [game condition]
+  (let [ world (.world game)
+         pos (random-pos (.getDimension world))]
+    (if (condition game pos)
+      pos
+      (random-pos-with-condition game condition))))
 
 (defn- random-initial-population []
   (model/Population. (crand-int 15) (crand-int 15) (crand-int 15) (crand-int 5) (crand-int 5)))
@@ -28,7 +28,16 @@
   "Return a map game, tribe"
   [game]
   (let [world (.world game)]
-    (create-tribe game :unnamed (random-pos-avoiding world unhospital-biomes) (random-initial-population) initial-culture initial-society)))
+    (create-tribe game :unnamed
+      (random-pos-with-condition game (fn [game pos]
+                                        (let [ world (.world game)
+                                               biome (biome-at world pos)]
+                                          (if (in? unhospital-biomes biome)
+                                            false
+                                            (pos-free? game pos)))))
+      (random-initial-population)
+      initial-culture
+      initial-society)))
 
 (defn- base-prosperity-per-activity-in-biome
   "Do not consider population limits"

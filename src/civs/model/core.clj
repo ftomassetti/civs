@@ -77,6 +77,7 @@
 (defn get-language [group]
   (-> group .culture .language))
 
+
 (defn assoc-language [group language]
   (let [old-culture (.culture group)
         new-culture (assoc old-culture :language language)]
@@ -175,6 +176,17 @@
 
 (defn get-group [game id]
   (get (:tribes game) id))
+
+(defn group-in-pos [game pos]
+  (let [groups (filter #(= pos (.position %)) (groups game))]
+    (when (> (.size groups) 1)
+      (throw (Exception. "More than one group in the same position")))
+    (if (empty? groups)
+      nil
+      (first groups))))
+
+(defn pos-free? [game pos]
+  (= nil (group-in-pos game pos)))
 
 (def ^:deprecated get-tribe get-group)
 
