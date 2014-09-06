@@ -199,7 +199,7 @@
   (memoize (fn [world pos activity] (*
     (base-prosperity-per-activity-in-biome (biome-at world pos) activity)
     (prosperity-temperature-multiplier-at world pos)
-    (prosperity-humidity-multiplier-at world pos))))
+    (prosperity-humidity-multiplier-at world pos)))))
 
 (defn crowding-per-activity [group activity]
   (let [ actives (-> group .population active-persons)
