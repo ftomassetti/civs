@@ -28,7 +28,7 @@
 ; See http://en.wikipedia.org/wiki/Band_society
 ;
 ; * it is the initial kind of society
-; * it can be no larger than 100 individuals
+; * it can be not larger than 100 individuals
 ;
 ; A band tend to split when growing above 100 individuals
 ; A band can evolve into a tribe by either joining an existing tribe or

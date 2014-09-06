@@ -12,6 +12,9 @@
 
 (def migration-radius 3)
 
+(defn- discovery-population-factor [total-pop required-pop]
+  (+ 1.0 (Math/log10 (/ (float total-pop) required-pop))))
+
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
@@ -26,7 +29,9 @@
         (not (know? group :agriculture))
         (not (band-society? group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
-          prob (saturate (max 0.0 (* (- agr-prosperity 0.75) 6.0)) 0.30)]
+          prob (* (- agr-prosperity 0.75) 6.0)
+          prob (* (discovery-population-factor (total-pop group) 80) prob)
+          prob (saturate (max 0.0 prob) 0.30)]
       ; agriculture is discovered in places good for agriculture
       prob)
     0.0))
