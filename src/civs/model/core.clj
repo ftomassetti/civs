@@ -5,6 +5,8 @@
             [civs.model.language]))
 
 (defrecord PoliticalEntity [id name society groups culture])
+(declare culture)
+(declare society)
 
 ; ###########################################################
 ;  Generic
@@ -35,14 +37,14 @@
 ; To develop agriculture a population must be :semi-sedentary
 ; To become :sedentary a population must know agriculture
 
-(defn sedentary? [t]
-  (= :sedentary (-> t .culture .nomadism)))
+(defn sedentary? [game t]
+  (= :sedentary (.nomadism (culture game t))))
 
-(defn semi-sedentary? [t]
-  (= :semi-sedentary (-> t .culture .nomadism)))
+(defn semi-sedentary? [game t]
+  (= :semi-sedentary (.nomadism (culture game t))))
 
-(defn nomadic? [t]
-  (= :nomadic (-> t .culture .nomadism)))
+(defn nomadic? [game t]
+  (= :nomadic (.nomadism (culture game t))))
 
 (defrecord Culture [nomadism knowledge language])
 
@@ -72,6 +74,9 @@
 ; Return the Culture of the entity
 (defn culture [game el]
   (.culture (to-political-entity game el)))
+
+(defn society [game el]
+  (.society (to-political-entity game el)))
 
 ; Return the political entity associated
 (declare political-entity)
@@ -216,7 +221,7 @@
 
 (defn- by-id-with-collection [game id]
   "Return the element associated to the id"
-  (reduce #(or %1 {:element (get-in %2 id) :collection %2}) [:groups :settlements :political-entities]))
+  (reduce #(let [res (get-in game [%2 id])] (if (nil? res) nil {:element res :collection %2})) nil [:groups :settlements :political-entities]))
 
 (defn by-id [game id]
   "Return the element associated to the id"

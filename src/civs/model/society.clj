@@ -39,14 +39,14 @@
 
 (def initial-society :band)
 
-(defn band-society? [group]
-  (= :band (.society group)))
+(defn band-society? [game group]
+  (= :band (society game group)))
 
-(defn tribe-society? [group]
-  (= :tribe (.society group)))
+(defn tribe-society? [game group]
+  (= :tribe (society game group)))
 
-(defn chiefdom-society? [group]
-  (= :chiefdom (.society group)))
+(defn chiefdom-society? [game group]
+  (= :chiefdom (society game group)))
 
 (defn evolve-in-tribe
   "The group evolve into a tribe"
@@ -55,8 +55,8 @@
 (defn evolve-in-chiefdom [group]
   (assoc group :society :chiefdom))
 
-(defn possibility-of-evolving-into-tribe [group]
-  (if (band-society? group)
+(defn possibility-of-evolving-into-tribe [game group]
+  (if (band-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 45)]
       (if (> surplus 0)
@@ -64,8 +64,8 @@
         0.0))
     0.0))
 
-(defn possibility-of-evolving-into-chiefdom [group]
-  (if (tribe-society? group)
+(defn possibility-of-evolving-into-chiefdom [game group]
+  (if (tribe-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 900)]
       (if (> pop 900)
@@ -73,21 +73,21 @@
         0.0))
     0.0))
 
-(defn possibility-of-splitting [group]
+(defn possibility-of-splitting [game group]
   (cond
-    (band-society? group)
+    (band-society? game group)
       (let [pop (group-total-pop group)
             surplus (- pop 70)]
         (if (> pop 70)
           (saturate (* surplus 0.015) 0.80)
           0.02))
-    (tribe-society? group)
+    (tribe-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 900)]
       (if (> pop 900)
         (saturate (* surplus 0.002) 0.40)
         0.01))
-    (chiefdom-society? group)
+    (chiefdom-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 9000)]
       (if (> pop 9000)
@@ -97,10 +97,10 @@
     :else 0.01))
 
 (defn n-bands-alive [game]
-  (.size (filter #(and (alive? %) (band-society? %)) (groups game))))
+  (.size (filter #(and (alive? %) (band-society? game %)) (groups game))))
 
 (defn n-tribes-alive [game]
-  (.size (filter #(and (alive? %) (tribe-society? %)) (groups game))))
+  (.size (filter #(and (alive? %) (tribe-society? game %)) (groups game))))
 
 (defn n-chiefdoms-alive [game]
-  (.size (filter #(and (alive? %) (chiefdom-society? %)) (groups game))))
+  (.size (filter #(and (alive? %) (chiefdom-society? game %)) (groups game))))

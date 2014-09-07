@@ -270,26 +270,28 @@
       (saturate (saturate res 1.0) (* men-factor 3)))
     0))
 
-(defn update-births
+(defn- update-births
   "This method returns a delta"
-  [world tribe prosperity]
-  (let [young-men               (-> tribe :population :young-men)
+  [game tribe prosperity]
+  (let [world (.world game)
+         young-men               (-> tribe :population :young-men)
         young-women             (-> tribe :population :young-women)
         men-availability-factor (men-availability-factor young-men young-women)
         women-fertility         (* young-women 1.1 (perturbate-high prosperity))
         births                  (round (* women-fertility men-availability-factor))
         ; In primitive nomadic societies mothers tend to have one child every four
         ; years
-        births                  (if (nomadic? tribe) (* 0.75 births) births)]
+        births                  (if (nomadic? game tribe) (* 0.75 births) births)]
     (when (> births 0)
       (fact :births {:tribe (.id tribe) :n births}))
     (Population. births 0 0 0 0)))
 
-(defn update-children
+(defn- update-children
   "Children can die or grow in to young men or women.
   This method returns a delta"
-  [world tribe prosperity]
-  (let [mortality (* (opposite prosperity) 0.35)
+  [game tribe prosperity]
+  (let [world (.world game)
+         mortality (* (opposite prosperity) 0.35)
         n-children (-> tribe :population :children)
         [dead, grown] (rsplit-by n-children mortality)
         [men, women] (rsplit-by grown 0.5)]
@@ -301,11 +303,12 @@
       (fact :children-grown-as-women {:tribe (.id tribe) :n women}))
     (Population. (* -1 n-children) men women 0 0)))
 
-(defn update-young-population
+(defn- update-young-population
   "Young men and women can die, remain young or grow old.
   This method returns a delta"
-  [world tribe prosperity]
-  (let [mortality-men     (* (opposite prosperity) 0.22)
+  [game tribe prosperity]
+  (let [world (.world game)
+         mortality-men     (* (opposite prosperity) 0.22)
         mortality-women   (* (opposite prosperity) 0.22)
         n-young-men       (-> tribe :population :young-men)
         n-young-women     (-> tribe :population :young-women)
@@ -323,11 +326,12 @@
       (fact :young-women-grew-old {:tribe (.id tribe) :n grown-w}))
     (Population. 0 (* -1 (+ dead-m grown-m)) (* -1 (+ dead-w grown-w)) grown-m grown-w)))
 
-(defn update-old-population
+(defn- update-old-population
   "Old men and women can die or remain old.
   This method returns a delta"
-  [world tribe prosperity]
-  (let [mortality-men   (saturate (* (opposite prosperity) 1.1) 1.0)
+  [game tribe prosperity]
+  (let [world (.world game)
+         mortality-men   (saturate (* (opposite prosperity) 1.1) 1.0)
         mortality-women (saturate (* (opposite prosperity) 1.1) 1.0)
         n-old-men   (-> tribe :population :old-men)
         n-old-women (-> tribe :population :old-women)
@@ -348,7 +352,7 @@
         new-old-women   (+ (.old-women pop)   (.old-women delta))]
     (Population. new-children new-young-men new-young-women new-old-men new-old-women)))
 
-(defn update-tribe-population
+(defn- update-tribe-population
   "this sum the various deltas to the tribe population"
   [tribe deltas]
   (let [new-population (reduce sum-population (.population tribe) deltas)]
@@ -362,8 +366,8 @@
   [game tribe]
   (let [p (prosperity game tribe)
         world (.world game)
-        deltaFromChildren        (update-children         world tribe p)
-        deltaFromYoungPopulation (update-young-population world tribe p)
-        deltaFromOldPopulation   (update-old-population   world tribe p)
-        deltaFromBirths          (update-births world tribe p)]
+        deltaFromChildren        (update-children         game tribe p)
+        deltaFromYoungPopulation (update-young-population game tribe p)
+        deltaFromOldPopulation   (update-old-population   game tribe p)
+        deltaFromBirths          (update-births game tribe p)]
     (update-tribe-population tribe [deltaFromChildren deltaFromYoungPopulation deltaFromOldPopulation deltaFromBirths])))

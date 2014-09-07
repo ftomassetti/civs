@@ -10,11 +10,11 @@
     [civs.logic.demographics :refer :all])
   (:import [civs.model.core Population]))
 
-(defn- migration-radius [group]
+(defn- migration-radius [game group]
   (cond
-    (nomadic? group) 2
-    (semi-sedentary? group) 2
-    (sedentary? group) 4
+    (nomadic? game group) 2
+    (semi-sedentary? game group) 2
+    (sedentary? game group) 4
     :default (throw (Exception. "Unexpected"))))
 
 (defn- discovery-population-factor [total-pop required-pop]
@@ -23,16 +23,16 @@
 (defn chance-to-become-semi-sedentary [game tribe]
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
-    (if (and (nomadic? tribe) (> prosperity 0.6))
+    (if (and (nomadic? game tribe) (> prosperity 0.6))
       (saturate (/ (- prosperity 0.75) 1.5) 0.10)
       0.0)))
 
 ; Must be at least a tribe society
 (defn chance-to-develop-agriculture [game group]
   (if (and
-        (not (nomadic? group))
-        (not (know? group :agriculture))
-        (not (band-society? group)))
+        (not (nomadic? game group))
+        (not (know? game group :agriculture))
+        (not (band-society? game group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
           prob (* (- agr-prosperity 0.75) 6.0)
           prob (* (discovery-population-factor (group-total-pop group) 200) prob)
@@ -45,12 +45,12 @@
 (defn chance-to-become-sedentary [game tribe]
   (let [world (.world game)
          prosperity (prosperity game tribe)
-         ss (semi-sedentary? tribe)
-        know-agriculture (know? tribe :agriculture)]
+         ss (semi-sedentary? game tribe)
+        know-agriculture (know? game tribe :agriculture)]
     (if (and
           ss
           know-agriculture
-          (not (band-society? tribe))) 0.125 0.0)))
+          (not (band-society? game tribe))) 0.125 0.0)))
 
 (defrecord PossibleEvent [name chance apply])
 
@@ -59,9 +59,10 @@
     :become-semi-sedentary
     chance-to-become-semi-sedentary
     (fn [game tribe]
-      (let [new-culture (assoc (.culture tribe) :nomadism :semi-sedentary)]
+      (let [new-culture (assoc (culture game tribe) :nomadism :semi-sedentary)]
         {
-          :tribe (assoc tribe :culture new-culture)
+          :tribe tribe
+          :game (update-by-id game (.political-entity-id tribe) #(assoc % :culture new-culture))
           :params {}
           }))))
 
@@ -96,20 +97,20 @@
     (fn [game group]
       (let [ world (.world game)
              pos (.position group)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))]
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius game group)))]
         (if (empty? possible-destinations)
           0.0
           (let [p (prosperity-in-pos game group pos)
                 ip (- 1.0 p)]
             (* ip (case
-              (sedentary? group) 0
-              (semi-sedentary? group) 0.15
-              (nomadic? group) 0.85))))))
+              (sedentary? game group) 0
+              (semi-sedentary? game group) 0.15
+              (nomadic? game group) 0.85))))))
     (fn [game group]
       (let [ world (.world game)
              pos (.position group)
              _ (check-valid-position world pos)
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius game group)))
              preferences (map (fn [pos] {
                                      :preference (perturbate-low (prosperity-in-pos game group pos))
                                      :pos pos
@@ -137,7 +138,7 @@
             pop (-> group .population total-persons)
             world (.world game)
             pos (.position group)
-            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))]
+            possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius game group)))]
         (if
           (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
           (/ (opposite c) 2.7)
@@ -146,7 +147,7 @@
       (let [ world (.world game)
              pos (.position group)
              sp (split-pop (.population group))
-             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius group)))
+             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius game group)))
              preferences (map (fn [pos] {
                                           :preference (perturbate-low (prosperity-in-pos game group pos))
                                           :pos pos
@@ -157,7 +158,7 @@
              new-group-name (if (nil? language) :unnamed (.name language))
              res (create-tribe game new-group-name dest-target (:leaving sp) (.culture group) (.society group))
              game (:game res)]
-        (if (sedentary? group)
+        (if (sedentary? game group)
           (let [settlement-name (if (nil? language) :unnamed (.name language))
                 game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
             {
@@ -188,7 +189,7 @@
   (PossibleEvent.
     :evolve-in-tribe
     (fn [game tribe]
-      (possibility-of-evolving-into-tribe tribe))
+      (possibility-of-evolving-into-tribe game tribe))
     (fn [game group]
       (let [game (develop-a-language game (:id group))
             group (get-group game (:id group))
@@ -203,7 +204,7 @@
   (PossibleEvent.
     :evolve-in-chiefdom
     (fn [game tribe]
-      (possibility-of-evolving-into-chiefdom tribe))
+      (possibility-of-evolving-into-chiefdom game tribe))
     (fn [game tribe]
       {
         :tribe (evolve-in-chiefdom tribe)

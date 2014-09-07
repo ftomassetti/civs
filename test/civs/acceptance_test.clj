@@ -111,9 +111,9 @@
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
-         nsocieties-still-nomadic    (.size (filter nomadic? societies))
-         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
-         nsocieties-sedentary        (.size (filter sedentary? societies))]
+         nsocieties-still-nomadic    (.size (filter #(nomadic? g %) societies))
+         nsocieties-semi-sedentary   (.size (filter #(semi-sedentary? g %) societies))
+         nsocieties-sedentary        (.size (filter #(sedentary? g %) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns nomadic" nsocieties-still-nomadic)
       (println "scenario-w77-100tribes-30turns semi-sedentary" nsocieties-semi-sedentary)
@@ -125,9 +125,9 @@
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
-         nsocieties-still-nomadic    (.size (filter nomadic? societies))
-         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
-         nsocieties-sedentary        (.size (filter sedentary? societies))]
+         nsocieties-still-nomadic    (.size (filter #(nomadic? g %) societies))
+         nsocieties-semi-sedentary   (.size (filter #(semi-sedentary? g %) societies))
+         nsocieties-sedentary        (.size (filter #(sedentary? g %) societies))]
     (is (and (>= nsocieties-semi-sedentary 10) (<= nsocieties-semi-sedentary 55)))
     ))
 
@@ -135,9 +135,9 @@
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          nsocieties-total            (.size societies)
-         nsocieties-still-nomadic    (.size (filter nomadic? societies))
-         nsocieties-semi-sedentary   (.size (filter semi-sedentary? societies))
-         nsocieties-sedentary        (.size (filter sedentary? societies))]
+         nsocieties-still-nomadic    (.size (filter #(nomadic? g %) societies))
+         nsocieties-semi-sedentary   (.size (filter #(semi-sedentary? g %) societies))
+         nsocieties-sedentary        (.size (filter #(sedentary? g %) societies))]
     (is (and (>= nsocieties-sedentary 3) (<= nsocieties-sedentary 15)))))
 
 (deftest ^:acceptance test-some-discover-agriculture
