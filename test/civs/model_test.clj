@@ -37,7 +37,7 @@
 (deftest test-create-tribe
   (let [g (create-game nil)
         g (:game (create-tribe g "Group1" nil nil nil nil))
-        t (get (-> g .tribes) 1)]
+        t (get (-> g .groups) 1)]
   (is t)
   (is (= 1 (.id t)))))
 

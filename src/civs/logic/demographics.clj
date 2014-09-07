@@ -28,7 +28,7 @@
   "Return a map game, tribe"
   [game]
   (let [world (.world game)]
-    (create-tribe game :unnamed
+    (create-group game :unnamed
       (random-pos-with-condition game (fn [game pos]
                                         (let [ world (.world game)
                                                biome (biome-at world pos)]
@@ -225,16 +225,16 @@
         crowding (crowding-per-activity tribe activity)]
     (saturate (* base crowding) 1.0)))
 
-(defn known-activities [group]
-  (if (know? group :agriculture)
-    [:gathering-and-hunting :agriculture ]
+(defn known-activities [game group]
+  (if (know? game group :agriculture)
+    [:gathering-and-hunting :agriculture]
     [:gathering-and-hunting]))
 
 (defn chosen-activity
   [game group pos]
   (let [prosperity-by-activity (map
                                  (fn [activity] {:activity activity :prosperity (prosperity-in-pos-per-activity game group pos activity)})
-                                 (known-activities group))]
+                                 (known-activities game group))]
     (:activity (first (sort-by :prosperity prosperity-by-activity)))))
 
 (defn crowding
@@ -251,7 +251,7 @@
       (map
         (fn [activity]
           (prosperity-in-pos-per-activity game group pos activity))
-        (known-activities group)))))
+        (known-activities game group)))))
 
 (defn prosperity
   "A number in [0,1] whic indicates how well the tribe is living.

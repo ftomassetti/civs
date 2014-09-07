@@ -4,6 +4,8 @@
   (:require [clojure.math.combinatorics :as combo]
             [civs.model.language]))
 
+(defrecord PoliticalEntity [id name society groups culture])
+
 ; ###########################################################
 ;  Generic
 ; ###########################################################
@@ -50,7 +52,34 @@
 ;  Group
 ; ###########################################################
 
-(defrecord Group [id name position population culture society])
+(declare by-id)
+(declare required-by-id)
+
+(defrecord Group [id name position population political-entity-id])
+
+; Can get an id, a political-entity or a group
+(defmulti to-political-entity (fn [_ el] (class el)))
+
+(defmethod to-political-entity Group [game group]
+  (try
+    (required-by-id game (:political-entity-id group))
+    (catch IllegalArgumentException e
+      (throw (IllegalStateException. (str "Political entity for group " group " not found") e)))))
+
+(defmethod to-political-entity PoliticalEntity [game pe]
+  pe)
+
+; Return the Culture of the entity
+(defn culture [game el]
+  (.culture (to-political-entity game el)))
+
+; Return the political entity associated
+(declare political-entity)
+
+;(extend-type Group HasCulture
+;  (culture [game en]
+;    (let [pe (political-entity game en)]
+;      (culture pe))))
 
 (defn dead? [group]
   (= 0 (total-persons (:population group))))
@@ -60,13 +89,13 @@
 (defn alive? [group]
   (not (dead? group)))
 
-(defn know? [group knowledge]
-  (in? (-> group .culture .knowledge) knowledge))
+(defn know? [game group knowledge]
+  (in? (.knowledge (culture game group)) knowledge))
 
 (defn learn [group knowledge]
-  (let [old-knowledge (-> group .culture .knowledge)
+  (let [old-knowledge (-> group culture .knowledge)
         new-knowledge (conj old-knowledge knowledge)
-        new-culture (assoc (-> group .culture) :knowledge new-knowledge)]
+        new-culture (assoc (-> group culture) :knowledge new-knowledge)]
     (assoc group :culture new-culture)))
 
 (defn group-total-pop [group]
@@ -75,11 +104,10 @@
 (def ^:deprecated tribe-total-pos group-total-pop)
 
 (defn get-language [group]
-  (-> group .culture .language))
-
+  (-> group culture .language))
 
 (defn assoc-language [group language]
-  (let [old-culture (.culture group)
+  (let [old-culture (culture group)
         new-culture (assoc old-culture :language language)]
     (assoc group :culture new-culture)))
 
@@ -145,24 +173,95 @@
 
 (defrecord Settlement [id name foundation-turn position owner])
 
+;===============================================
+; Society (Govern forms)
+;===============================================
+
+; :band
+; :tribe
+; :chiefdom
+; :kingdom
+; :republic
+
+;===============================================
+; Political entity
+;===============================================
+
+(defn add-political-entity
+  "Associate the correct id to the political-entity.
+  Return the game and the assigned id"
+  [game political-entity]
+  {:pre [(nil? (:id political-entity))]} ;political entity should have no id, it will be assigned
+  (let [id (:next_id game)
+        pe (assoc political-entity :id id)
+        game (assoc game :next_id (inc id))
+        game (assoc-in game [:political-entities id] pe)]
+    {:game game :new-id id } ))
+
+(defn update-political-entity
+  "The function f should take the political entity and the game"
+  [game id f]
+  (update-in game [:political-entities id] f game))
+
+(defn political-entities-ids
+  [game]
+  (keys (:political-entities game)))
+
+(defn add-group-to-political-entity [game pe-id group-id]
+  (update-political-entity game pe-id
+    (fn [pe game]
+      (let [gs (.groups pe)
+            gs (conj gs group-id)]
+        (assoc pe :groups gs)))))
+
+(defn- by-id-with-collection [game id]
+  "Return the element associated to the id"
+  (reduce #(or %1 {:element (get-in %2 id) :collection %2}) [:groups :settlements :political-entities]))
+
+(defn by-id [game id]
+  "Return the element associated to the id"
+  (:element (by-id-with-collection game id)))
+
+(defn required-by-id [game id]
+  (if (nil? id)
+    (throw (NullPointerException. "Null id given"))
+    (let [res (by-id game id)]
+      (if (nil? res)
+        (throw (IllegalArgumentException. (str "Invalid id given " id)))
+        res))))
+
+(defn update-by-id
+  "f(game, entity)"
+  [game id f]
+  (let [{element :element, collection :collection} (by-id-with-collection game id)]
+    (update-in game [collection id] f)))
+
+(defn culture [game x]
+  (.culture (to-political-entity game x)))
+
 ; ###########################################################
 ;  Game
 ; ###########################################################
 
-(defrecord Game [world tribes settlements next_id])
+(defrecord Game [world settlements groups political-entities next_id])
 
 (defn create-game [world]
-  (Game. world {} {} 1))
+  (Game. world {} {} {} 1))
 
-(defn create-tribe
-  "Return the game, updated and the new tribe"
+(defn create-group
+  "Return the game, updated and the new tribe.
+   The group creates its own independent political entity"
   [game name position population culture society]
-  (let [tribe-id (:next_id game)
-        new-tribe (Group. tribe-id name position population culture society)
-        tribes (assoc (:tribes game) tribe-id new-tribe)
+  (let [{pe-id :new-id game :game} (add-political-entity game (PoliticalEntity. nil :unnamed society [] culture))
+        tribe-id (:next_id game)
+        new-tribe (Group. tribe-id name position population pe-id)
+        tribes (assoc (:groups game) tribe-id new-tribe)
         game (assoc game :next_id (inc tribe-id))
-        game (assoc game :tribes tribes)]
+        game (assoc game :groups tribes)
+        game (add-group-to-political-entity game pe-id tribe-id)]
     {:game game :tribe new-tribe}))
+
+(def ^:deprecated create-tribe create-group)
 
 (defn create-settlement
   "Return the game, updated and the new settlement"
@@ -175,10 +274,10 @@
     {:game game :settlement new-town}))
 
 (defn get-group [game id]
-  (get (:tribes game) id))
+  (get (:groups game) id))
 
 (defn groups [game]
-  (vals (.tribes game)))
+  (vals (:groups game)))
 
 (defn group-in-pos [game pos]
   (let [groups (filter #(= pos (.position %)) (groups game))]
@@ -231,7 +330,7 @@
   (into #{} (keys (:tribes game))))
 
 (defn game-total-pop [game]
-  (reduce + 0 (map #(-> % .population total-persons) (vals (.tribes game)))))
+  (reduce + 0 (map #(-> % .population total-persons) (vals (.groups game)))))
 
 (def ^:deprecated tribes groups)
 
