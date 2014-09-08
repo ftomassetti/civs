@@ -37,9 +37,9 @@
 (deftest test-create-tribe
   (let [g (create-game nil)
         g (:game (create-tribe g "Group1" nil nil nil nil))
-        t (get (-> g .groups) 1)]
+        t (get (-> g .groups) 2)]
   (is t)
-  (is (= 1 (.id t)))))
+  (is (= 2 (.id t)))))
 
 (deftest test-cells-around
   (is (= '({:x 4, :y 7} {:x 4, :y 8} {:x 4, :y 9} {:x 5, :y 7} {:x 5, :y 8} {:x 5, :y 9} {:x 6, :y 7} {:x 6, :y 8} {:x 6, :y 9})
@@ -68,7 +68,7 @@
     (is (= "name" (.name t)))
     (is (= {:x 15 :y 18} (.position t)))
     (is (= (Population. 1 2 3 4 5) (.population t)))
-    (is (= initial-culture (.culture t)))))
+    (is (= initial-culture (culture g t)))))
 
 (deftest test-create-settlement
   (let [initial-g (create-game nil)
@@ -91,11 +91,11 @@
     (is (= 15 (game-total-pop g1)))
     (is (= 18 (game-total-pop g2)))))
 
-(deftest test-get-tribe
+(deftest test-get-group
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))]
-    (is (= nil (get-tribe g0 1)))
-    (is (= (Group. 1 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) nil) (get-tribe g1 1)))))
+    (is (= nil (get-group g0 1)))
+    (is (= (Group. 2 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) 1) (get-group g1 2)))))
 
 (deftest test-get-settlement
   (let [g0 (create-game nil)
@@ -109,8 +109,8 @@
         g2 (:game (create-settlement g1 "name" {:x 15 :y 18} 1 11))
         g3 (:game (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))
         g4 (:game (create-settlement g3 "name" {:x 15 :y 18} 3 12))]
-    (is (= false (ghost-city? g2 2)))
-    (is (= true (ghost-city? g4 4)))))
+    (is (= false (ghost-city? g2 3)))
+    (is (= true (ghost-city? g4 6)))))
 
 (deftest test-n-groups-alive
   (let [g0 (create-game nil)
@@ -120,12 +120,12 @@
     (is (= 1 (n-groups-alive g1)))
     (is (= 1 (n-groups-alive g2)))))
 
-(deftest test-update-tribe
+(deftest test-update-group
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
-        g2 (update-tribe g1 (Group. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) nil))]
-    (is (= (Group. 1 "name"  {:x 15 :y 18} (Population. 1 2 3 4 5) nil) (get-tribe g1 1)))
-    (is (= (Group. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) nil) (get-tribe g2 1)))))
+        g2 (update-group g1 (Group. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) nil))]
+    (is (= (Group. 1 "name"  {:x 15 :y 18} (Population. 1 2 3 4 5) nil) (get-group g1 1)))
+    (is (= (Group. 1 "name2" {:x 25 :y 28} (Population. 0 1 1 0 0) nil) (get-group g2 1)))))
 
 (deftest test-n-ghost-cities
   (let [g0 (create-game nil)
@@ -139,9 +139,10 @@
 
 (deftest test-assoc-and-use-language
   (let [ ga (create-game nil)
-         gr (:tribe (create-tribe ga nil nil nil initial-culture initial-society))
-         gr (assoc-language gr (generate-language))
-         l  (get-language gr)
+         {gr :group, ga :game} (create-group ga nil nil nil initial-culture initial-society)
+         pe (by-id ga (.political-entity-id gr))
+         pe (assoc-language ga pe (generate-language))
+         l  (get-language ga pe)
          n  (.name l)]
     (is (not (nil? n)))
     (is (not (.isEmpty n)))))

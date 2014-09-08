@@ -83,7 +83,7 @@
     (fn [game tribe]
       (let [ pos (.position tribe)
              new-culture (assoc (.culture tribe) :nomadism :sedentary)
-             language (get-language tribe)
+             language (get-language game tribe)
              settlement-name (if (nil? language) :unnamed (.name language))]
         {
           :game (:game (create-settlement game settlement-name pos (:id tribe) current-turn))
@@ -154,7 +154,7 @@
                                           }) possible-destinations)
              preferences (sort-by :preference preferences)
              dest-target (:pos (first preferences))
-             language (get-language group)
+             language (get-language game group)
              new-group-name (if (nil? language) :unnamed (.name language))
              res (create-tribe game new-group-name dest-target (:leaving sp) (.culture group) (.society group))
              game (:game res)]
@@ -176,10 +176,11 @@
   "Return a game"
   [game group-id]
   (let [group (get-group game group-id)
-        group (assoc-language group (generate-language))
-        language (get-language group)
+        political-entity (assoc-language game (to-political-entity game group) (generate-language))
+        language (get-language game group)
         group (assoc group :name (.name language))
         game (update-group game group)
+        game (update-political-entity game political-entity)
         settlements (get-settlements-owned-by game (:id group))
         settlements (map #(assoc % :name (.name language)) settlements)
         game (update-settlements game settlements)]

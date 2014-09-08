@@ -19,7 +19,11 @@
   (get (:game-snapshots history) turn))
 
 (defn group-at [history turn group-id]
-  (get (:tribes (game-at history turn)) group-id))
+  (get (:groups (game-at history turn)) group-id))
+
+(defn political-entity-at [history turn group-id]
+  (get (:political-entities (game-at history turn)) group-id))
+
 
 (defn update-game [history turn game]
   (let [snapshots (:game-snapshots history)

@@ -21,6 +21,7 @@
 (defrecord Population [children young-men young-women old-men old-women])
 
 (defn total-persons [pop]
+  {:pre [(instance? Population pop)]}
   (int (+ (:children pop) (:young-men pop) (:young-women pop) (:old-men pop) (:old-women pop))))
 
 (defn active-persons [pop]
@@ -108,13 +109,14 @@
 
 (def ^:deprecated tribe-total-pos group-total-pop)
 
-(defn get-language [group]
-  (-> group culture .language))
+(defn get-language [game group]
+  (.language (culture game group)))
 
-(defn assoc-language [group language]
-  (let [old-culture (culture group)
+(defn assoc-language [game political-entity language]
+  {:pre [(not (nil? political-entity)) (instance? PoliticalEntity political-entity)]}
+  (let [old-culture (culture game political-entity)
         new-culture (assoc old-culture :language language)]
-    (assoc group :culture new-culture)))
+    (assoc political-entity :culture new-culture)))
 
 ; ###########################################################
 ;  World
@@ -205,8 +207,8 @@
 
 (defn update-political-entity
   "The function f should take the political entity and the game"
-  [game id f]
-  (update-in game [:political-entities id] f game))
+  ([game id f] (update-in game [:political-entities id] f game))
+  ([game pe]   (update-in game [:political-entities (.id pe)] (fn [_] pe))))
 
 (defn political-entities-ids
   [game]
@@ -242,6 +244,7 @@
     (update-in game [collection id] f)))
 
 (defn culture [game x]
+  {:pre [(not (nil? x))]}
   (.culture (to-political-entity game x)))
 
 ; ###########################################################
@@ -264,7 +267,8 @@
         game (assoc game :next_id (inc tribe-id))
         game (assoc game :groups tribes)
         game (add-group-to-political-entity game pe-id tribe-id)]
-    {:game game :tribe new-tribe}))
+    ; :tribe is there only to support old calls
+    {:game game :tribe new-tribe :group new-tribe}))
 
 (def ^:deprecated create-tribe create-group)
 

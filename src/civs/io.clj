@@ -16,7 +16,7 @@
     [clojure.string :as string]
     [miner.tagged :as tag]
     [clojure.data.fressian :as fress])
-  (:import [civs.model.core Population Group Culture Game Population Settlement]
+  (:import [civs.model.core Population Group Culture Game Population Settlement PoliticalEntity]
            [org.fressian.handlers WriteHandler ReadHandler ILookup WriteHandlerLookup])
   (:use clojure.java.io))
 
@@ -24,8 +24,6 @@
 (import '(com.github.langgen.Language))
 (import '(com.github.lands.IncorrectFileException))
 (import '(java.io.IOException))
-
-; TODO extend EDN to support saving Language
 
 (defmethod print-method Culture [this w]
   (tag/pr-tagged-record-on this w))
@@ -107,10 +105,6 @@
         original-data unserialized-data]
     original-data))
 
-(defn save-simulation-result-edn [simulation-result history-filename world-filename]
-  (let [ str (to-serialized-str simulation-result {:world-filename world-filename})]
-    (spit history-filename str)))
-
 (def world-ftag "world")
 (def language-ftag "language")
 
@@ -171,16 +165,16 @@
   [history game t prev-t]
   (reduce
     (fn [game group-id]
-      (let [current-group (group-at history t group-id)
-            prev-group    (group-at history prev-t group-id)]
+      (let [current-group (political-entity-at history t group-id)
+            prev-group    (political-entity-at history prev-t group-id)]
         (if (not (nil? prev-group))
           (if (= (.culture current-group) (.culture prev-group))
             (let [updated-group (assoc current-group :culture :unchanged)]
-              (update-group game updated-group))
+              (update-political-entity game (.id updated-group) (fn [_ _]  updated-group)))
           game)
         game)))
     game
-    (groups-ids-in-game game)))
+    (political-entities-ids game)))
 
 (defn- prepare-history-turn-for-serialization
   "Return history, updated"
@@ -200,16 +194,16 @@
   [history game t prev-t]
   (reduce
     (fn [game group-id]
-      (let [current-group (group-at history t group-id)
-            prev-group    (group-at history prev-t group-id)]
+      (let [current-group (political-entity-at history t group-id)
+            prev-group    (political-entity-at history prev-t group-id)]
         (if (not (nil? prev-group))
           (if (= :unchanged (.culture current-group))
             (let [updated-group (assoc current-group :culture  (.culture prev-group))]
-              (update-group game updated-group))
+              (update-political-entity game (.id updated-group) (fn [_ _] updated-group)))
             game)
           game)))
     game
-    (groups-ids-in-game game)))
+    (political-entities-ids game)))
 
 (defn- restore-history-turn-from-serialization
   "Return history, updated"
@@ -237,6 +231,4 @@
     (restore-history-from-serialization (from-serialized-bytes ba resolve))))
 
 (defn save-simulation-result [simulation-result history-filename world-filename use-fressian]
-  (if use-fressian
-    (save-simulation-result-fressian simulation-result history-filename)
-    (save-simulation-result-edn simulation-result history-filename world-filename)))
+  (save-simulation-result-fressian simulation-result history-filename))
