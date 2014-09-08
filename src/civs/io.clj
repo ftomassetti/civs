@@ -92,19 +92,6 @@
 (defn PersistentArrayMapReader [value]
   value)
 
-(defn from-serialized-str [serialized-str options]
-  (let [ resolver (:resolver options)
-         unserialized-data (clojure.edn/read-string
-                            {
-                              :readers {
-                                         'com.github.lands.World (world-reader resolver)
-                                         'clojure.lang/PersistentArrayMap PersistentArrayMapReader
-                                       }
-                              :default tag/tagged-default-reader
-                            } serialized-str)
-        original-data unserialized-data]
-    original-data))
-
 (def world-ftag "world")
 (def language-ftag "language")
 
