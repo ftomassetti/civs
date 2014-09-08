@@ -72,7 +72,7 @@
     chance-to-develop-agriculture
     (fn [game tribe]
         {
-          :tribe (learn tribe :agriculture)
+          :game (learn game (to-political-entity game tribe) :agriculture)
           :params {}
           })))
 

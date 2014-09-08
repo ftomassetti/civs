@@ -7,6 +7,7 @@
 (defrecord PoliticalEntity [id name society groups culture])
 (declare culture)
 (declare society)
+(declare update-political-entity)
 
 ; ###########################################################
 ;  Generic
@@ -98,11 +99,15 @@
 (defn know? [game group knowledge]
   (in? (.knowledge (culture game group)) knowledge))
 
-(defn learn [group knowledge]
-  (let [old-knowledge (-> group culture .knowledge)
-        new-knowledge (conj old-knowledge knowledge)
-        new-culture (assoc (-> group culture) :knowledge new-knowledge)]
-    (assoc group :culture new-culture)))
+(defn learn [game x knowledge]
+  {:pre [(or
+          (instance? PoliticalEntity x)
+          (instance? Group x))]}
+  (let [ pe (to-political-entity game x)
+         old-knowledge (.knowledge (culture game pe))
+         new-knowledge (conj old-knowledge knowledge)
+         pe (assoc-in pe [:culture :knowledge] new-knowledge)]
+    (update-political-entity game pe)))
 
 (defn group-total-pop [group]
   (-> group :population total-persons))

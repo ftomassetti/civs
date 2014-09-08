@@ -9,7 +9,6 @@
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
 (def g (generate-game w77 1))
-(def t (:tribe (generate-tribe g)))
 
 (deftest test-lang-generation-works
   (let [l (com.github.langgen.SamplesBasedLanguageFactory/getRandomLanguage)]
@@ -30,9 +29,12 @@
 (deftest testRSplitByWithFactorOne
   (is (= [100 0] (rsplit-by 100 1.0))))
 
-(deftest testKnow?
-   (is (not (know? t :agriculture))))
+(deftest test-know?
+  (let [{t :group g :game} (generate-tribe g)]
+   (is (not (know? g t :agriculture)))))
 
-(deftest testLearn
-  (let [t (learn t :agriculture)]
-    (is (know? t :agriculture))))
+(deftest test-learn
+  (let [ {t :group g :game} (generate-tribe g)
+         pe (to-political-entity g t)
+         g (learn g t :agriculture)]
+    (is (know? g t :agriculture))))
