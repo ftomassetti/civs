@@ -13,7 +13,7 @@
 ;  Generic
 ; ###########################################################
 
-(defn in? [coll target] (some #(= target %) coll))
+(defn in? [coll target] (not (nil? (some #(= target %) coll))))
 
 ; ###########################################################
 ;  Population

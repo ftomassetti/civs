@@ -1,4 +1,4 @@
-(ns civs.model-test
+(ns civs.model.core-test
   (:require [clojure.test :refer :all]
             [civs.core :refer :all]
             [civs.model.core :refer :all]
@@ -11,6 +11,18 @@
   (:import [civs.model.core Population Group Settlement]))
 
 (def w77 (load-world "examples-worlds/seed_77.world"))
+
+; ###########################################################
+;  Generic
+; ###########################################################
+
+(deftest test-in?
+  (is (= true (in? [1 2 3] 1)))
+  (is (= false (in? [1 2 3] 4)))
+  (is (= true (in? (list 1 2 3) 1)))
+  (is (= false (in? (list 1 2 3) 4))))
+
+
 
 (deftest test-total-persons
   (is (= 15 (total-persons (Population. 1 2 3 4 5)))))
