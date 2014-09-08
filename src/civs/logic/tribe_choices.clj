@@ -59,10 +59,9 @@
     :become-semi-sedentary
     chance-to-become-semi-sedentary
     (fn [game tribe]
-      (let [new-culture (assoc (culture game tribe) :nomadism :semi-sedentary)]
+      (let [game (update-nomadism game tribe :semi-sedentary)]
         {
-          :tribe tribe
-          :game (update-by-id game (.political-entity-id tribe) #(assoc % :culture new-culture))
+          :game game
           :params {}
           }))))
 
@@ -82,12 +81,11 @@
     chance-to-become-sedentary
     (fn [game tribe]
       (let [ pos (.position tribe)
-             new-culture (assoc (.culture tribe) :nomadism :sedentary)
+             game (update-nomadism game tribe :sedentary)
              language (get-language game tribe)
              settlement-name (if (nil? language) :unnamed (.name language))]
         {
           :game (:game (create-settlement game settlement-name pos (:id tribe) current-turn))
-          :tribe (assoc tribe :culture new-culture)
           :params {}
           }))))
 

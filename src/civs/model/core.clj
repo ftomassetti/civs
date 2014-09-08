@@ -5,9 +5,11 @@
             [civs.model.language]))
 
 (defrecord PoliticalEntity [id name society groups culture])
+(defrecord Game [world settlements groups political-entities next_id])
 (declare culture)
 (declare society)
 (declare update-political-entity)
+(declare to-political-entity)
 
 ; ###########################################################
 ;  Generic
@@ -39,14 +41,23 @@
 ; To develop agriculture a population must be :semi-sedentary
 ; To become :sedentary a population must know agriculture
 
-(defn sedentary? [game t]
-  (= :sedentary (.nomadism (culture game t))))
+(defn sedentary? [game x]
+  (= :sedentary (.nomadism (culture game x))))
 
-(defn semi-sedentary? [game t]
-  (= :semi-sedentary (.nomadism (culture game t))))
+(defn semi-sedentary? [game x]
+  (= :semi-sedentary (.nomadism (culture game x))))
 
-(defn nomadic? [game t]
-  (= :nomadic (.nomadism (culture game t))))
+(defn nomadic? [game x]
+  (= :nomadic (.nomadism (culture game x))))
+
+(defn valid-nomadism? [v]
+  (in? [:nomadic :semi-sedentary :sedentary] v))
+
+(defn update-nomadism [game x nomadism]
+  {:pre [(valid-nomadism? nomadism)]
+   :post [(instance? Game %)]}
+  (let [pe (to-political-entity game x)]
+    (update-political-entity game (.id pe) (fn [pe _] (assoc-in pe [:culture :nomadism] nomadism)))))
 
 (defrecord Culture [nomadism knowledge language])
 
@@ -255,8 +266,6 @@
 ; ###########################################################
 ;  Game
 ; ###########################################################
-
-(defrecord Game [world settlements groups political-entities next_id])
 
 (defn create-game [world]
   (Game. world {} {} {} 1))

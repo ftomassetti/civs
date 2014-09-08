@@ -22,13 +22,41 @@
   (is (= true (in? (list 1 2 3) 1)))
   (is (= false (in? (list 1 2 3) 4))))
 
-
+; ###########################################################
+;  Population
+; ###########################################################
 
 (deftest test-total-persons
   (is (= 15 (total-persons (Population. 1 2 3 4 5)))))
 
 (deftest test-active-persons
   (is (= 5 (active-persons (Population. 1 2 3 4 5)))))
+
+; ###########################################################
+;  Culture
+; ###########################################################
+
+(defn- consider-base-group [f]
+  (let [ga (create-game w77)
+        {ga :game gr :group} (create-tribe ga "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society)]
+    (f ga gr)))
+
+(deftest test-get-and-set-nomadism
+  (consider-base-group
+    (fn [ga gr]
+      (let [ga (update-nomadism ga gr :nomadic)]
+        (is (nomadic? ga gr))
+        (is (not (semi-sedentary? ga gr)))
+        (is (not (sedentary? ga gr))))
+      (let [ga (update-nomadism ga gr :semi-sedentary)]
+        (is (not (nomadic? ga gr)))
+        (is (semi-sedentary? ga gr))
+        (is (not (sedentary? ga gr))))
+      (let [ga (update-nomadism ga gr :sedentary)]
+        (is (not (nomadic? ga gr)))
+        (is (not (semi-sedentary? ga gr)))
+        (is (sedentary? ga gr))))))
+
 
 (deftest test-is-dead?
   (is (= false (is-dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
