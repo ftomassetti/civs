@@ -319,8 +319,8 @@
   "Return the game, updated"
   [game tribe]
   (let [tribe-id (:id tribe)
-        tribes (assoc (:tribes game) tribe-id tribe)]
-    (assoc game :tribes tribes)))
+        tribes (assoc (:groups game) tribe-id tribe)]
+    (assoc game :groups tribes)))
 
 (def ^:deprecated update-tribe update-group)
 
