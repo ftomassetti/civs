@@ -6,6 +6,8 @@
 
 (defrecord PoliticalEntity [id name society groups culture])
 (defrecord Game [world settlements groups political-entities next_id])
+(defrecord Culture [nomadism knowledge language])
+
 (declare culture)
 (declare society)
 (declare update-political-entity)
@@ -58,8 +60,6 @@
    :post [(instance? Game %)]}
   (let [pe (to-political-entity game x)]
     (update-political-entity game (.id pe) (fn [pe _] (assoc-in pe [:culture :nomadism] nomadism)))))
-
-(defrecord Culture [nomadism knowledge language])
 
 (def initial-culture (Culture. :nomadic [] nil))
 
