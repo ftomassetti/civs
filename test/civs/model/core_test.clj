@@ -57,6 +57,11 @@
         (is (not (semi-sedentary? ga gr)))
         (is (sedentary? ga gr))))))
 
+; ###########################################################
+;  Group
+; ###########################################################
+
+
 
 (deftest test-is-dead?
   (is (= false (is-dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))

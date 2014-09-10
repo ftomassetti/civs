@@ -4,9 +4,14 @@
   (:require [clojure.math.combinatorics :as combo]
             [civs.model.language]))
 
+; ###########################################################
+;  Records
+; ###########################################################
+
 (defrecord PoliticalEntity [id name society groups culture])
 (defrecord Game [world settlements groups political-entities next_id])
 (defrecord Culture [nomadism knowledge language])
+(defrecord Group [id name position population political-entity-id])
 
 (declare culture)
 (declare society)
@@ -69,8 +74,6 @@
 
 (declare by-id)
 (declare required-by-id)
-
-(defrecord Group [id name position population political-entity-id])
 
 ; Can get an id, a political-entity or a group
 (defmulti to-political-entity (fn [_ el] (class el)))
