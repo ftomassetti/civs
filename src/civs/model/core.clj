@@ -12,6 +12,7 @@
 (defrecord Game [world settlements groups political-entities next_id])
 (defrecord Culture [nomadism knowledge language])
 (defrecord Group [id name position population political-entity-id])
+(defrecord Settlement [id name foundation-turn position owner])
 
 (declare culture)
 (declare society)
@@ -181,8 +182,6 @@
 ; ###########################################################
 ;  Settlement
 ; ###########################################################
-
-(defrecord Settlement [id name foundation-turn position owner])
 
 ;===============================================
 ; Society (Govern forms)
