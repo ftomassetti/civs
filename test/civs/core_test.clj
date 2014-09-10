@@ -28,13 +28,3 @@
 
 (deftest testRSplitByWithFactorOne
   (is (= [100 0] (rsplit-by 100 1.0))))
-
-(deftest test-know?
-  (let [{t :group g :game} (generate-tribe g)]
-   (is (not (know? g t :agriculture)))))
-
-(deftest test-learn
-  (let [ {t :group g :game} (generate-tribe g)
-         pe (to-political-entity g t)
-         g (learn g t :agriculture)]
-    (is (know? g t :agriculture))))

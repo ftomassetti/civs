@@ -61,7 +61,21 @@
 ;  Group
 ; ###########################################################
 
+(deftest test-group-to-political-entity
+  (consider-base-group
+    (fn [ga gr]
+      (let [pe (to-political-entity ga gr)]
+        (is (= 1 (.id pe)))))))
 
+(deftest test-culture
+  (consider-base-group
+    (fn [ga gr]
+      (is (= initial-culture (culture ga gr))))))
+
+(deftest test-society
+  (consider-base-group
+    (fn [ga gr]
+      (is (= initial-society (society ga gr))))))
 
 (deftest test-dead?
   (is (= false (dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
@@ -70,6 +84,51 @@
 (deftest test-alive?
   (is (= true  (alive?  (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
   (is (= false (alive?  (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
+
+(deftest test-know?
+  (consider-base-group
+    (fn [g _]
+      (let [{t :group g :game} (generate-tribe g)]
+        (is (not (know? g t :agriculture)))))))
+
+(deftest test-learn
+  (consider-base-group
+    (fn [g _]
+      (let [ {t :group g :game} (generate-tribe g)
+             pe (to-political-entity g t)
+             g (learn g t :agriculture)]
+        (is (know? g t :agriculture))))))
+
+(deftest test-group-total-pop
+  (let [g0 (create-game nil)
+        g1 (:group (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
+        g2 (:group (create-tribe g0 "name" {:x 15 :y 18} (Population. 0 1 2 0 0) initial-culture initial-society))]
+    (is (= 15 (group-total-pop g1)))
+    (is (= 3 (group-total-pop g2)))))
+
+(deftest test-get-language
+  (consider-base-group
+    (fn [ga gr]
+      (is (= nil (get-language ga gr))))))
+
+(deftest test-assoc-language
+  (consider-base-group
+    (fn [ga gr]
+      (let [l (generate-language)
+            pe0 (by-id ga 1)
+            pe1 (assoc-language ga pe0 l)]
+        (is (= l (get-language ga pe1)))))))
+
+      ; ###########################################################
+;  Political entity
+; ###########################################################
+
+(deftest test-political-entity-to-political-entity
+  (consider-base-group
+    (fn [ga gr]
+      (let [ pe0 (by-id ga 1)
+             pe (to-political-entity ga pe0)]
+        (is (= pe pe0))))))
 
 (deftest test-game-width
   (let [g (create-game w77)]

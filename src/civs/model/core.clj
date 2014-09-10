@@ -113,8 +113,6 @@
 (defn group-total-pop [group]
   (-> group :population total-persons))
 
-(def ^:deprecated tribe-total-pos group-total-pop)
-
 (defn get-language [game group]
   (.language (culture game group)))
 
