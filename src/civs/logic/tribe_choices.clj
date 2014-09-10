@@ -116,7 +116,7 @@
              preferences (sort-by :preference preferences)
              target (:pos (first preferences))]
         {
-          :tribe (assoc group :position target)
+          :group (assoc group :position target)
           :params {:to target}
           }))))
 
@@ -158,15 +158,15 @@
              game (:game res)]
         (if (sedentary? game group)
           (let [settlement-name (if (nil? language) :unnamed (.name language))
-                game (:game (create-settlement game settlement-name dest-target (:id (:tribe res)) current-turn))]
+                game (:game (create-settlement game settlement-name dest-target (:id (:group res)) current-turn))]
             {
               :game game
-              :tribe (assoc group :population (:remaining sp))
+              :group (assoc group :population (:remaining sp))
               :params {}
             })
           {
             :game game
-            :tribe (assoc group :population (:remaining sp))
+            :group (assoc group :population (:remaining sp))
             :params {}
             })))))
 
@@ -195,7 +195,7 @@
             group (evolve-in-tribe group)]
         {
           :game game
-          :tribe group
+          :group group
           :params {}
           }))))
 
@@ -206,7 +206,7 @@
       (possibility-of-evolving-into-chiefdom game tribe))
     (fn [game tribe]
       {
-        :tribe (evolve-in-chiefdom tribe)
+        :group (evolve-in-chiefdom tribe)
         :params {}
         })))
 
@@ -215,23 +215,23 @@
   (let [p ((.chance event) game tribe)]
     (if (roll p)
       (let [apply-res ((.apply event) game tribe)
-            new-tribe (:tribe apply-res)
+            new-tribe (:group apply-res)
             new-game (or (:game apply-res) game)
             new-game (update-tribe new-game new-tribe)
-            params (assoc (:params apply-res) :tribe (.id new-tribe))]
+            params (assoc (:params apply-res) :group (.id new-tribe))]
         (fact (:name event) params)
-        {:game new-game :tribe new-tribe})
-      {:game game :tribe tribe} )))
+        {:game new-game :group new-tribe})
+      {:game game :group tribe} )))
 
 (defn consider-events
   "Return a map of game and tribe, changed"
   [game tribe events]
   (if (empty? events)
-    {:game game :tribe tribe}
+    {:game game :group tribe}
     (let [e (first events)
           re (rest events)
           res (consider-event game tribe e)]
-      (consider-events (:game res) (:tribe res) re))))
+      (consider-events (:game res) (:group res) re))))
 
 (defn consider-all-events
   "Return a map of game and tribe, changed"

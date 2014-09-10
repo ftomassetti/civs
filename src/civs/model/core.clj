@@ -340,7 +340,7 @@
   (reduce (fn [acc s] (update-settlement acc s)) game settlements))
 
 (defn groups-ids-in-game [game]
-  (into #{} (keys (:tribes game))))
+  (into #{} (keys (:groups game))))
 
 (defn game-total-pop [game]
   (reduce + 0 (map #(-> % .population total-persons) (vals (.groups game)))))
