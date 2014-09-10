@@ -84,9 +84,6 @@
     (catch IllegalArgumentException e
       (throw (IllegalStateException. (str "Political entity for group " group " not found") e)))))
 
-(defmethod to-political-entity PoliticalEntity [game pe]
-  pe)
-
 ; Return the Culture of the entity
 (defn culture [game el]
   (.culture (to-political-entity game el)))
@@ -94,18 +91,8 @@
 (defn society [game el]
   (.society (to-political-entity game el)))
 
-; Return the political entity associated
-(declare political-entity)
-
-;(extend-type Group HasCulture
-;  (culture [game en]
-;    (let [pe (political-entity game en)]
-;      (culture pe))))
-
 (defn dead? [group]
   (= 0 (total-persons (:population group))))
-
-(def ^:deprecated is-dead? dead?)
 
 (defn alive? [group]
   (not (dead? group)))
@@ -212,6 +199,9 @@
 ;===============================================
 ; Political entity
 ;===============================================
+
+(defmethod to-political-entity PoliticalEntity [game pe]
+  pe)
 
 (defn add-political-entity
   "Associate the correct id to the political-entity.

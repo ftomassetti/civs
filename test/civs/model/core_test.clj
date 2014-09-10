@@ -63,9 +63,9 @@
 
 
 
-(deftest test-is-dead?
-  (is (= false (is-dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
-  (is (= true  (is-dead? (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
+(deftest test-dead?
+  (is (= false (dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
+  (is (= true  (dead? (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
 
 (deftest test-alive?
   (is (= true  (alive?  (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
