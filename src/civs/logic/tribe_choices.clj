@@ -8,7 +8,7 @@
     [civs.logic.basic :refer :all]
     [civs.logic.globals :refer :all]
     [civs.logic.demographics :refer :all])
-  (:import [civs.model.core Population]))
+  (:import [civs.model.core Population Game]))
 
 (defn- migration-radius [game group]
   (cond
@@ -247,10 +247,13 @@
   [game tribe]
   (consider-events game tribe [become-semi-sedentary discover-agriculture become-sedentary migrate split evolution-in-tribe evolution-in-chiefdom]))
 
-(defn tribe-turn
+(defn group-turn
   "Return the game, updated"
   [game tribe]
+  {:pre  [(instance? Game game) (:group game)]
+   :post [(instance? Game %) (:group %)]}
   (let [ world (.world game)
          tribe (update-population game tribe)
         game (update-group game tribe)]
     (:game (consider-all-events game tribe))))
+

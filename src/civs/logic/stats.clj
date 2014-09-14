@@ -9,7 +9,7 @@
 
 (defn- execute-turns [world tribe nturns]
   (if (and (alive? tribe) (> nturns 0))
-    (execute-turns world (tribe-turn world tribe) (- nturns 1))
+    (execute-turns world (group-turn world tribe) (- nturns 1))
     tribe))
 
 (defn observe-tribe [world n]

@@ -6,7 +6,8 @@
     [civs.logic.basic :refer :all]
     [civs.logic.tribe-choices :refer :all]
     [civs.logic.demographics :refer :all]
-    [civs.model.politic :refer :all]))
+    [civs.model.politic :refer :all])
+  (:import [civs.model.core Population Group Game]))
 
 ; Asked question about this function:
 ; http://stackoverflow.com/questions/25632388/clojure-executing-an-operation-n-times-using-the-output-as-input-of-next-operat
@@ -24,5 +25,7 @@
         (assoc pe :groups (filter alive? (:groups pe)))))))
 
 (defn turn [game]
+  {:pre  [(instance? Game game) (:group game)]
+   :post [(instance? Game %) (:group %)]}
   (let [groups (groups game)]
-    (remove-dead-groups (reduce (fn [acc t] (tribe-turn acc t)) game groups))))
+    (remove-dead-groups (reduce (fn [acc t] (group-turn acc t)) game groups))))

@@ -352,7 +352,9 @@
   (into #{} (keys (:groups game))))
 
 (defn game-total-pop [game]
-  (reduce + 0 (map #(-> % .population total-persons) (vals (.groups game)))))
+  {:pre [(instance? Game game)]
+   :post [(>= % 0)]}
+  (reduce + 0 (map #(-> % .population total-persons) (groups game))))
 
 (def ^:deprecated tribes groups)
 
