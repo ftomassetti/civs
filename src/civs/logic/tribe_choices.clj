@@ -21,6 +21,7 @@
   (+ 1.0 (Math/log10 (/ (float total-pop) required-pop))))
 
 (defn chance-to-become-semi-sedentary [game tribe]
+  {:pre [(not (nil? tribe))]}
   (let [ world (.world game)
          prosperity (prosperity game tribe)]
     (if (and (nomadic? game tribe) (> prosperity 0.6))
@@ -29,6 +30,7 @@
 
 ; Must be at least a tribe society
 (defn chance-to-develop-agriculture [game group]
+  {:pre [(not (nil? group))]}
   (if (and
         (not (nomadic? game group))
         (not (know? game group :agriculture))
@@ -43,6 +45,7 @@
 
 ; Must be at least a tribe society
 (defn chance-to-become-sedentary [game tribe]
+  {:pre [(not (nil? tribe))]}
   (let [world (.world game)
          prosperity (prosperity game tribe)
          ss (semi-sedentary? game tribe)
@@ -211,14 +214,18 @@
         })))
 
 (defn consider-event [game tribe event]
+  {:pre [game tribe event]
+   :post [(:game %) (:group %)]}
   "Return a map of game and tribe, changed"
   (let [p ((.chance event) game tribe)]
     (if (roll p)
       (let [apply-res ((.apply event) game tribe)
             new-tribe (:group apply-res)
             new-game (or (:game apply-res) game)
-            new-game (update-tribe new-game new-tribe)
-            params (assoc (:params apply-res) :group (.id new-tribe))]
+            new-game (if new-tribe (update-group new-game new-tribe) new-game)
+            new-tribe (if new-tribe new-tribe (by-id new-game (.id tribe)))
+            group-id (.id new-tribe)
+            params (assoc (:params apply-res) :group group-id)]
         (fact (:name event) params)
         {:game new-game :group new-tribe})
       {:game game :group tribe} )))
@@ -226,6 +233,8 @@
 (defn consider-events
   "Return a map of game and tribe, changed"
   [game tribe events]
+  {:pre [game tribe]
+   :post [(:game %) (:group %)]}
   (if (empty? events)
     {:game game :group tribe}
     (let [e (first events)
@@ -243,5 +252,5 @@
   [game tribe]
   (let [ world (.world game)
          tribe (update-population game tribe)
-        game (update-tribe game tribe)]
+        game (update-group game tribe)]
     (:game (consider-all-events game tribe))))

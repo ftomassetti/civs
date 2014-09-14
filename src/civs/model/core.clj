@@ -56,6 +56,7 @@
   (= :semi-sedentary (.nomadism (culture game x))))
 
 (defn nomadic? [game x]
+  {:pre [(not (nil? x))]}
   (= :nomadic (.nomadism (culture game x))))
 
 (defn valid-nomadism? [v]
@@ -93,9 +94,11 @@
   (.society (to-political-entity game el)))
 
 (defn dead? [group]
+  {:pre [(instance? Group group) (instance? Population (:population group))]}
   (= 0 (total-persons (:population group))))
 
 (defn alive? [group]
+  {:pre [(instance? Group group) (instance? Population (:population group))]}
   (not (dead? group)))
 
 (defn know? [game group knowledge]
@@ -229,7 +232,13 @@
 
 (defn- by-id-with-collection [game id]
   "Return the element associated to the id"
-  (reduce #(let [res (get-in game [%2 id])] (if (nil? res) nil {:element res :collection %2})) nil [:groups :settlements :political-entities]))
+  (reduce
+    #(let
+       [res (get-in game [%2 id])]
+       (if (nil? res)
+         %1
+         {:element res :collection %2}))
+    nil [:groups :settlements :political-entities]))
 
 (defn by-id [game id]
   "Return the element associated to the id"
@@ -322,9 +331,9 @@
 (defn update-group
   "Return the game, updated"
   [game tribe]
-  (let [tribe-id (:id tribe)
-        tribes (assoc (:groups game) tribe-id tribe)]
-    (assoc game :groups tribes)))
+  {:pre [tribe (:id tribe) (>= (:id tribe) 0)]
+   :post [(by-id % (:id tribe))]}
+  (assoc-in game [:groups (:id tribe)] tribe))
 
 (def ^:deprecated update-tribe update-group)
 

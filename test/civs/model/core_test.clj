@@ -119,7 +119,7 @@
             pe1 (assoc-language ga pe0 l)]
         (is (= l (get-language ga pe1)))))))
 
-      ; ###########################################################
+; ###########################################################
 ;  Political entity
 ; ###########################################################
 
@@ -242,3 +242,9 @@
          n  (.name l)]
     (is (not (nil? n)))
     (is (not (.isEmpty n)))))
+
+(deftest test-by-id
+  (let [g0 (create-game nil)
+        gr (Group. 123 nil nil nil nil)
+        g1 (update-group g0 gr)]
+    (is (= (by-id g1 123) gr))))
