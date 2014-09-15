@@ -123,9 +123,8 @@
       (println "scenario-w77-100tribes-30turns sedentary" nsocieties-sedentary)
       (println "scenario-w77-100tribes-30turns bands" nsocieties-bands)
       (println "scenario-w77-100tribes-30turns tribes" nsocieties-tribes)
-      (println "scenario-w77-100tribes-30turns chiefdoms" nsocieties-chiefdoms)))
-    (is (and (>= nsocieties-still-nomadic 10) (<= nsocieties-still-nomadic 60)))
-    ))
+      (println "scenario-w77-100tribes-30turns chiefdoms" nsocieties-chiefdoms))
+    (is (and (>= nsocieties-still-nomadic 10) (<= nsocieties-still-nomadic 60)))))
 
 (deftest ^:acceptance test-some-societies-become-semi-sedentary
   (let [ g game-scenario-w77-100tribes-30turns
