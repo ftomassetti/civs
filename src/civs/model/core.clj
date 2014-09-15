@@ -115,6 +115,8 @@
     (update-political-entity game pe)))
 
 (defn group-total-pop [group]
+  {:pre [(instance? Group group)]
+   :post [(>= % 0)]}
   (-> group :population total-persons))
 
 (defn get-language [game group]
@@ -222,7 +224,7 @@
 
 (defn update-political-entity
   "The function f should take the political entity and the game"
-  ([game id f] (update-in game [:political-entities id] f game))
+  ([game id f] {:pre [(>= id 0)]} (update-in game [:political-entities id] f game))
   ([game pe]   (update-in game [:political-entities (.id pe)] (fn [_] pe))))
 
 (defn political-entities-ids

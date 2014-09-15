@@ -3,7 +3,8 @@
   civs.model.society
   (:require [civs.model.core :refer :all]
             [civs.model.language :refer :all]
-            [civs.logic.basic :refer :all]))
+            [civs.logic.basic :refer :all])
+  (:import [civs.model.core Population Group Culture Game Population Settlement PoliticalEntity]))
 
 ; See http://en.wikipedia.org/wiki/Tribe
 ;     http://www.newworldencyclopedia.org/entry/Tribe
@@ -39,6 +40,13 @@
 
 (def initial-society :band)
 
+(defn- set-society [game group society-value]
+  {:pre [(instance? Group group)]
+   :post [(instance? Game %) (= society-value (society % group))]}
+  (let [pe (to-political-entity game group)
+        game (update-political-entity game (.id pe) (fn [pe game] (assoc pe :society society-value)))]
+    game))
+
 (defn band-society? [game group]
   (= :band (society game group)))
 
@@ -50,17 +58,23 @@
 
 (defn evolve-in-tribe
   "The group evolve into a tribe"
-  [tribe] (assoc tribe :society :tribe))
+  [game group]
+  {:pre [(instance? Group group)]
+   :post [(instance? Game %) (tribe-society? % group)]}
+  (set-society game group :tribe))
 
-(defn evolve-in-chiefdom [group]
-  (assoc group :society :chiefdom))
+(defn evolve-in-chiefdom
+  [game group]
+  {:pre [(instance? Group group)]
+   :post [(instance? Game %) (chiefdom-society? % group)]}
+  (set-society game group :chiefdm))
 
 (defn possibility-of-evolving-into-tribe [game group]
   (if (band-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 45)]
       (if (> surplus 0)
-        (saturate (/ surplus 250.0) 0.75)
+        (saturate (/ (float surplus) 250.0) 0.75)
         0.0))
     0.0))
 

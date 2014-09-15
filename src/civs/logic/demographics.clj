@@ -54,7 +54,7 @@
                            "GLACIER"     0.5
                            "GRASSLAND"   0.835
                            "ROCK_DESERT" 0.750
-                           "SAND_DESERT" 0.735
+                           "SAND_DESERT" 0.715
                            "FOREST"      0.820
                            "SAVANNA"     0.800
                            "JUNGLE"      0.825
