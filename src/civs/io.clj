@@ -152,12 +152,12 @@
   [history game t prev-t]
   (reduce
     (fn [game group-id]
-      (let [current-group (political-entity-at history t group-id)
-            prev-group    (political-entity-at history prev-t group-id)]
-        (if (not (nil? prev-group))
-          (if (= (.culture current-group) (.culture prev-group))
-            (let [updated-group (assoc current-group :culture :unchanged)]
-              (update-political-entity game (.id updated-group) (fn [_ _]  updated-group)))
+      (let [current-pe (political-entity-at history t group-id)
+            prev-pe    (political-entity-at history prev-t group-id)]
+        (if (not (nil? prev-pe))
+          (if (= (.culture current-pe) (.culture prev-pe))
+            (let [updated-pe (assoc current-pe :culture :unchanged)]
+              (update-political-entity game (.id updated-pe) (fn [_ _]  updated-pe)))
           game)
         game)))
     game

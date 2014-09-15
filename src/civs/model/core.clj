@@ -126,6 +126,12 @@
         new-culture (assoc old-culture :language language)]
     (assoc political-entity :culture new-culture)))
 
+(defn assoc-language-in-game [game political-entity language]
+  {:pre [(not (nil? political-entity)) (instance? PoliticalEntity political-entity)]
+   :post [(instance? Game %)]}
+  (update-political-entity game
+    (assoc-language game political-entity language)))
+
 ; ###########################################################
 ;  World
 ; ###########################################################

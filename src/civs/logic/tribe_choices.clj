@@ -36,9 +36,9 @@
         (not (know? game group :agriculture))
         (not (band-society? game group)))
     (let [agr-prosperity (base-prosperity-per-activity (.world game) (.position group) :agriculture)
-          prob (* (- agr-prosperity 0.75) 6.0)
-          prob (* (discovery-population-factor (group-total-pop group) 200) prob)
-          prob (saturate (max 0.0 prob) 0.30)]
+          prob (* (- agr-prosperity 0.75) 8.0)
+          prob (* (discovery-population-factor (group-total-pop group) 180) prob)
+          prob (saturate (max 0.0 prob) 0.35)]
       ; agriculture is discovered in places good for agriculture
       prob)
     0.0))
@@ -157,7 +157,7 @@
              dest-target (:pos (first preferences))
              language (get-language game group)
              new-group-name (if (nil? language) :unnamed (.name language))
-             res (create-tribe game new-group-name dest-target (:leaving sp) (.culture group) (.society group))
+             res (create-tribe game new-group-name dest-target (:leaving sp) (culture game group) (society game group))
              game (:game res)]
         (if (sedentary? game group)
           (let [settlement-name (if (nil? language) :unnamed (.name language))
@@ -177,11 +177,11 @@
   "Return a game"
   [game group-id]
   (let [group (get-group game group-id)
-        political-entity (assoc-language game (to-political-entity game group) (generate-language))
+        game (assoc-language-in-game game (to-political-entity game group) (generate-language))
         language (get-language game group)
+        _ (assert (not (nil? language)))
         group (assoc group :name (.name language))
         game (update-group game group)
-        game (update-political-entity game political-entity)
         settlements (get-settlements-owned-by game (:id group))
         settlements (map #(assoc % :name (.name language)) settlements)
         game (update-settlements game settlements)]
@@ -250,8 +250,8 @@
 (defn group-turn
   "Return the game, updated"
   [game tribe]
-  {:pre  [(instance? Game game) (:group game)]
-   :post [(instance? Game %) (:group %)]}
+  {:pre  [(instance? Game game) (:groups game)]
+   :post [(instance? Game %) (:groups %)]}
   (let [ world (.world game)
          tribe (update-population game tribe)
         game (update-group game tribe)]

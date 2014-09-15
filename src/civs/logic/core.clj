@@ -19,13 +19,14 @@
 (defn- remove-dead-groups
   "Remove dead groups"
   [game]
-  (for [id (political-entities-ids game)]
-    (update-political-entity game id
+  (reduce
+    (fn [game id] (update-political-entity game id
       (fn [pe game]
-        (assoc pe :groups (filter alive? (:groups pe)))))))
+        (assoc pe :groups (filter (fn [id] (alive? (by-id game id))) (:groups pe))))))
+    game (political-entities-ids game)))
 
 (defn turn [game]
-  {:pre  [(instance? Game game) (:group game)]
-   :post [(instance? Game %) (:group %)]}
+  {:pre  [(instance? Game game) (:groups game)]
+   :post [(instance? Game %) (:groups %)]}
   (let [groups (groups game)]
     (remove-dead-groups (reduce (fn [acc t] (group-turn acc t)) game groups))))

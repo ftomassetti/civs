@@ -93,7 +93,7 @@
   (check-biome com.github.lands.Biome/SAVANNA 2.0 (Math/pow 1.04 100) 50 100))
 
 (deftest ^:acceptance test-long-lasting-population-in-forest
-  (check-biome com.github.lands.Biome/FOREST 2.5 (Math/pow 1.05 100) 50 100))
+  (check-biome com.github.lands.Biome/FOREST 2.3 (Math/pow 1.05 100) 50 100))
 
 (deftest ^:acceptance test-long-lasting-population-in-sand-desert
   (check-biome com.github.lands.Biome/SAND_DESERT 0.1 (Math/pow 1.03 100) 50 100))
@@ -113,11 +113,17 @@
          nsocieties-total            (.size societies)
          nsocieties-still-nomadic    (.size (filter #(nomadic? g %) societies))
          nsocieties-semi-sedentary   (.size (filter #(semi-sedentary? g %) societies))
-         nsocieties-sedentary        (.size (filter #(sedentary? g %) societies))]
+         nsocieties-sedentary        (.size (filter #(sedentary? g %) societies))
+         nsocieties-bands            (.size (filter #(band-society? g % ) societies))
+         nsocieties-tribes           (.size (filter #(tribe-society? g % ) societies))
+         nsocieties-chiefdoms        (.size (filter #(chiefdom-society? g % ) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns nomadic" nsocieties-still-nomadic)
       (println "scenario-w77-100tribes-30turns semi-sedentary" nsocieties-semi-sedentary)
-      (println "scenario-w77-100tribes-30turns sedentary" nsocieties-sedentary))
+      (println "scenario-w77-100tribes-30turns sedentary" nsocieties-sedentary)
+      (println "scenario-w77-100tribes-30turns bands" nsocieties-bands)
+      (println "scenario-w77-100tribes-30turns tribes" nsocieties-tribes)
+      (println "scenario-w77-100tribes-30turns chiefdoms" nsocieties-chiefdoms)))
     (is (and (>= nsocieties-still-nomadic 10) (<= nsocieties-still-nomadic 60)))
     ))
 
@@ -143,7 +149,7 @@
 (deftest ^:acceptance test-some-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
-         nsocieties-agriculture      (.size (filter #(know? % :agriculture) societies))]
+         nsocieties-agriculture      (.size (filter #(know? g % :agriculture) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns agriculture" nsocieties-agriculture))
     (is (and (>= nsocieties-agriculture 3) (<= nsocieties-agriculture 25)))))
@@ -151,7 +157,7 @@
 (deftest ^:acceptance test-some-most-do-not-discover-agriculture
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
-         nsocieties-no-agriculture   (.size (filter #(not (know? % :agriculture)) societies))]
+         nsocieties-no-agriculture   (.size (filter #(not (know? g % :agriculture)) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns no agriculture" nsocieties-no-agriculture))
     (is (and (>= nsocieties-no-agriculture 35) (<= nsocieties-no-agriculture 90)))))
@@ -159,7 +165,7 @@
 (deftest ^:acceptance test-some-societies-are-band
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
-         target                      (.size (filter band-society? societies))]
+         target                      (.size (filter #(band-society? g % ) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns band" target))
     (is (and (>= target 10) (<= target 85)))))
@@ -167,7 +173,7 @@
 (deftest ^:acceptance test-some-societies-are-tribe
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
-         target                      (.size (filter tribe-society? societies))]
+         target                      (.size (filter #(tribe-society? g %) societies))]
     (when verbose-acceptance-tests
       (println "scenario-w77-100tribes-30turns tribe" target))
     (is (and (>= target 5) (<= target 35)))))
@@ -175,5 +181,5 @@
 (deftest ^:acceptance test-no-societies-are-yet-chiefdom
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
-         target                      (.size (filter chiefdom-society? societies))]
+         target                      (.size (filter #(chiefdom-society? g %) societies))]
     (is (= 0 target))))
