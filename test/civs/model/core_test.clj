@@ -17,10 +17,10 @@
 ; ###########################################################
 
 (deftest test-in?
-  (is (= true (in? [1 2 3] 1)))
-  (is (= false (in? [1 2 3] 4)))
-  (is (= true (in? (list 1 2 3) 1)))
-  (is (= false (in? (list 1 2 3) 4))))
+  (is (true? (in? [1 2 3] 1)))
+  (is (false? (in? [1 2 3] 4)))
+  (is (true? (in? (list 1 2 3) 1)))
+  (is (false? (in? (list 1 2 3) 4))))
 
 ; ###########################################################
 ;  Population
@@ -78,12 +78,12 @@
       (is (= initial-society (society ga gr))))))
 
 (deftest test-dead?
-  (is (= false (dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
-  (is (= true  (dead? (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
+  (is (false? (dead? (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
+  (is (true?  (dead? (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
 
 (deftest test-alive?
-  (is (= true  (alive?  (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
-  (is (= false (alive?  (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
+  (is (true?  (alive?  (Group. nil nil nil (Population. 1 2 3 4 5) nil))))
+  (is (false? (alive?  (Group. nil nil nil (Population. 0 0 0 0 0) nil)))))
 
 (deftest test-know?
   (consider-base-group
@@ -109,7 +109,7 @@
 (deftest test-get-language
   (consider-base-group
     (fn [ga gr]
-      (is (= nil (get-language ga gr))))))
+      (is (nil? (get-language ga gr))))))
 
 (deftest test-assoc-language
   (consider-base-group
@@ -183,20 +183,20 @@
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 1 2 0 0) initial-culture initial-society))]
-    (is (= 0 (game-total-pop g0)))
+    (is (zero? (game-total-pop g0)))
     (is (= 15 (game-total-pop g1)))
     (is (= 18 (game-total-pop g2)))))
 
 (deftest test-get-group
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))]
-    (is (= nil (get-group g0 1)))
+    (is (nil? (get-group g0 1)))
     (is (= (Group. 2 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) 1) (get-group g1 2)))))
 
 (deftest test-get-settlement
   (let [g0 (create-game nil)
         g1 (:game (create-settlement g0 "name" {:x 15 :y 18} :123 10))]
-    (is (= nil (get-settlement g0 1)))
+    (is (nil? (get-settlement g0 1)))
     (is (= (Settlement. 1 "name" 10 {:x 15 :y 18} :123) (get-settlement g1 1)))))
 
 (deftest test-ghost-city
@@ -205,14 +205,14 @@
         {g2 :game s1 :settlement} (create-settlement g1 "name" {:x 15 :y 18} (.id gr1) 11)
         {g3 :game gr2 :group} (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society)
         {g4 :game s2 :settlement} (create-settlement g3 "name" {:x 15 :y 18} (.id gr2) 12)]
-    (is (= false (ghost-city? g2 (.id s1))))
-    (is (= true (ghost-city? g4 (.id s2))))))
+    (is (false? (ghost-city? g2 (.id s1))))
+    (is (true? (ghost-city? g4 (.id s2))))))
 
 (deftest test-n-groups-alive
   (let [g0 (create-game nil)
         g1 (:game (create-tribe g0 "name" {:x 15 :y 18} (Population. 1 2 3 4 5) initial-culture initial-society))
         g2 (:game (create-tribe g1 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society))]
-    (is (= 0 (n-groups-alive g0)))
+    (is (zero? (n-groups-alive g0)))
     (is (= 1 (n-groups-alive g1)))
     (is (= 1 (n-groups-alive g2)))))
 
@@ -229,8 +229,8 @@
         {g2 :game s1 :settlement} (create-settlement g1 "name" {:x 15 :y 18} (.id gr1) 20)
         {g3 :game gr2 :group} (create-tribe g2 "name" {:x 15 :y 18} (Population. 0 0 0 0 0) initial-culture initial-society)
         {g4 :game s2 :settlement} (create-settlement g3 "name" {:x 15 :y 18} (.id gr2) 21)]
-    (is (= 0 (n-ghost-cities g0)))
-    (is (= 0 (n-ghost-cities g2)))
+    (is (zero? (n-ghost-cities g0)))
+    (is (zero? (n-ghost-cities g2)))
     (is (= 1 (n-ghost-cities g4)))))
 
 (deftest test-assoc-and-use-language
