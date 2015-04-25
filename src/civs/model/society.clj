@@ -73,7 +73,7 @@
   (if (band-society? game group)
     (let [pop (group-total-pop group)
           surplus (- pop 45)]
-      (if (> surplus 0)
+      (if (pos? surplus)
         (saturate (/ (float surplus) 250.0) 0.75)
         0.0))
     0.0))

@@ -95,7 +95,7 @@
 
 (defn dead? [group]
   {:pre [(instance? Group group) (instance? Population (:population group))]}
-  (= 0 (total-persons (:population group))))
+  (zero? (total-persons (:population group))))
 
 (defn alive? [group]
   {:pre [(instance? Group group) (instance? Population (:population group))]}
@@ -140,7 +140,7 @@
 
 (defn load-world [filename]
   (let [f (java.io.File. filename)]
-    (. com.github.lands.PickleSerialization loadWorld f)))
+    (com.github.lands.PickleSerialization/loadWorld f)))
 
 (defn isLand [world pos]
   (not (.get (.getOcean world) (:x pos) (:y pos))))
@@ -174,14 +174,14 @@
 (defn check-valid-position [world pos]
   (when (or (nil? (:x pos)) (nil? (:y pos)))
     (throw (Exception. (str "Invalid position given " pos))))
-  (when (not (inside? world pos))
+  (when-not (inside? world pos)
     (throw (Exception. (str "Invalid position given " pos)))))
 
 (defn cells-around [world pos radius]
   (check-valid-position world pos)
   (let [ x (:x pos)
          y (:y pos)
-         r (range (* -1 radius) (+ 1 radius))
+         r (range (* -1 radius) (inc radius))
         deltas (combo/cartesian-product r r)
         cells (map (fn [d] {:x (+ x (nth d 0)) :y (+ y (nth d 1))}) deltas)]
     (filter #(inside? world %) cells)))
@@ -313,12 +313,10 @@
   (let [groups (filter #(= pos (.position %)) (groups game))]
     (when (> (.size groups) 1)
       (throw (Exception. "More than one group in the same position")))
-    (if (empty? groups)
-      nil
-      (first groups))))
+    (when (seq groups) (first groups))))
 
 (defn pos-free? [game pos]
-  (= nil (group-in-pos game pos)))
+  (nil? (group-in-pos game pos)))
 
 (def ^:deprecated get-tribe get-group)
 
@@ -354,10 +352,10 @@
 
 (defn update-settlements
   [game settlements]
-  (reduce (fn [acc s] (update-settlement acc s)) game settlements))
+  (reduce update-settlement game settlements))
 
 (defn groups-ids-in-game [game]
-  (into #{} (keys (:groups game))))
+  (set (keys (:groups game))))
 
 (defn game-total-pop [game]
   {:pre [(instance? Game game)]
