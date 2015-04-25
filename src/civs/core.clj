@@ -27,15 +27,17 @@
   (System/exit 1))
 
 (defn usage [options-summary]
-  (println (->> ["This program run simulations of civilizations evolution and struggling"
-        ""
-        "Usage: [lein run] civs [options]"
-        ""
-        "Options:"
-        options-summary
-        ""
-        "Feel free to ask all possible questions on https://github.com/ftomassetti/civs (just open an issue!)"]
-    (string/join \newline)))
+  (println
+    (string/join
+      \newline 
+      ["This program run simulations of civilizations evolution and struggling"
+      ""
+      "Usage: [lein run] civs [options]"
+      ""
+      "Options:"
+      options-summary
+      ""
+      "Feel free to ask all possible questions on https://github.com/ftomassetti/civs (just open an issue!)"]))
     (System/exit 0))
 
 (defn simulate

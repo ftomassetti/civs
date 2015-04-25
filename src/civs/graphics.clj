@@ -23,9 +23,8 @@
         height (game-height game)
         bi (BufferedImage. width height BufferedImage/TYPE_INT_ARGB)
         gr (.createGraphics bi)]
-    (do
-      (doall (for [x (doall (range width)) y (doall (range height))]
-        (do
-          (.setColor gr (population-map-color game {:x x :y y}))
-          (.fillRect gr x y (+ x 1) (+ y 1)))))
-      (ImageIO/write bi "png" (File. filename)))))
+    (doall (for [x (doall (range width)) y (doall (range height))]
+      (do
+        (.setColor gr (population-map-color game {:x x :y y}))
+        (.fillRect gr x y (inc x) (inc y)))))
+    (ImageIO/write bi "png" (File. filename))))
