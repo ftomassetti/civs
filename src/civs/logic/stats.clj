@@ -8,8 +8,8 @@
     [civs.logic.tribe-choices :refer :all]))
 
 (defn- execute-turns [world tribe nturns]
-  (if (and (alive? tribe) (> nturns 0))
-    (execute-turns world (group-turn world tribe) (- nturns 1))
+  (if (and (alive? tribe) (pos? nturns))
+    (execute-turns world (group-turn world tribe) (dec nturns))
     tribe))
 
 (defn observe-tribe [world n]

@@ -144,7 +144,7 @@
             pos (.position group)
             possible-destinations (filter #(pos-free? game %) (land-cells-around world pos (migration-radius game group)))]
         (if
-          (and (> pop 35) (< c 0.9) (not (empty? possible-destinations)))
+          (and (> pop 35) (< c 0.9) (seq possible-destinations))
           (/ (opposite c) 2.7)
           0.0)))
     (fn [game group]
@@ -193,8 +193,7 @@
 (def evolution-in-tribe
   (PossibleEvent.
     :evolve-in-tribe
-    (fn [game tribe]
-      (possibility-of-evolving-into-tribe game tribe))
+    possibility-of-evolving-into-tribe
     (fn [game group]
       (let [game (develop-a-language game (:id group))
             group (get-group game (:id group))
@@ -207,8 +206,7 @@
 (def evolution-in-chiefdom
   (PossibleEvent.
     :evolve-in-chiefdom
-    (fn [game tribe]
-      (possibility-of-evolving-into-chiefdom game tribe))
+    possibility-of-evolving-into-chiefdom
     (fn [game tribe]
       {
         :group (evolve-in-chiefdom tribe)
@@ -225,7 +223,7 @@
             new-tribe (:group apply-res)
             new-game (or (:game apply-res) game)
             new-game (if new-tribe (update-group new-game new-tribe) new-game)
-            new-tribe (if new-tribe new-tribe (by-id new-game (.id tribe)))
+            new-tribe (or new-tribe (by-id new-game (.id tribe)))
             group-id (.id new-tribe)
             params (assoc (:params apply-res) :group group-id)]
         (fact (:name event) params)

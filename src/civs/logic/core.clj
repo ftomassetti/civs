@@ -29,4 +29,4 @@
   {:pre  [(instance? Game game) (:groups game)]
    :post [(instance? Game %) (:groups %)]}
   (let [groups (groups game)]
-    (remove-dead-groups (reduce (fn [acc t] (group-turn acc t)) game groups))))
+    (remove-dead-groups (reduce group-turn game groups))))

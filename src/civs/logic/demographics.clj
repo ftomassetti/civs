@@ -226,7 +226,7 @@
          pop-supportable (min max-supportable pop-supportable)]
     (if (< tot pop-supportable)
       1.0
-      (if (or (= pop-supportable 0.0) (= tot 0))
+      (if (or (= pop-supportable 0.0) (zero? tot))
         0.0
         (/ 1.0 (/ tot pop-supportable))))))
 
@@ -280,7 +280,7 @@
 (defn men-availability-factor [young-men young-women]
   ; check necessary to avoid division by zero
   {:post [(>= % 0.0) (<= % 1.0)]}
-  (if (> young-women 0)
+  (if (pos? young-women)
     (let [men-factor (/ (float young-men) young-women)
           res (/ (+ men-factor 0.5) 2)]
       (saturate (saturate res 1.0) (* men-factor 3)))
@@ -298,7 +298,7 @@
         ; In primitive nomadic societies mothers tend to have one child every four
         ; years
         births                  (if (nomadic? game tribe) (* 0.75 births) births)]
-    (when (> births 0)
+    (when (pos? births)
       (fact :births {:group (.id tribe) :n births}))
     (Population. births 0 0 0 0)))
 
@@ -311,11 +311,11 @@
         n-children (-> tribe :population :children)
         [dead, grown] (rsplit-by n-children mortality)
         [men, women] (rsplit-by grown 0.5)]
-    (when (> dead 0)
+    (when (pos? dead)
       (fact :children-dead {:group (.id tribe) :n dead}))
-    (when (> men 0)
+    (when (pos? men)
       (fact :children-grown-as-men {:group (.id tribe) :n men}))
-    (when (> women 0)
+    (when (pos? women)
       (fact :children-grown-as-women {:group (.id tribe) :n women}))
     (Population. (* -1 n-children) men women 0 0)))
 
@@ -332,13 +332,13 @@
         [dead-w, alive-w] (rsplit-by n-young-women mortality-women)
         [grown-m, _]      (rsplit-by alive-m 0.25)
         [grown-w, _]      (rsplit-by alive-w 0.25)]
-    (when (> dead-m 0)
+    (when (pos? dead-m)
       (fact :young-men-dead {:group (.id tribe) :n dead-m}))
-    (when (> dead-w 0)
+    (when (pos? dead-w)
       (fact :young-women-dead {:group (.id tribe) :n dead-w}))
-    (when (> grown-m 0)
+    (when (pos? grown-m)
       (fact :young-men-grew-old {:group (.id tribe) :n grown-m}))
-    (when (> grown-w 0)
+    (when (pos? grown-w)
       (fact :young-women-grew-old {:group (.id tribe) :n grown-w}))
     (Population. 0 (* -1 (+ dead-m grown-m)) (* -1 (+ dead-w grown-w)) grown-m grown-w)))
 
@@ -353,9 +353,9 @@
         n-old-women (-> tribe :population :old-women)
         [dead-m, alive-m] (rsplit-by n-old-men mortality-men)
         [dead-w, alive-w] (rsplit-by n-old-women mortality-women)]
-    (when (> dead-m 0)
+    (when (pos? dead-m)
       (fact :old-men-dead {:group (.id tribe) :n dead-m}))
-     (when (> dead-w 0)
+     (when (pos? dead-w)
       (fact :old-women-dead {:group (.id tribe) :n dead-w}))
     (Population. 0 0 0 (* -1 dead-m) (* -1 dead-w))))
 
