@@ -39,7 +39,7 @@
                 crand-float (mock-crand-float)]
     (let [g0 (generate-game w77 10)
           g (reduce (fn [g _] (turn g)) g0 (repeat 10 :_))]
-      (is (> (game-total-pop g) 0)))))
+      (is (pos? (game-total-pop g))))))
 
 (deftest ^:acceptance test-population-do-not-expand-too-much-too-fast
   (with-redefs [crand-int   (mock-crand-int)
@@ -62,8 +62,8 @@
           g (reduce (fn [g _] (turn g)) g0 (repeat nturns :_))
           final-pop (game-total-pop g)]
       (when verbose-acceptance-tests
-        (println (.toString biome) "scenario: initial population" start-pop)
-        (println (.toString biome) "scenario: final population"   final-pop "after" nturns "turns"))
+        (println (str biome) "scenario: initial population" start-pop)
+        (println (str biome) "scenario: final population"   final-pop "after" nturns "turns"))
       (is (> final-pop (* start-pop min-factor)))
       (is (< final-pop (* start-pop max-factor))))))
 
@@ -181,4 +181,4 @@
   (let [ g game-scenario-w77-100tribes-30turns
          societies                   (groups-alive g)
          target                      (.size (filter #(chiefdom-society? g %) societies))]
-    (is (= 0 target))))
+    (is (zero? target))))
