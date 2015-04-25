@@ -78,7 +78,7 @@
         serializable-data data]
     (set-world-print-method (:world-filename options))
     (miner.tagged/pr-tagged-record-on serializable-data writer)
-    (.toString writer)))
+    (str writer)))
 
 (defn world-reader [resolver]
   (fn [value]
@@ -129,11 +129,11 @@
     fress/inheritance-lookup))
 
 (defn- fress-read-handlers [resolve]
-  (-> (merge {
-               world-ftag    (world-freader resolve)
-               language-ftag (language-freader)
-             } fress/clojure-read-handlers)
-          fress/associative-lookup))
+  (fress/associative-lookup
+    (merge
+      {world-ftag (world-freader resolve),
+       language-ftag (language-freader)}
+      fress/clojure-read-handlers)))
 
 (defn to-serialized-bytes [data]
   (let [os (java.io.ByteArrayOutputStream.)
@@ -154,7 +154,7 @@
     (fn [game group-id]
       (let [current-pe (political-entity-at history t group-id)
             prev-pe    (political-entity-at history prev-t group-id)]
-        (if (not (nil? prev-pe))
+        (if-not (nil? prev-pe)
           (if (= (.culture current-pe) (.culture prev-pe))
             (let [updated-pe (assoc current-pe :culture :unchanged)]
               (update-political-entity game (.id updated-pe) (fn [_ _]  updated-pe)))
@@ -174,7 +174,7 @@
 (defn prepare-history-for-serialization
   "We replace elements unchanged from turn to turn with :unchanged"
   [history]
-  (reduce (fn [acc turn] (prepare-history-turn-for-serialization acc turn)) history (rest (turns history))))
+  (reduce prepare-history-turn-for-serialization history (rest (turns history))))
 
 (defn- restore-game-from-serialization
   "Return game, updated"
@@ -183,7 +183,7 @@
     (fn [game group-id]
       (let [current-group (political-entity-at history t group-id)
             prev-group    (political-entity-at history prev-t group-id)]
-        (if (not (nil? prev-group))
+        (if-not (nil? prev-group)
           (if (= :unchanged (.culture current-group))
             (let [updated-group (assoc current-group :culture  (.culture prev-group))]
               (update-political-entity game (.id updated-group) (fn [_ _] updated-group)))
@@ -202,7 +202,7 @@
 
 (defn restore-history-from-serialization [history]
   [history]
-  (reduce (fn [acc turn] (restore-history-turn-from-serialization acc turn)) history (rest (turns history))))
+  (reduce restore-history-turn-from-serialization history (rest (turns history))))
 
 (defn save-simulation-result-fressian [simulation-result history-filename]
   (let [ bytes (to-serialized-bytes (prepare-history-for-serialization simulation-result))
