@@ -51,6 +51,17 @@ Maven
 </dependency>
 ```
 
+Dev guidelines
+==============
+
+Use [kibit](https://github.com/jonase/kibit) and [eastwood](https://github.com/jonase/eastwood) to verify code quality.
+
+When runnng eastwood exclude the check for unlimited use of namespaces:
+
+```
+lein eastwood "{:exclude-linters [:unlimited-use]}"
+```
+
 ## Interesting links about human history and history simulation
 
 [world-js](http://anvoz.github.io/world-js/) *an attempt to show you a brief history of humankind via a simulation game.*
