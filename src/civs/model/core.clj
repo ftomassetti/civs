@@ -86,10 +86,6 @@
     (catch IllegalArgumentException e
       (throw (IllegalStateException. (str "Political entity for group " group " not found") e)))))
 
-; Return the Culture of the entity
-(defn culture [game el]
-  (.culture (to-political-entity game el)))
-
 (defn society [game el]
   (.society (to-political-entity game el)))
 
@@ -238,8 +234,9 @@
             gs (conj gs group-id)]
         (assoc pe :groups gs)))))
 
-(defn- by-id-with-collection [game id]
+(defn- by-id-with-collection
   "Return the element associated to the id"
+  [game id]
   (reduce
     #(let
        [res (get-in game [%2 id])]
@@ -248,8 +245,9 @@
          {:element res :collection %2}))
     nil [:groups :settlements :political-entities]))
 
-(defn by-id [game id]
+(defn by-id
   "Return the element associated to the id"
+  [game id]
   (:element (by-id-with-collection game id)))
 
 (defn required-by-id [game id]
@@ -266,6 +264,7 @@
   (let [{element :element, collection :collection} (by-id-with-collection game id)]
     (update-in game [collection id] f)))
 
+; Return the Culture of the entity
 (defn culture [game x]
   {:pre [(not (nil? x))]}
   (.culture (to-political-entity game x)))
