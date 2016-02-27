@@ -73,7 +73,7 @@
   (println "History filename :" history-filename)
   (println "")
   (try
-    (let [w (load-world "examples-worlds/seed_77.world")
+    (let [w (load-world world-filename)
           g (generate-game w n-bands)
           simulation-result (simulate g n-turns)]
       (save-simulation-result simulation-result history-filename world-filename use-fressian))
